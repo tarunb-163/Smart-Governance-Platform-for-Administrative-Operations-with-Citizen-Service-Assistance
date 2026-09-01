@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CivicPulse - Track Complaint</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .navbar {
+            background: #123b6d;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: white !important;
+            font-size: 22px;
+        }
+
+        .navbar-text {
+            color: white;
+        }
+
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background: white;
+            border-right: 1px solid #ddd;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 13px 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background: #eaf2ff;
+            color: #123b6d;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .content-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .page-title {
+            color: #123b6d;
+            font-weight: bold;
+        }
+
+        .status-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .timeline {
+            position: relative;
+            margin-top: 30px;
+            padding-left: 45px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 17px;
+            top: 5px;
+            bottom: 5px;
+            width: 3px;
+            background: #d9e2ef;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 35px;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: -38px;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #198754;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timeline-item.active .timeline-icon {
+            background: #0d6efd;
+        }
+
+        .timeline-item.pending .timeline-icon {
+            background: #adb5bd;
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .search-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="/citizen/dashboard">
+
+            <i class="bi bi-building"></i>
+            CivicPulse
+
+        </a>
+
+        <span class="navbar-text">
+
+            <i class="bi bi-person-circle"></i>
+            Citizen
+
+        </span>
+
+    </div>
+
+</nav>
+
+
+
+<div class="container-fluid">
+
+    <div class="row">
+
+
+        <!-- SIDEBAR -->
+
+        <div class="col-md-2 sidebar">
+
+            <a href="/citizen/dashboard">
+
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+
+            </a>
+
+
+            <a href="/citizen/complaint-form">
+
+                <i class="bi bi-plus-circle"></i>
+                Register Complaint
+
+            </a>
+
+
+            <a href="/citizen/complaints">
+
+                <i class="bi bi-file-text"></i>
+                My Complaints
+
+            </a>
+
+
+            <a href="/citizen/track">
+
+                <i class="bi bi-search"></i>
+                Track Complaint
+
+            </a>
+
+
+            <a href="/citizen/notifications">
+
+                <i class="bi bi-bell"></i>
+                Notifications
+
+            </a>
+
+
+            <a href="/citizen/profile">
+
+                <i class="bi bi-person"></i>
+                My Profile
+
+            </a>
+
+
+            <a href="/login">
+
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+
+            </a>
+
+        </div>
+
+
+
+        <!-- MAIN CONTENT -->
+
+        <div class="col-md-10 main-content">
+
+
+            <div class="content-card">
+
+
+                <h2 class="page-title mb-2">
+
+                    <i class="bi bi-search"></i>
+
+                    Track Complaint
+
+                </h2>
+
+
+                <p class="text-muted">
+
+                    Track the current status of your civic complaint.
+
+                </p>
+
+
+
+                <!-- SEARCH -->
+
+                <div class="search-box mt-4">
+
+                    <label class="form-label">
+
+                        Enter Complaint ID
+
+                    </label>
+
+
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            id="complaintId"
+                            class="form-control"
+                            placeholder="Example: CMP202600124"
+                            value="CMP202600078">
+                        <button
+                            class="btn btn-primary"
+                            onclick="trackComplaint()">
+                            <i class="bi bi-search"></i>
+                            Track
+                        </button>
+                    </div>
+                    <div class="mt-2 text-muted small">
+                        <strong>Click to Demo:</strong> 
+                        <span class="badge bg-success cursor-pointer" style="cursor: pointer;" onclick="setDemoId('CMP202600999')">CMP202600999 (Electrical)</span> | 
+                        <span class="badge bg-success cursor-pointer" style="cursor: pointer;" onclick="setDemoId('CMP202600078')">CMP202600078 (Resolved)</span> | 
+                        <span class="badge bg-primary cursor-pointer" style="cursor: pointer;" onclick="setDemoId('CMP202600124')">CMP202600124 (Assigned)</span> | 
+                        <span class="badge bg-info text-dark cursor-pointer" style="cursor: pointer;" onclick="setDemoId('CMP202600103')">CMP202600103 (In Progress)</span>
+                    </div>
+
+                </div>
+
+
+
+                <!-- COMPLAINT DETAILS -->
+                <div class="status-card">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted mb-1">Complaint ID</p>
+                            <h5 id="displayComplaintId">CMP202600124</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted mb-1">Category</p>
+                            <h5 id="displayCategory">Road Damage</h5>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <p class="text-muted mb-1">Submitted Date</p>
+                            <h5 id="displaySubmittedDate">11 Aug 2026</h5>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <p class="text-muted mb-1">Current Status</p>
+                            <span id="displayStatus" class="badge bg-primary fs-6">Assigned to Officer</span>
+                        </div>
+                    </div>
+
+                    <!-- TIMELINE -->
+                    <h5 class="mt-5 mb-3">Complaint Status</h5>
+                    <div class="timeline" id="timelineContainer">
+                        <!-- TIMELINE ITEMS DYNAMICALLY INJECTED -->
+                    </div>
+                </div>
+
+                <!-- IMAGE UPLOAD SECTION -->
+                <div id="imageUploadSection" style="display: none;" class="card p-4 mt-4">
+                    <h5 class="card-title text-primary"><i class="bi bi-image"></i> Upload Supporting Image</h5>
+                    <p class="text-muted small">Add additional supporting images to this complaint.</p>
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <input type="file" id="complaintImageFile" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4 mt-2 mt-md-0">
+                            <button class="btn btn-primary w-100" onclick="uploadComplaintImage()">
+                                <i class="bi bi-upload"></i> Upload Image
+                            </button>
+                        </div>
+                    </div>
+                    <div id="imageUploadStatus" class="text-muted small mt-2"></div>
+                    <div id="uploadedImageContainer" class="mt-3" style="display: none;">
+                        <span class="text-success small d-block mb-2 font-weight-bold">Current Supporting Image:</span>
+                        <img id="uploadedImagePreview" src="" alt="Supporting Image" class="img-fluid rounded border shadow-sm" style="max-height: 250px; object-fit: contain;">
+                    </div>
+                </div>
+
+                <!-- FEEDBACK & REOPEN ACTION CONTAINER (ONLY FOR RESOLVED COMPLAINTS) -->
+                <div id="resolvedActions" style="display: none;" class="mt-4">
+                    <div class="row g-4">
+                        <!-- FEEDBACK CARD -->
+                        <div class="col-md-6">
+                            <div class="card h-100 border-success shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success"><i class="bi bi-star-fill text-warning"></i> Share Feedback</h5>
+                                    <p class="card-text text-muted small">Your feedback helps us improve municipal services.</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Rating</label>
+                                        <div class="d-flex gap-2">
+                                            <select id="feedbackRating" class="form-select">
+                                                <option value="5">★★★★★ (5 - Excellent)</option>
+                                                <option value="4">★★★★☆ (4 - Good)</option>
+                                                <option value="3">★★★☆☆ (3 - Average)</option>
+                                                <option value="2">★★☆☆☆ (2 - Poor)</option>
+                                                <option value="1">★☆☆☆☆ (1 - Terrible)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Comments</label>
+                                        <textarea id="feedbackComment" class="form-control" rows="3" placeholder="Tell us how we did..."></textarea>
+                                    </div>
+                                    <button class="btn btn-success w-100" onclick="submitFeedback()">
+                                        <i class="bi bi-chat-left-heart"></i> Submit Feedback
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- REOPEN CARD -->
+                        <div class="col-md-6">
+                            <div class="card h-100 border-danger shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title text-danger"><i class="bi bi-arrow-counterclockwise"></i> Reopen Complaint</h5>
+                                    <p class="card-text text-muted small">If the issue is not resolved to your satisfaction, you may request to reopen it.</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Reason for Reopening</label>
+                                        <textarea id="reopenReason" class="form-control" rows="4" placeholder="Explain why the resolution was not satisfactory..."></textarea>
+                                    </div>
+                                    <button class="btn btn-danger w-100" onclick="reopenComplaint()">
+                                        <i class="bi bi-exclamation-triangle"></i> Reopen Complaint
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Track default complaint on page load
+    trackComplaint();
+});
+
+function setDemoId(id) {
+    document.getElementById("complaintId").value = id;
+    trackComplaint();
+}
+
+function trackComplaint() {
+    const id = document.getElementById("complaintId").value.trim();
+    if (id === "") {
+        alert("Please enter a complaint ID.");
+        return;
+    }
+
+    fetch('/api/complaints/' + id)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Complaint not found.");
+            }
+            return response.json();
+        })
+        .then(complaint => {
+            // Update Details
+            document.getElementById("displayComplaintId").innerText = complaint.complaintId;
+            document.getElementById("displayCategory").innerText = complaint.category;
+            document.getElementById("displaySubmittedDate").innerText = complaint.submittedDate;
+
+            const statusBadge = document.getElementById("displayStatus");
+            statusBadge.innerText = complaint.status;
+
+            // Set badge color based on status
+            statusBadge.className = "badge fs-6";
+            if (complaint.status === "Pending") {
+                statusBadge.classList.add("bg-warning", "text-dark");
+            } else if (complaint.status === "In Progress" || complaint.status === "Assigned to Officer") {
+                statusBadge.classList.add("bg-primary");
+            } else if (complaint.status === "Resolved") {
+                statusBadge.classList.add("bg-success");
+            } else if (complaint.status === "Reopened") {
+                statusBadge.classList.add("bg-danger");
+            } else {
+                statusBadge.classList.add("bg-secondary");
+            }
+
+            // Build Timeline
+            const timelineContainer = document.getElementById("timelineContainer");
+            timelineContainer.innerHTML = "";
+
+            complaint.timeline.forEach(event => {
+                const item = document.createElement("div");
+                item.className = "timeline-item";
+                if (event.status === "active") {
+                    item.classList.add("active");
+                } else if (event.status === "pending") {
+                    item.classList.add("pending");
+                }
+
+                let iconClass = "bi-check";
+                if (event.status === "active") {
+                    iconClass = "bi-person-check";
+                } else if (event.status === "pending") {
+                    iconClass = "bi-hourglass";
+                } else if (event.title.includes("Reopened")) {
+                    iconClass = "bi-arrow-counterclockwise";
+                } else if (event.title.includes("Feedback")) {
+                    iconClass = "bi-star-fill";
+                } else if (event.title.includes("Image")) {
+                    iconClass = "bi-image";
+                }
+
+                item.innerHTML = `
+                    <div class="timeline-icon">
+                        <i class="bi ${iconClass}"></i>
+                    </div>
+                    <div>
+                        <div class="timeline-title">${event.title}</div>
+                        <small class="text-muted">${event.date}</small>
+                        <p class="mb-0 mt-1">${event.description}</p>
+                    </div>
+                `;
+                timelineContainer.appendChild(item);
+            });
+
+            // Toggle resolve forms
+            const resolvedActions = document.getElementById("resolvedActions");
+            if (complaint.status === "Resolved") {
+                resolvedActions.style.display = "block";
+            } else {
+                resolvedActions.style.display = "none";
+            }
+
+            // Show image upload section for tracking complaints
+            document.getElementById("imageUploadSection").style.display = "block";
+
+            // Preview uploaded image
+            const imgContainer = document.getElementById("uploadedImageContainer");
+            const imgPreview = document.getElementById("uploadedImagePreview");
+            if (complaint.imagePath) {
+                imgPreview.src = complaint.imagePath;
+                imgContainer.style.display = "block";
+            } else {
+                imgContainer.style.display = "none";
+            }
+        })
+        .catch(err => {
+            alert(err.message + " Use CMP202600124, CMP202600103, or CMP202600078.");
+        });
+}
+
+function submitFeedback() {
+    const id = document.getElementById("displayComplaintId").innerText.trim();
+    const rating = document.getElementById("feedbackRating").value;
+    const comment = document.getElementById("feedbackComment").value.trim();
+
+    fetch('/api/complaints/' + id + '/feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ rating: rating, comment: comment })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to submit feedback.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert("Feedback submitted successfully!");
+        trackComplaint(); // Refresh details & timeline
+        document.getElementById("feedbackComment").value = "";
+    })
+    .catch(err => {
+        alert(err.message);
+    });
+}
+
+function reopenComplaint() {
+    const id = document.getElementById("displayComplaintId").innerText.trim();
+    const reason = document.getElementById("reopenReason").value.trim();
+
+    if (reason === "") {
+        alert("Please enter a reason for reopening the complaint.");
+        return;
+    }
+
+    fetch('/api/complaints/' + id + '/reopen', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ reason: reason })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to reopen complaint.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert("Complaint reopened successfully!");
+        trackComplaint(); // Refresh details & timeline
+        document.getElementById("reopenReason").value = "";
+    })
+    .catch(err => {
+        alert(err.message);
+    });
+}
+
+function uploadComplaintImage() {
+    const id = document.getElementById("displayComplaintId").innerText.trim();
+    const fileInput = document.getElementById("complaintImageFile");
+    const statusDiv = document.getElementById("imageUploadStatus");
+
+    if (fileInput.files.length === 0) {
+        alert("Please select an image file to upload.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    statusDiv.innerText = "Uploading...";
+
+    fetch('/api/complaints/' + id + '/image', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errData => {
+                throw new Error(errData.error || "Failed to upload image.");
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        statusDiv.innerText = "Upload successful!";
+        alert("Image uploaded successfully!");
+        fileInput.value = "";
+        trackComplaint(); // Refresh to show uploaded image preview
+    })
+    .catch(err => {
+        statusDiv.innerText = "Upload failed: " + err.message;
+        alert(err.message);
+    });
+}
+</script>
+
+
+</body>
+
+</html>
