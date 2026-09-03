@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -185,106 +185,58 @@
 
                         <tbody>
 
-                        <tr>
-
+                        <!-- DYNAMIC DATABASE COMPLAINTS -->
+                        <tr th:each="c : ${complaints}">
                             <td>
-                                <strong>CMP202600124</strong>
+                                <strong th:text="${c.trackingId}">CMP202600124</strong>
                             </td>
-
+                            <td th:text="${c.category}">Road Damage</td>
+                            <td th:text="${c.title}">Damaged road near college</td>
+                            <td th:text="${c.submittedDate != null ? c.submittedDate : '11 Aug 2026'}">11 Aug 2026</td>
                             <td>
-                                Road Damage
-                            </td>
-
-                            <td>
-                                Damaged road near college
-                            </td>
-
-                            <td>
-                                11 Aug 2026
-                            </td>
-
-                            <td>
-                                <span class="badge bg-warning text-dark">
+                                <span class="badge"
+                                      th:classappend="${c.status == 'Pending'} ? 'bg-warning text-dark' :
+                                                     (${c.status == 'In Progress' or c.status == 'Assigned to Officer'} ? 'bg-primary' :
+                                                     (${c.status == 'Resolved'} ? 'bg-success' : 'bg-secondary'))"
+                                      th:text="${c.status}">
                                     Pending
                                 </span>
                             </td>
-
                             <td>
-                                <a href="/citizen/track"
+                                <a th:href="@{/citizen/track(id=${c.trackingId})}"
                                    class="btn btn-sm btn-outline-primary">
                                     Track
                                 </a>
                             </td>
-
                         </tr>
 
-
+                        <!-- FALLBACK DEMO COMPLAINTS IF LIST EMPTY -->
+                        <th:block th:if="${complaints == null or #lists.isEmpty(complaints)}">
                         <tr>
-
-                            <td>
-                                <strong>CMP202600103</strong>
-                            </td>
-
-                            <td>
-                                Street Light
-                            </td>
-
-                            <td>
-                                Street light not working
-                            </td>
-
-                            <td>
-                                08 Aug 2026
-                            </td>
-
-                            <td>
-                                <span class="badge bg-info">
-                                    In Progress
-                                </span>
-                            </td>
-
-                            <td>
-                                <a href="/citizen/track"
-                                   class="btn btn-sm btn-outline-primary">
-                                    Track
-                                </a>
-                            </td>
-
+                            <td><strong>CMP202600124</strong></td>
+                            <td>Road Damage</td>
+                            <td>Damaged road near college</td>
+                            <td>11 Aug 2026</td>
+                            <td><span class="badge bg-warning text-dark">Pending</span></td>
+                            <td><a href="/citizen/track?id=CMP202600124" class="btn btn-sm btn-outline-primary">Track</a></td>
                         </tr>
-
-
                         <tr>
-
-                            <td>
-                                <strong>CMP202600078</strong>
-                            </td>
-
-                            <td>
-                                Waste Management
-                            </td>
-
-                            <td>
-                                Garbage collection issue
-                            </td>
-
-                            <td>
-                                01 Aug 2026
-                            </td>
-
-                            <td>
-                                <span class="badge bg-success">
-                                    Resolved
-                                </span>
-                            </td>
-
-                            <td>
-                                <a href="/citizen/track"
-                                   class="btn btn-sm btn-outline-primary">
-                                    Track
-                                </a>
-                            </td>
-
+                            <td><strong>CMP202600103</strong></td>
+                            <td>Street Light</td>
+                            <td>Street light not working</td>
+                            <td>08 Aug 2026</td>
+                            <td><span class="badge bg-info">In Progress</span></td>
+                            <td><a href="/citizen/track?id=CMP202600103" class="btn btn-sm btn-outline-primary">Track</a></td>
                         </tr>
+                        <tr>
+                            <td><strong>CMP202600078</strong></td>
+                            <td>Waste Management</td>
+                            <td>Garbage collection issue</td>
+                            <td>01 Aug 2026</td>
+                            <td><span class="badge bg-success">Resolved</span></td>
+                            <td><a href="/citizen/track?id=CMP202600078" class="btn btn-sm btn-outline-primary">Track</a></td>
+                        </tr>
+                        </th:block>
 
                         </tbody>
 

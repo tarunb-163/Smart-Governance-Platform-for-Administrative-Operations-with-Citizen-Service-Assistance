@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicPulse | Admin Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #172554, #1e3a8a);
+            color: white;
+            padding: 24px 16px;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px 30px;
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .logo span {
+            color: #60a5fa;
+        }
+
+        .menu-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #93c5fd;
+            padding: 15px 14px 8px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #dbeafe;
+            text-decoration: none;
+            padding: 13px 14px;
+            margin: 4px 0;
+            border-radius: 9px;
+            transition: 0.2s;
+            font-size: 15px;
+        }
+
+        .menu a:hover {
+            background: rgba(255,255,255,0.12);
+            color: white;
+        }
+
+        .menu a.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 5px 15px rgba(37,99,235,0.35);
+        }
+
+        .menu-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 22px;
+            left: 16px;
+            right: 16px;
+        }
+
+        .logout a {
+            color: #bfdbfe;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        /* ================= TOPBAR ================= */
+
+        .topbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .page-title h2 {
+            font-size: 20px;
+        }
+
+        .page-title p {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .notification {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: 2px solid white;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #1d4ed8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .profile-info span {
+            display: block;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        /* ================= CONTENT ================= */
+
+        .content {
+            padding: 30px 32px;
+        }
+
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .welcome h1 {
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+
+        .welcome p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .date-box {
+            background: white;
+            padding: 11px 17px;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* ================= STAT CARDS ================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e8edf4;
+            border-radius: 13px;
+            padding: 21px;
+            box-shadow: 0 3px 12px rgba(15,23,42,0.04);
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(15,23,42,0.08);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .blue {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .orange {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
+        .green {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .purple {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+
+        .card-number {
+            font-size: 30px;
+            font-weight: 700;
+            margin-top: 17px;
+        }
+
+        .card-footer {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .positive {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        /* ================= GRID ================= */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.55fr 1fr;
+            gap: 22px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e8edf4;
+            border-radius: 13px;
+            padding: 23px;
+            box-shadow: 0 3px 12px rgba(15,23,42,0.04);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .panel-header h2 {
+            font-size: 17px;
+        }
+
+        .panel-header a {
+            text-decoration: none;
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ================= COMPLAINT STATUS ================= */
+
+        .status-row {
+            margin-bottom: 20px;
+        }
+
+        .status-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .status-info span:last-child {
+            font-weight: 600;
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #eef2f7;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+
+        .pending-bar {
+            background: #f59e0b;
+        }
+
+        .progress-bar-blue {
+            background: #3b82f6;
+        }
+
+        .resolved-bar {
+            background: #10b981;
+        }
+
+        /* ================= ACTIVITY ================= */
+
+        .activity {
+            display: flex;
+            gap: 13px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .activity:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            min-width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-text strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .activity-text span {
+            display: block;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        /* ================= QUICK ACTIONS ================= */
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 22px;
+        }
+
+        .action {
+            text-decoration: none;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 17px;
+            border-radius: 10px;
+            color: #1e293b;
+            transition: 0.2s;
+        }
+
+        .action:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            font-size: 21px;
+            margin-bottom: 9px;
+        }
+
+        .action strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .action span {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1100px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .logo {
+                justify-content: center;
+                padding-left: 0;
+            }
+
+            .logo-text,
+            .menu-title,
+            .menu a span:not(.menu-icon) {
+                display: none;
+            }
+
+            .menu a {
+                justify-content: center;
+            }
+
+            .logout {
+                left: 10px;
+                right: 10px;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <div class="logo-icon">CP</div>
+        <div class="logo-text">
+            Civic<span>Pulse</span>
+        </div>
+    </div>
+
+    <div class="menu">
+
+        <div class="menu-title">Main Menu</div>
+
+        <a href="/admin/dashboard" class="active">
+            <span class="menu-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/admin/complaints">
+            <span class="menu-icon">▣</span>
+            <span>Complaints</span>
+        </a>
+
+        <a href="/admin/officers">
+            <span class="menu-icon">♙</span>
+            <span>Officers</span>
+        </a>
+
+        <a href="/admin/citizens">
+            <span class="menu-icon">♟</span>
+            <span>Citizens</span>
+        </a>
+
+        <div class="menu-title">Management</div>
+
+        <a href="/admin/reports">
+            <span class="menu-icon">▤</span>
+            <span>Reports</span>
+        </a>
+
+        <a href="/admin/settings">
+            <span class="menu-icon">⚙</span>
+            <span>Settings</span>
+        </a>
+
+        <a href="/admin/profile">
+            <span class="menu-icon">◉</span>
+            <span>Profile</span>
+        </a>
+
+    </div>
+
+    <div class="logout">
+        <a href="/logout">
+            <span class="menu-icon">↪</span>
+            <span>Logout</span>
+        </a>
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+        <div class="page-title">
+            <h2>Admin Dashboard</h2>
+            <p>CivicPulse Management Portal</p>
+        </div>
+
+        <div class="top-right">
+
+            <div class="notification">
+                🔔
+                <div class="notification-dot"></div>
+            </div>
+
+            <div class="profile">
+
+                <div class="avatar">
+                    A
+                </div>
+
+                <div class="profile-info">
+                    <strong>Administrator</strong>
+                    <span>System Admin</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+        <!-- WELCOME -->
+
+        <div class="welcome">
+
+            <div>
+                <h1>Welcome back, Admin 👋</h1>
+
+                <p>
+                    Here's what's happening with CivicPulse today.
+                </p>
+            </div>
+
+            <div class="date-box">
+                📅 Today
+            </div>
+
+        </div>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <div class="cards">
+
+            <!-- TOTAL COMPLAINTS -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <span class="card-title">
+                        Total Complaints
+                    </span>
+
+                    <div class="card-icon blue">
+                        ▣
+                    </div>
+
+                </div>
+
+                <div class="card-number"
+                     th:text="${totalComplaints}">
+                    0
+                </div>
+
+                <div class="card-footer">
+                    <span class="positive">↑ 0%</span>
+                    &nbsp; from last month
+                </div>
+
+            </div>
+
+
+            <!-- PENDING COMPLAINTS -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <span class="card-title">
+                        Pending Complaints
+                    </span>
+
+                    <div class="card-icon orange">
+                        ⏱
+                    </div>
+
+                </div>
+
+                <div class="card-number"
+                     th:text="${pendingComplaints}">
+                    0
+                </div>
+
+                <div class="card-footer">
+                    Awaiting action
+                </div>
+
+            </div>
+
+
+            <!-- RESOLVED COMPLAINTS -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <span class="card-title">
+                        Resolved Complaints
+                    </span>
+
+                    <div class="card-icon green">
+                        ✓
+                    </div>
+
+                </div>
+
+                <div class="card-number"
+                     th:text="${resolvedComplaints}">
+                    0
+                </div>
+
+                <div class="card-footer">
+                    Successfully resolved
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL OFFICERS -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <span class="card-title">
+                        Total Officers
+                    </span>
+
+                    <div class="card-icon purple">
+                        ♙
+                    </div>
+
+                </div>
+
+                <!-- Officer backend is not available yet -->
+                <div class="card-number">
+                    0
+                </div>
+
+                <div class="card-footer">
+                    Active officers
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= DASHBOARD GRID ================= -->
+
+        <div class="dashboard-grid">
+
+            <!-- ================= COMPLAINT OVERVIEW ================= -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>Complaint Overview</h2>
+
+                    <a href="/admin/complaints">
+                        View Details →
+                    </a>
+
+                </div>
+
+
+                <!-- PENDING -->
+
+                <div class="status-row">
+
+                    <div class="status-info">
+
+                        <span>Pending</span>
+
+                        <span th:text="${pendingComplaints}">
+                            0
+                        </span>
+
+                    </div>
+
+                    <div class="progress">
+
+                        <div class="progress-bar pending-bar"
+                             th:style="'width: ' + ${pendingPercentage} + '%'">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- UNDER REVIEW -->
+
+                <div class="status-row">
+
+                    <div class="status-info">
+
+                        <span>Under Review</span>
+
+                        <span th:text="${underReviewComplaints}">
+                            0
+                        </span>
+
+                    </div>
+
+                    <div class="progress">
+
+                        <div class="progress-bar progress-bar-blue"
+                             th:style="'width: ' + ${underReviewPercentage} + '%'">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RESOLVED -->
+
+                <div class="status-row">
+
+                    <div class="status-info">
+
+                        <span>Resolved</span>
+
+                        <span th:text="${resolvedComplaints}">
+                            0
+                        </span>
+
+                    </div>
+
+                    <div class="progress">
+
+                        <div class="progress-bar resolved-bar"
+                             th:style="'width: ' + ${resolvedPercentage} + '%'">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= RECENT ACTIVITY ================= -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>Recent Activity</h2>
+
+                    <a href="/admin/complaints">
+                        View All
+                    </a>
+
+                </div>
+
+
+                <!-- NO RECENT COMPLAINTS -->
+
+                <div th:if="${#lists.isEmpty(recentComplaints)}"
+                     class="activity">
+
+                    <div class="activity-icon">
+                        ✓
+                    </div>
+
+                    <div class="activity-text">
+
+                        <strong>
+                            No recent complaints
+                        </strong>
+
+                        <span>
+                            Activity will appear here
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RECENT COMPLAINTS -->
+
+                <div th:each="complaint : ${recentComplaints}"
+                     class="activity">
+
+                    <div class="activity-icon">
+                        ⚠
+                    </div>
+
+                    <div class="activity-text">
+
+                        <strong>
+                            Complaint #<span th:text="${complaint.id}">
+                                1
+                            </span>
+                        </strong>
+
+                        <span>
+
+                            <span th:text="${complaint.category}">
+                                Complaint
+                            </span>
+
+                            -
+
+                            <span th:text="${complaint.status}">
+                                Pending
+                            </span>
+
+                            -
+
+                            <span th:text="${complaint.citizenName}">
+                                Citizen
+                            </span>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= QUICK ACTIONS ================= -->
+
+        <div class="panel" style="margin-top:22px;">
+
+            <div class="panel-header">
+
+                <h2>Quick Actions</h2>
+
+            </div>
+
+
+            <div class="quick-actions">
+
+                <!-- MANAGE COMPLAINTS -->
+
+                <a href="/admin/complaints"
+                   class="action">
+
+                    <div class="action-icon">
+                        📋
+                    </div>
+
+                    <strong>
+                        Manage Complaints
+                    </strong>
+
+                    <span>
+                        Review and assign complaints
+                    </span>
+
+                </a>
+
+
+                <!-- MANAGE OFFICERS -->
+
+                <a href="/admin/officers"
+                   class="action">
+
+                    <div class="action-icon">
+                        👮
+                    </div>
+
+                    <strong>
+                        Manage Officers
+                    </strong>
+
+                    <span>
+                        Add and manage officers
+                    </span>
+
+                </a>
+
+
+                <!-- VIEW CITIZENS -->
+
+                <a href="/admin/citizens"
+                   class="action">
+
+                    <div class="action-icon">
+                        👥
+                    </div>
+
+                    <strong>
+                        View Citizens
+                    </strong>
+
+                    <span>
+                        Manage registered citizens
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

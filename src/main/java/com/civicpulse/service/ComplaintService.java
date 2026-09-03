@@ -1,88 +1,269 @@
 package com.civicpulse.service;
 
+import com.civicpulse.dto.AttachmentDTO;
+import com.civicpulse.dto.ComplaintDetailsDTO;
 import com.civicpulse.model.Complaint;
+import com.civicpulse.model.ComplaintAttachment;
+import com.civicpulse.model.Officer;
 import com.civicpulse.model.TimelineEvent;
+import com.civicpulse.repository.ComplaintRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.PostConstruct;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ComplaintService {
 
-    private final Map<String, Complaint> complaints = new ConcurrentHashMap<>();
+    private final ComplaintRepository complaintRepository;
 
-    @PostConstruct
-    public void init() {
-        // Pre-populate data matching complaints.html and track.html
-
-        // 1. CMP202600124 (Assigned to Officer)
-        Complaint c1 = new Complaint(
-            "CMP202600124",
-            "Damaged road near college",
-            "The main road leading to the college has huge potholes which are dangerous for students and motorists.",
-            "Road Damage",
-            "Assigned to Officer",
-            "11 Aug 2026"
-        );
-        c1.getTimeline().add(new TimelineEvent("Complaint Submitted", "11 Aug 2026, 10:30 AM", "Your complaint has been successfully submitted.", "completed"));
-        c1.getTimeline().add(new TimelineEvent("Under Review", "11 Aug 2026, 11:15 AM", "The complaint has been reviewed by the concerned department.", "completed"));
-        c1.getTimeline().add(new TimelineEvent("Assigned to Officer", "11 Aug 2026, 12:00 PM", "Your complaint has been assigned to a concerned officer.", "active"));
-        c1.getTimeline().add(new TimelineEvent("Resolution", "Pending", "The complaint will be marked resolved after the issue is addressed.", "pending"));
-        complaints.put(c1.getId(), c1);
-
-        // 2. CMP202600103 (In Progress)
-        Complaint c2 = new Complaint(
-            "CMP202600103",
-            "Street light not working",
-            "The street light in front of house 45 has been broken for two weeks.",
-            "Street Light",
-            "In Progress",
-            "08 Aug 2026"
-        );
-        c2.getTimeline().add(new TimelineEvent("Complaint Submitted", "08 Aug 2026, 09:00 AM", "Your complaint has been successfully submitted.", "completed"));
-        c2.getTimeline().add(new TimelineEvent("Under Review", "08 Aug 2026, 02:00 PM", "The complaint has been reviewed by the concerned department.", "completed"));
-        c2.getTimeline().add(new TimelineEvent("In Progress", "09 Aug 2026, 10:00 AM", "Repair team has been dispatched to fix the light.", "active"));
-        c2.getTimeline().add(new TimelineEvent("Resolution", "Pending", "The complaint will be marked resolved after the issue is addressed.", "pending"));
-        complaints.put(c2.getId(), c2);
-
-        // 3. CMP202600078 (Resolved)
-        Complaint c3 = new Complaint(
-            "CMP202600078",
-            "Garbage collection issue",
-            "Garbage collector has not visited the street for three days.",
-            "Waste Management",
-            "Resolved",
-            "01 Aug 2026"
-        );
-        c3.getTimeline().add(new TimelineEvent("Complaint Submitted", "01 Aug 2026, 08:30 AM", "Your complaint has been successfully submitted.", "completed"));
-        c3.getTimeline().add(new TimelineEvent("Under Review", "01 Aug 2026, 11:00 AM", "The complaint has been reviewed by the concerned department.", "completed"));
-        c3.getTimeline().add(new TimelineEvent("Assigned to Officer", "01 Aug 2026, 03:00 PM", "Your complaint has been assigned to a concerned officer.", "completed"));
-        c3.getTimeline().add(new TimelineEvent("Resolved", "02 Aug 2026, 04:00 PM", "The garbage has been cleared and area sanitized.", "completed"));
-        complaints.put(c3.getId(), c3);
-
-        // 4. CMP202600999 (Resolved)
-        Complaint c4 = new Complaint(
-            "CMP202600999",
-            "Street Light Not Working",
-            "Street light near the main road is not functioning.",
-            "Electrical",
-            "Resolved",
-            "20 Aug 2026"
-        );
-        c4.getTimeline().add(new TimelineEvent("Complaint Submitted", "20 Aug 2026, 09:00 AM", "Your complaint has been successfully submitted.", "completed"));
-        c4.getTimeline().add(new TimelineEvent("Under Review", "20 Aug 2026, 02:00 PM", "The complaint has been reviewed by the concerned department.", "completed"));
-        c4.getTimeline().add(new TimelineEvent("In Progress", "21 Aug 2026, 10:00 AM", "Maintenance team dispatched.", "completed"));
-        c4.getTimeline().add(new TimelineEvent("Resolved", "22 Aug 2026, 04:00 PM", "Street light bulb replaced and verified operational.", "completed"));
-        complaints.put(c4.getId(), c4);
+    public ComplaintService(ComplaintRepository complaintRepository) {
+        this.complaintRepository = complaintRepository;
     }
 
+    /* =========================================================
+       CITIZEN MODULE METHODS
+    ========================================================= */
+
+    @Transactional(readOnly = true)
     public Complaint getComplaint(String id) {
-        return complaints.get(id);
+        if (id == null || id.trim().isEmpty()) {
+            return null;
+        }
+
+        // Try exact match on complaintNumber (e.g. CMP202600124)
+        Optional<Complaint> byNumber = complaintRepository.findByComplaintNumber(id.trim());
+        if (byNumber.isPresent()) {
+            return byNumber.get();
+        }
+
+        // Try parsing numeric ID (e.g. 1, 2)
+        try {
+            Long numericId = Long.parseLong(id.trim());
+            return complaintRepository.findById(numericId).orElse(null);
+        } catch (NumberFormatException ignored) {
+            // Not numeric
+        }
+
+        return null;
     }
 
-    public void saveComplaint(Complaint complaint) {
-        complaints.put(complaint.getId(), complaint);
+    @Transactional
+    public Complaint saveComplaint(Complaint complaint) {
+        return complaintRepository.save(complaint);
+    }
+
+    @Transactional
+    public Complaint createComplaint(String title, String description, String category, String location, String citizenName) {
+        long count = complaintRepository.count() + 1;
+        String complaintNumber = String.format("CMP2026%05d", count);
+
+        Complaint complaint = new Complaint();
+        complaint.setComplaintNumber(complaintNumber);
+        complaint.setTitle(title);
+        complaint.setDescription(description);
+        complaint.setCategory(category != null ? category : "General");
+        complaint.setLocation(location);
+        complaint.setCitizenName(citizenName != null ? citizenName : "Citizen");
+        complaint.setStatus("Pending");
+        complaint.setPriority("Medium");
+        complaint.setCreatedAt(LocalDateTime.now());
+        complaint.setUpdatedAt(LocalDateTime.now());
+
+        String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a"));
+        complaint.setSubmittedDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+        complaint.getTimeline().add(new TimelineEvent(
+                "Complaint Submitted",
+                formattedDate,
+                "Your complaint has been successfully registered in CivicPulse.",
+                "completed"
+        ));
+        complaint.getTimeline().add(new TimelineEvent(
+                "Under Review",
+                "Pending",
+                "The complaint will be reviewed by the concerned department.",
+                "active"
+        ));
+
+        return complaintRepository.save(complaint);
+    }
+
+    /* =========================================================
+       ADMIN MODULE METHODS
+    ========================================================= */
+
+    @Transactional(readOnly = true)
+    public List<Complaint> getAllComplaints() {
+        return complaintRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Complaint getComplaintById(Long id) {
+        if (id == null) {
+            return null;
+        }
+        return complaintRepository.findById(id).orElse(null);
+    }
+
+    @Transactional
+    public void deleteComplaint(Long id) {
+        if (id != null) {
+            complaintRepository.deleteById(id);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public long getTotalComplaints() {
+        return complaintRepository.count();
+    }
+
+    @Transactional(readOnly = true)
+    public long getPendingComplaints() {
+        return countByStatus("Pending");
+    }
+
+    @Transactional(readOnly = true)
+    public long getUnderReviewComplaints() {
+        return complaintRepository.findAll()
+                .stream()
+                .filter(c -> c.getStatus() != null &&
+                        (c.getStatus().equalsIgnoreCase("Under Review") ||
+                         c.getStatus().equalsIgnoreCase("In Progress") ||
+                         c.getStatus().equalsIgnoreCase("Assigned to Officer")))
+                .count();
+    }
+
+    @Transactional(readOnly = true)
+    public long getResolvedComplaints() {
+        return countByStatus("Resolved");
+    }
+
+    private long countByStatus(String status) {
+        return complaintRepository.findAll()
+                .stream()
+                .filter(c -> c.getStatus() != null && c.getStatus().equalsIgnoreCase(status))
+                .count();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Complaint> getRecentComplaints() {
+        return complaintRepository.findAll()
+                .stream()
+                .sorted((c1, c2) -> Long.compare(c2.getId() != null ? c2.getId() : 0, c1.getId() != null ? c1.getId() : 0))
+                .limit(5)
+                .collect(Collectors.toList());
+    }
+
+    /* =========================================================
+       OFFICER MODULE METHODS
+    ========================================================= */
+
+    @Transactional(readOnly = true)
+    public ComplaintDetailsDTO getComplaintDetailsById(String id) {
+        Complaint complaint = getComplaint(id);
+        if (complaint == null) {
+            return null;
+        }
+        return mapToDTO(complaint);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ComplaintDetailsDTO> getAllComplaintDetails() {
+        return complaintRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Complaint> getComplaintsForOfficer(Officer officer) {
+        return complaintRepository.findByAssignedOfficer(officer);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Complaint> findById(Long id) {
+        return complaintRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Complaint> findByComplaintNumber(String complaintNumber) {
+        return complaintRepository.findByComplaintNumber(complaintNumber);
+    }
+
+    @Transactional
+    public Complaint save(Complaint complaint) {
+        return complaintRepository.save(complaint);
+    }
+
+    @Transactional
+    public Complaint update(Complaint complaint) {
+        return complaintRepository.save(complaint);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Complaint> getComplaintsByStatus(Officer officer, String status) {
+        return complaintRepository.findByAssignedOfficerAndStatus(officer, status);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Complaint> getComplaintsByPriority(Officer officer, String priority) {
+        return complaintRepository.findByAssignedOfficerAndPriority(officer, priority);
+    }
+
+    /* =========================================================
+       DTO MAPPERS
+    ========================================================= */
+
+    private ComplaintDetailsDTO mapToDTO(Complaint complaint) {
+        ComplaintDetailsDTO dto = new ComplaintDetailsDTO();
+
+        dto.setId(complaint.getTrackingId());
+        dto.setTitle(complaint.getTitle() != null ? complaint.getTitle() : "Untitled Complaint");
+        dto.setDescription(complaint.getDescription());
+        dto.setLocation(complaint.getLocation());
+        dto.setDepartment(complaint.getDepartment());
+        dto.setCategory(complaint.getCategory());
+        dto.setPriority(complaint.getPriority() != null ? complaint.getPriority() : "Medium");
+        dto.setStatus(complaint.getStatus() != null ? complaint.getStatus() : "Pending");
+
+        dto.setCreatedAt(complaint.getCreatedAt());
+        dto.setAssignedAt(complaint.getAssignedAt());
+        dto.setUpdatedAt(complaint.getUpdatedAt());
+        dto.setResolvedAt(complaint.getResolvedAt());
+
+        if (complaint.getAttachments() != null && !complaint.getAttachments().isEmpty()) {
+            List<AttachmentDTO> attachmentDTOs = complaint.getAttachments().stream()
+                    .map(this::mapAttachmentToDTO)
+                    .collect(Collectors.toList());
+            dto.setAttachments(attachmentDTOs);
+        } else {
+            dto.setAttachments(Collections.emptyList());
+        }
+
+        return dto;
+    }
+
+    private AttachmentDTO mapAttachmentToDTO(ComplaintAttachment attachment) {
+        AttachmentDTO dto = new AttachmentDTO();
+        dto.setId(attachment.getId());
+        dto.setFileName(attachment.getFileName());
+        dto.setFileType(attachment.getFileType());
+        dto.setFileSize(attachment.getFileSize());
+        dto.setUploadedAt(attachment.getUploadedAt());
+
+        if (attachment.getStoredFileName() != null) {
+            dto.setFileUrl("/uploads/" + attachment.getStoredFileName());
+        } else if (attachment.getFilePath() != null) {
+            dto.setFileUrl(attachment.getFilePath());
+        } else {
+            dto.setFileUrl("#");
+        }
+
+        return dto;
     }
 }

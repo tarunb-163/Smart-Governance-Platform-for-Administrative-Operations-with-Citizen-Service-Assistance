@@ -170,7 +170,7 @@
                                 Complaint Category
                             </label>
 
-                            <select class="form-select" required>
+                            <select id="complaintCategory" class="form-select" required>
 
                                 <option value="">
                                     Select Category
@@ -197,6 +197,7 @@
                             </label>
 
                             <input
+                                id="complaintSubject"
                                 type="text"
                                 class="form-control"
                                 placeholder="Enter complaint subject"
@@ -215,6 +216,7 @@
                         </label>
 
                         <textarea
+                            id="complaintDescription"
                             class="form-control"
                             rows="5"
                             placeholder="Describe the issue in detail"
@@ -231,6 +233,7 @@
                         </label>
 
                         <input
+                            id="complaintLocation"
                             type="text"
                             class="form-control"
                             placeholder="Enter location of the issue"
@@ -247,6 +250,7 @@
                         </label>
 
                         <input
+                            id="complaintImageFile"
                             type="file"
                             class="form-control"
                             accept="image/*">
@@ -262,6 +266,7 @@
                     <div class="d-flex gap-2">
 
                         <button
+                            id="submitBtn"
                             type="submit"
                             class="btn btn-primary px-4">
 
@@ -294,15 +299,62 @@
 <script>
 
 function submitComplaint(event) {
-
     event.preventDefault();
 
-    alert(
-        "Complaint submitted successfully!\\n\\nComplaint ID: CMP202600124"
-    );
+    const category = document.getElementById("complaintCategory").value;
+    const title = document.getElementById("complaintSubject").value;
+    const description = document.getElementById("complaintDescription").value;
+    const location = document.getElementById("complaintLocation").value;
+    const submitBtn = document.getElementById("submitBtn");
 
-    window.location.href = "/citizen/complaints";
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
 
+    fetch('/api/complaints', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            title: title,
+            description: description,
+            category: category,
+            location: location,
+            citizenName: "Citizen User"
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to register complaint.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        const trackingId = data.complaintId || "CMP202600124";
+
+        // Check if an image is selected to upload
+        const imageFileInput = document.getElementById("complaintImageFile");
+        if (imageFileInput && imageFileInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append("file", imageFileInput.files[0]);
+
+            fetch('/api/complaints/' + trackingId + '/image', {
+                method: 'POST',
+                body: formData
+            }).finally(() => {
+                alert("Complaint registered successfully!\n\nComplaint Tracking ID: " + trackingId);
+                window.location.href = "/citizen/track?id=" + encodeURIComponent(trackingId);
+            });
+        } else {
+            alert("Complaint registered successfully!\n\nComplaint Tracking ID: " + trackingId);
+            window.location.href = "/citizen/track?id=" + encodeURIComponent(trackingId);
+        }
+    })
+    .catch(err => {
+        alert("Error: " + err.message);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="bi bi-send"></i> Submit Complaint';
+    });
 }
 
 </script>

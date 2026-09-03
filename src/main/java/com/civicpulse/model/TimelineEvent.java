@@ -1,5 +1,8 @@
 package com.civicpulse.model;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class TimelineEvent {
     private String title;
     private String date;

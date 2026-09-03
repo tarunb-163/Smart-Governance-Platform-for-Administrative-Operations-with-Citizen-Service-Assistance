@@ -25,6 +25,28 @@ public class ComplaintApiController {
     @Autowired
     private ComplaintService complaintService;
 
+    // 0. SUBMIT COMPLAINT
+    @PostMapping
+    public ResponseEntity<?> submitComplaint(@RequestBody Map<String, Object> body) {
+        String title = (String) body.get("title");
+        String description = (String) body.get("description");
+        String category = (String) body.get("category");
+        String location = (String) body.get("location");
+        String citizenName = (String) body.getOrDefault("citizenName", "Citizen");
+
+        if (title == null || title.trim().isEmpty() || description == null || description.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Title and description are required."));
+        }
+
+        Complaint complaint = complaintService.createComplaint(title, description, category, location, citizenName);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "success", true,
+                "message", "Complaint registered successfully.",
+                "complaintId", complaint.getTrackingId(),
+                "id", complaint.getId()
+        ));
+    }
+
     // 1. TRACK COMPLAINT
     @GetMapping("/{id}")
     public ResponseEntity<?> getComplaint(@PathVariable String id) {
@@ -35,7 +57,7 @@ public class ComplaintApiController {
         }
         
         ComplaintResponse response = new ComplaintResponse(
-                complaint.getId(),
+                complaint.getTrackingId(),
                 complaint.getTitle(),
                 complaint.getDescription(),
                 complaint.getCategory(),
@@ -150,10 +172,10 @@ public class ComplaintApiController {
             // Add timeline event
             String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd Aug yyyy, hh:mm a"));
             complaint.getTimeline().add(new TimelineEvent(
-                    "Supporting Image Uploaded",
-                    formattedDate,
-                    "Image uploaded: " + originalFileName,
-                    "completed"
+                "Supporting Image Uploaded",
+                formattedDate,
+                "Image uploaded: " + originalFileName,
+                "completed"
             ));
 
             complaintService.saveComplaint(complaint);

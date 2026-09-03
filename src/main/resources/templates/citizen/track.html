@@ -402,7 +402,12 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Track default complaint on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const idParam = urlParams.get('id');
+    if (idParam && idParam.trim() !== "") {
+        document.getElementById("complaintId").value = idParam.trim();
+    }
+    // Track complaint on page load
     trackComplaint();
 });
 
