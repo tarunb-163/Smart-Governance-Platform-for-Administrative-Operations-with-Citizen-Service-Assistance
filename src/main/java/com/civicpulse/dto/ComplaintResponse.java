@@ -25,6 +25,9 @@ public class ComplaintResponse {
     private String remarks;
     private List<TimelineEvent> timeline;
     private String imagePath;
+    private Integer feedbackRating;
+    private String feedbackComment;
+    private String reopenReason;
 
     public ComplaintResponse() {}
 
@@ -204,5 +207,29 @@ public class ComplaintResponse {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public Integer getFeedbackRating() {
+        return feedbackRating;
+    }
+
+    public void setFeedbackRating(Integer feedbackRating) {
+        this.feedbackRating = feedbackRating;
+    }
+
+    public String getFeedbackComment() {
+        return feedbackComment;
+    }
+
+    public void setFeedbackComment(String feedbackComment) {
+        this.feedbackComment = feedbackComment;
+    }
+
+    public String getReopenReason() {
+        return reopenReason;
+    }
+
+    public void setReopenReason(String reopenReason) {
+        this.reopenReason = reopenReason;
     }
 }

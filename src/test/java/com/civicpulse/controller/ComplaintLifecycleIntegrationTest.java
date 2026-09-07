@@ -136,6 +136,25 @@ class ComplaintLifecycleIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
+        // 4b. Verify feedback cannot be submitted while complaint is still In Progress
+        mockMvc.perform(post("/api/complaints/" + complaintId + "/feedback")
+                        .session(citizenSession)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {"rating": 4, "comment": "Too early"}
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").exists());
+
+        // 4c. Verify complaint cannot be reopened while still In Progress
+        mockMvc.perform(post("/api/complaints/" + complaintId + "/reopen")
+                        .session(citizenSession)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {"reason": "Cannot reopen active issue"}
+                        """))
+                .andExpect(status().isBadRequest());
+
         // 5. Citizen tracks complaint: Verify timeline and dynamic timestamps
         MvcResult trackResult = mockMvc.perform(get("/api/complaints/" + complaintId))
                 .andExpect(status().isOk())
@@ -183,7 +202,30 @@ class ComplaintLifecycleIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
-        // 9. Citizen Reopen test
+        // 8b. Prevent duplicate feedback submission
+        mockMvc.perform(post("/api/complaints/" + complaintId + "/feedback")
+                        .session(citizenSession)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(feedbackJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Feedback has already been submitted for this complaint."));
+
+        // 8c. Verify tracking endpoint returns stored feedback
+        mockMvc.perform(get("/api/complaints/" + complaintId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.feedbackRating").value(5))
+                .andExpect(jsonPath("$.feedbackComment").value("Thank you for fixing it quickly!"));
+
+        // 9a. Citizen Reopen test: Reopen without reason should fail
+        mockMvc.perform(post("/api/complaints/" + complaintId + "/reopen")
+                        .session(citizenSession)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {"reason": "   "}
+                        """))
+                .andExpect(status().isBadRequest());
+
+        // 9b. Citizen Reopen test: Valid reason succeeds
         String reopenJson = """
             {
                 "reason": "Recent rain washed away the loose patch"
@@ -197,8 +239,22 @@ class ComplaintLifecycleIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
+        // 9c. Verify reopened complaint state and that reopen cannot be called again
+        mockMvc.perform(post("/api/complaints/" + complaintId + "/reopen")
+                        .session(citizenSession)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(reopenJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Only complaints that are currently resolved or closed can be reopened."));
+
         Complaint reopened = complaintRepository.findByComplaintNumber(complaintId).orElseThrow();
         assertEquals("Reopened", reopened.getStatus());
         assertEquals("Recent rain washed away the loose patch", reopened.getReopenReason());
+
+        // Verify tracking endpoint returns reopenReason
+        mockMvc.perform(get("/api/complaints/" + complaintId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("Reopened"))
+                .andExpect(jsonPath("$.reopenReason").value("Recent rain washed away the loose patch"));
     }
 }

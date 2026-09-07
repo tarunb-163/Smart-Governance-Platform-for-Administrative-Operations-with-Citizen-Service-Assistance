@@ -284,8 +284,7 @@
                             <div class="text-muted small" th:text="${c.title}">Damaged road near college</div>
                         </td>
                         <td class="text-secondary small" th:text="${c.department != null ? c.department : 'General Administration'}">Roads / Public Works</td>
-                        <td class="text-secondary small" th:text="${c.location}">Main Bus Stop</td>
-                        <td th:text="${c.submittedDate}">11 Aug 2026</td>
+                        <td th:text="${c.submittedDate != null ? c.submittedDate : '--'}">--</td>
                         <td>
                             <span class="status-badge"
                                   th:classappend="${c.status == 'Resolved' ? 'bg-success text-white' :
@@ -297,9 +296,23 @@
                             </span>
                         </td>
                         <td class="text-end">
-                            <a th:href="@{/citizen/track(id=${c.trackingId})}" class="btn btn-sm btn-outline-primary px-3">
-                                <i class="bi bi-search me-1"></i> Track
-                            </a>
+                            <div class="d-inline-flex gap-1 align-items-center">
+                                <a th:href="@{/citizen/track(id=${c.trackingId})}" class="btn btn-sm btn-outline-primary px-2" title="Track Progress">
+                                    <i class="bi bi-search me-1"></i> Track
+                                </a>
+                                <a th:if="${(c.status == 'Resolved' or c.status == 'Closed') and c.feedbackRating == null}"
+                                   th:href="@{/citizen/track(id=${c.trackingId})}"
+                                   class="btn btn-sm btn-outline-success px-2"
+                                   title="Share Feedback">
+                                    <i class="bi bi-star-fill text-warning me-1"></i> Feedback
+                                </a>
+                                <a th:if="${(c.status == 'Resolved' or c.status == 'Closed') and c.reopenReason == null}"
+                                   th:href="@{/citizen/track(id=${c.trackingId})}"
+                                   class="btn btn-sm btn-outline-danger px-2"
+                                   title="Request Reopen">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reopen
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

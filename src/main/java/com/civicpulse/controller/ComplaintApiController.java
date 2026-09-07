@@ -119,6 +119,9 @@ public class ComplaintApiController {
         response.setCitizenName(complaint.getCitizenName());
         response.setResolution(complaint.getResolution());
         response.setRemarks(complaint.getRemarks());
+        response.setFeedbackRating(complaint.getFeedbackRating());
+        response.setFeedbackComment(complaint.getFeedbackComment());
+        response.setReopenReason(complaint.getReopenReason());
 
         if (complaint.getCreatedAt() != null) {
             response.setCreatedAt(complaint.getCreatedAt().format(TIMELINE_FORMATTER));
@@ -148,31 +151,47 @@ public class ComplaintApiController {
                     .body(Map.of("error", "Complaint not found."));
         }
 
+        // Only resolved or closed complaints are eligible for feedback
+        if (complaint.getStatus() == null || (!complaint.getStatus().equalsIgnoreCase("Resolved") && !complaint.getStatus().equalsIgnoreCase("Closed"))) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Feedback can only be provided for resolved or closed complaints."));
+        }
+
+        // Prevent duplicate feedback
+        if (complaint.getFeedbackRating() != null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Feedback has already been submitted for this complaint."));
+        }
+
         Integer rating = null;
         if (body.containsKey("rating")) {
             Object r = body.get("rating");
             if (r instanceof Number) {
                 rating = ((Number) r).intValue();
             } else if (r instanceof String) {
-                rating = Integer.parseInt((String) r);
+                try {
+                    rating = Integer.parseInt((String) r);
+                } catch (NumberFormatException ignored) {}
             }
         }
-        String comment = (String) body.get("comment");
 
+        if (rating == null || rating < 1 || rating > 5) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Please provide a valid satisfaction rating between 1 and 5 stars."));
+        }
+
+        String comment = (String) body.get("comment");
         complaint.setFeedbackRating(rating);
-        complaint.setFeedbackComment(comment);
+        complaint.setFeedbackComment(comment != null ? comment.trim() : null);
 
         // Add timeline event with dynamic date
         String formattedDate = LocalDateTime.now().format(TIMELINE_FORMATTER);
         complaint.getTimeline().add(new TimelineEvent(
                 "Feedback Submitted",
                 formattedDate,
-                "Rating: " + rating + "/5 stars. Comment: " + (comment != null ? comment : ""),
+                "Citizen Rating: " + rating + "/5 stars." + (comment != null && !comment.trim().isEmpty() ? " Comment: " + comment.trim() : ""),
                 "completed"
         ));
 
         complaintService.saveComplaint(complaint);
-        return ResponseEntity.ok(Map.of("success", true, "message", "Feedback submitted successfully."));
+        return ResponseEntity.ok(Map.of("success", true, "message", "Thank you! Your feedback has been recorded successfully."));
     }
 
     // 3. REOPEN REQUEST
@@ -184,15 +203,24 @@ public class ComplaintApiController {
                     .body(Map.of("error", "Complaint not found."));
         }
 
+        // Only resolved or closed complaints can be reopened
+        if (complaint.getStatus() == null || (!complaint.getStatus().equalsIgnoreCase("Resolved") && !complaint.getStatus().equalsIgnoreCase("Closed"))) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Only complaints that are currently resolved or closed can be reopened."));
+        }
+
         String reason = (String) body.get("reason");
-        complaint.setReopenReason(reason);
+        if (reason == null || reason.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Please provide a reason explaining why you want to reopen this complaint."));
+        }
+
+        complaint.setReopenReason(reason.trim());
         complaint.setStatus("Reopened");
 
         String formattedDate = LocalDateTime.now().format(TIMELINE_FORMATTER);
         complaint.getTimeline().add(new TimelineEvent(
                 "Complaint Reopened",
                 formattedDate,
-                "Reason: " + (reason != null ? reason : "No reason provided."),
+                "Reason: " + reason.trim(),
                 "active"
         ));
 
@@ -202,12 +230,12 @@ public class ComplaintApiController {
         notificationService.createNotification(
                 complaint.getCitizenEmail(),
                 "Complaint Reopened",
-                "Your complaint " + complaint.getTrackingId() + " has been reopened for further investigation.",
+                "Your complaint " + complaint.getTrackingId() + " has been reopened for municipal review.",
                 complaint.getTrackingId(),
                 "STATUS_CHANGE"
         );
 
-        return ResponseEntity.ok(Map.of("success", true, "message", "Complaint reopened successfully."));
+        return ResponseEntity.ok(Map.of("success", true, "message", "Complaint reopened successfully. Concerned authorities have been notified."));
     }
 
     // 4. IMAGE UPLOAD

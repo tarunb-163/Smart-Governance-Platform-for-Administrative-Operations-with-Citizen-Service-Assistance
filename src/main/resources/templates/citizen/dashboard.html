@@ -571,7 +571,8 @@
                             <span class="status-badge"
                                   th:classappend="${c.status == 'Resolved' ? 'bg-success text-white' :
                                                  (c.status == 'In Progress' ? 'bg-primary text-white' :
-                                                 (c.status == 'Assigned to Officer' ? 'bg-info text-dark' : 'bg-warning text-dark'))}"
+                                                 (c.status == 'Assigned to Officer' ? 'bg-info text-dark' :
+                                                 (c.status == 'Reopened' ? 'bg-danger text-white' : 'bg-warning text-dark')))}"
                                   th:text="${c.status}">
                                 Pending
                             </span>

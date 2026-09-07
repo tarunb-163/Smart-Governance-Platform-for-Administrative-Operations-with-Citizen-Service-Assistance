@@ -362,7 +362,7 @@
                 <div class="col-sm-6 col-md-3">
                     <div class="p-3 border rounded-3 bg-white h-100">
                         <small class="text-muted d-block" style="font-size: 0.75rem;">SUBMISSION DATE</small>
-                        <strong id="displaySubmittedDate" class="text-dark">11 Aug 2026</strong>
+                        <strong id="displaySubmittedDate" class="text-dark">--</strong>
                     </div>
                 </div>
                 <div class="col-12">
@@ -370,6 +370,18 @@
                         <small class="text-muted d-block" style="font-size: 0.75rem;">LOCATION & DETAILS</small>
                         <div class="mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i> <strong id="displayLocation">Location</strong></div>
                         <p id="displayDescription" class="text-secondary small mb-0 mt-2">Description text...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REOPENED ALERT BANNER (SHOWN IF STATUS IS REOPENED) -->
+            <div id="reopenedBanner" class="alert alert-warning border-warning d-none mb-4" role="alert">
+                <div class="d-flex align-items-start gap-3">
+                    <i class="bi bi-arrow-counterclockwise fs-3 text-danger mt-1"></i>
+                    <div>
+                        <h6 class="alert-heading fw-bold mb-1 text-dark">Complaint Reopened</h6>
+                        <p class="mb-1 small text-secondary" id="reopenedBannerReason">This grievance has been reopened by the citizen for further municipal action.</p>
+                        <small class="text-muted fst-italic">Field department officers have been alerted to re-examine the issue.</small>
                     </div>
                 </div>
             </div>
@@ -414,42 +426,80 @@
 
             <!-- FEEDBACK & REOPEN SECTION (FOR RESOLVED COMPLAINTS) -->
             <div id="resolvedActions" class="d-none">
+                <!-- Action Alert Banner -->
+                <div id="resolvedActionAlert" class="alert d-none mb-3" role="alert"></div>
+
                 <div class="row g-3">
                     <!-- FEEDBACK CARD -->
                     <div class="col-md-6">
                         <div class="card h-100 border-success shadow-sm p-3">
-                            <h6 class="fw-bold text-success mb-2"><i class="bi bi-star-fill text-warning me-1"></i> Share Citizen Rating</h6>
-                            <p class="small text-muted mb-2">Rate your satisfaction with the municipal resolution.</p>
-                            <div class="mb-2">
-                                <label class="small fw-semibold">Satisfaction Rating</label>
-                                <select id="feedbackRating" class="form-select form-select-sm">
-                                    <option value="5">★★★★★ (5 - Excellent)</option>
-                                    <option value="4">★★★★☆ (4 - Good)</option>
-                                    <option value="3">★★★☆☆ (3 - Average)</option>
-                                    <option value="2">★★☆☆☆ (2 - Poor)</option>
-                                    <option value="1">★☆☆☆☆ (1 - Unsatisfactory)</option>
-                                </select>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="fw-bold text-success mb-0">
+                                    <i class="bi bi-star-fill text-warning me-1"></i> Citizen Rating & Feedback
+                                </h6>
+                                <span id="feedbackStatusBadge" class="badge bg-success-subtle text-success border border-success-subtle d-none">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Submitted
+                                </span>
                             </div>
-                            <div class="mb-3">
-                                <textarea id="feedbackComment" class="form-control form-control-sm" rows="2" placeholder="Optional comments regarding service quality..."></textarea>
+                            <p class="small text-muted mb-3">Rate your satisfaction with the municipal department's resolution.</p>
+
+                            <!-- FEEDBACK FORM (IF NOT YET SUBMITTED) -->
+                            <div id="feedbackFormContainer">
+                                <div class="mb-2">
+                                    <label for="feedbackRating" class="small fw-semibold">Satisfaction Rating</label>
+                                    <select id="feedbackRating" class="form-select form-select-sm">
+                                        <option value="5">★★★★★ (5 - Excellent)</option>
+                                        <option value="4">★★★★☆ (4 - Good)</option>
+                                        <option value="3">★★★☆☆ (3 - Average)</option>
+                                        <option value="2">★★☆☆☆ (2 - Poor)</option>
+                                        <option value="1">★☆☆☆☆ (1 - Unsatisfactory)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <textarea id="feedbackComment" class="form-control form-control-sm" rows="3" placeholder="Optional comments regarding service quality, timeliness, or resolution quality..."></textarea>
+                                </div>
+                                <button class="btn btn-sm btn-success w-100" id="btnSubmitFeedback" onclick="submitFeedback()">
+                                    <i class="bi bi-check2-circle me-1"></i> Submit Feedback
+                                </button>
                             </div>
-                            <button class="btn btn-sm btn-success w-100" onclick="submitFeedback()">
-                                <i class="bi bi-check2-circle me-1"></i> Submit Feedback
-                            </button>
+
+                            <!-- FEEDBACK SUBMITTED DISPLAY (IF ALREADY SUBMITTED - PREVENTS DUPLICATE) -->
+                            <div id="feedbackSubmittedDisplay" class="d-none">
+                                <div class="p-3 bg-light rounded border border-success-subtle">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="small fw-bold text-success">Your Rating:</span>
+                                        <span class="badge bg-warning text-dark font-monospace" id="submittedRatingStars">★★★★★ (5/5)</span>
+                                    </div>
+                                    <div class="small text-muted mb-1">Your Comments:</div>
+                                    <p class="small text-dark fst-italic mb-0 bg-white p-2 rounded border" id="submittedCommentText">"Resolution was satisfactory."</p>
+                                </div>
+                                <div class="text-center text-muted small mt-2">
+                                    <i class="bi bi-shield-check text-success me-1"></i> Feedback recorded. One feedback submission per complaint.
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- REOPEN CARD -->
                     <div class="col-md-6">
                         <div class="card h-100 border-danger shadow-sm p-3">
-                            <h6 class="fw-bold text-danger mb-2"><i class="bi bi-arrow-counterclockwise me-1"></i> Reopen Grievance</h6>
-                            <p class="small text-muted mb-2">Not satisfied with the resolution? Request to reopen this ticket.</p>
-                            <div class="mb-3">
-                                <textarea id="reopenReason" class="form-control form-control-sm" rows="4" placeholder="Explain why the issue remains unresolved or needs further work..."></textarea>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="fw-bold text-danger mb-0">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i> Request Reopen
+                                </h6>
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Action Available</span>
                             </div>
-                            <button class="btn btn-sm btn-danger w-100" onclick="reopenComplaint()">
-                                <i class="bi bi-exclamation-triangle me-1"></i> Reopen Complaint
-                            </button>
+                            <p class="small text-muted mb-3">If the issue is still not resolved or was improperly fixed, request reopening with a reason.</p>
+
+                            <div id="reopenFormContainer">
+                                <div class="mb-3">
+                                    <label for="reopenReason" class="small fw-semibold text-danger">Reason for Reopening <span class="text-danger">*</span></label>
+                                    <textarea id="reopenReason" class="form-control form-control-sm" rows="3" placeholder="Explain clearly why the issue remains unresolved or why further work is required..."></textarea>
+                                </div>
+                                <button class="btn btn-sm btn-danger w-100" id="btnReopenComplaint" onclick="reopenComplaint()">
+                                    <i class="bi bi-exclamation-triangle me-1"></i> Request Reopen
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -517,32 +567,74 @@ function trackComplaint() {
 
             // Status Badge
             const statusBadge = document.getElementById("displayStatus");
-            statusBadge.innerText = complaint.status;
+            const statusLower = (complaint.status || "").toLowerCase();
+            const isResolvedOrClosed = (statusLower === "resolved" || statusLower === "closed");
+            const isReopened = (statusLower === "reopened");
+
+            statusBadge.innerText = complaint.status || "Pending";
             statusBadge.className = "status-badge";
-            if (complaint.status === "Resolved") {
+            if (isResolvedOrClosed) {
                 statusBadge.classList.add("bg-success", "text-white");
-            } else if (complaint.status === "In Progress" || complaint.status === "IN_PROGRESS") {
-                statusBadge.classList.add("bg-primary", "text-white");
-            } else if (complaint.status === "Assigned to Officer") {
-                statusBadge.classList.add("bg-info", "text-dark");
-            } else if (complaint.status === "Reopened") {
+            } else if (isReopened) {
                 statusBadge.classList.add("bg-danger", "text-white");
+            } else if (statusLower.includes("progress")) {
+                statusBadge.classList.add("bg-primary", "text-white");
+            } else if (statusLower.includes("officer") || statusLower.includes("assigned")) {
+                statusBadge.classList.add("bg-info", "text-dark");
             } else {
                 statusBadge.classList.add("bg-warning", "text-dark");
             }
 
-            // Resolution Box
+            // Resolution Box & Resolved Actions
             const resBox = document.getElementById("resolutionBox");
-            if (complaint.status === "Resolved") {
+            const resolvedActions = document.getElementById("resolvedActions");
+            const reopenedBanner = document.getElementById("reopenedBanner");
+
+            if (isResolvedOrClosed) {
                 resBox.classList.remove("d-none");
                 document.getElementById("resolutionText").innerText =
                     complaint.resolution || complaint.remarks || "Issue was addressed and resolved by the concerned department.";
                 document.getElementById("resolvedAtText").innerText =
                     complaint.resolvedAt ? "Resolved on: " + complaint.resolvedAt : "";
-                document.getElementById("resolvedActions").classList.remove("d-none");
+
+                resolvedActions.classList.remove("d-none");
+                if (reopenedBanner) reopenedBanner.classList.add("d-none");
+
+                // Check if feedback already submitted (prevents duplicate feedback)
+                const feedbackForm = document.getElementById("feedbackFormContainer");
+                const feedbackDisplay = document.getElementById("feedbackSubmittedDisplay");
+                const feedbackBadge = document.getElementById("feedbackStatusBadge");
+
+                if (complaint.feedbackRating !== null && complaint.feedbackRating !== undefined && complaint.feedbackRating > 0) {
+                    feedbackForm.classList.add("d-none");
+                    feedbackDisplay.classList.remove("d-none");
+                    if (feedbackBadge) feedbackBadge.classList.remove("d-none");
+
+                    const r = Math.max(1, Math.min(5, parseInt(complaint.feedbackRating)));
+                    const stars = "★".repeat(r) + "☆".repeat(5 - r);
+                    document.getElementById("submittedRatingStars").innerText = stars + " (" + r + "/5)";
+                    document.getElementById("submittedCommentText").innerText =
+                        complaint.feedbackComment && complaint.feedbackComment.trim() !== ""
+                            ? '"' + complaint.feedbackComment.trim() + '"'
+                            : "No additional comments provided.";
+                } else {
+                    feedbackForm.classList.remove("d-none");
+                    feedbackDisplay.classList.add("d-none");
+                    if (feedbackBadge) feedbackBadge.classList.add("d-none");
+                }
             } else {
                 resBox.classList.add("d-none");
-                document.getElementById("resolvedActions").classList.add("d-none");
+                resolvedActions.classList.add("d-none");
+
+                if (isReopened) {
+                    if (reopenedBanner) {
+                        reopenedBanner.classList.remove("d-none");
+                        document.getElementById("reopenedBannerReason").innerText =
+                            "Reason provided by citizen: " + (complaint.reopenReason || "Citizen requested re-investigation.");
+                    }
+                } else {
+                    if (reopenedBanner) reopenedBanner.classList.add("d-none");
+                }
             }
 
             // Dynamic Timeline
@@ -562,8 +654,8 @@ function trackComplaint() {
                     }
                     if (event.title.includes("Officer")) iconHtml = '<i class="bi bi-person-check-fill"></i>';
                     if (event.title.includes("Image")) iconHtml = '<i class="bi bi-image"></i>';
-                    if (event.title.includes("Feedback")) iconHtml = '<i class="bi bi-star-fill"></i>';
-                    if (event.title.includes("Reopened")) iconHtml = '<i class="bi bi-arrow-counterclockwise"></i>';
+                    if (event.title.includes("Feedback")) iconHtml = '<i class="bi bi-star-fill text-warning"></i>';
+                    if (event.title.includes("Reopened")) iconHtml = '<i class="bi bi-arrow-counterclockwise text-danger"></i>';
 
                     item.innerHTML = `
                         <div class="timeline-icon">${iconHtml}</div>
@@ -612,12 +704,12 @@ function uploadAdditionalPhoto() {
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
 
-    fetch('/api/complaints/' + id + '/image', {
+    fetch('/api/complaints/' + encodeURIComponent(id) + '/image', {
         method: 'POST',
         body: formData
     })
     .then(async response => {
-        const data = await response.json();
+        const data = await response.json().catch(() => ({}));
         if (!response.ok) {
             throw new Error(data.error || "Failed to upload image.");
         }
@@ -632,44 +724,95 @@ function submitFeedback() {
     const id = document.getElementById("displayId").innerText.trim();
     const rating = document.getElementById("feedbackRating").value;
     const comment = document.getElementById("feedbackComment").value.trim();
+    const alertBox = document.getElementById("resolvedActionAlert");
+    const btn = document.getElementById("btnSubmitFeedback");
 
-    fetch('/api/complaints/' + id + '/feedback', {
+    if (alertBox) alertBox.classList.add("d-none");
+    if (btn) btn.disabled = true;
+
+    fetch('/api/complaints/' + encodeURIComponent(id) + '/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rating: rating, comment: comment })
+        body: JSON.stringify({ rating: parseInt(rating), comment: comment })
     })
     .then(async response => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Failed to submit feedback.");
-        alert("Thank you! Your feedback has been recorded.");
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || "Failed to submit feedback.");
+        }
+        if (alertBox) {
+            alertBox.className = "alert alert-success mb-3";
+            alertBox.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>' + (data.message || "Feedback submitted successfully!");
+            alertBox.classList.remove("d-none");
+        }
         document.getElementById("feedbackComment").value = "";
         trackComplaint();
     })
-    .catch(err => alert("Error: " + err.message));
+    .catch(err => {
+        if (alertBox) {
+            alertBox.className = "alert alert-danger mb-3";
+            alertBox.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>' + err.message;
+            alertBox.classList.remove("d-none");
+        } else {
+            alert("Error: " + err.message);
+        }
+    })
+    .finally(() => {
+        if (btn) btn.disabled = false;
+    });
 }
 
 function reopenComplaint() {
     const id = document.getElementById("displayId").innerText.trim();
     const reason = document.getElementById("reopenReason").value.trim();
+    const alertBox = document.getElementById("resolvedActionAlert");
+    const btn = document.getElementById("btnReopenComplaint");
+
+    if (alertBox) alertBox.classList.add("d-none");
 
     if (!reason) {
-        alert("Please provide a reason for reopening this complaint.");
+        if (alertBox) {
+            alertBox.className = "alert alert-warning mb-3";
+            alertBox.innerHTML = '<i class="bi bi-exclamation-circle-fill me-2"></i><strong>Reason required:</strong> Please explain why you wish to reopen this complaint.';
+            alertBox.classList.remove("d-none");
+        } else {
+            alert("Please provide a reason for reopening this complaint.");
+        }
         return;
     }
 
-    fetch('/api/complaints/' + id + '/reopen', {
+    if (btn) btn.disabled = true;
+
+    fetch('/api/complaints/' + encodeURIComponent(id) + '/reopen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason: reason })
     })
     .then(async response => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Failed to reopen complaint.");
-        alert("Complaint has been reopened. Concerned authorities have been notified.");
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || "Failed to reopen complaint.");
+        }
+        if (alertBox) {
+            alertBox.className = "alert alert-warning mb-3";
+            alertBox.innerHTML = '<i class="bi bi-arrow-counterclockwise me-2"></i>' + (data.message || "Complaint reopened successfully.");
+            alertBox.classList.remove("d-none");
+        }
         document.getElementById("reopenReason").value = "";
         trackComplaint();
     })
-    .catch(err => alert("Error: " + err.message));
+    .catch(err => {
+        if (alertBox) {
+            alertBox.className = "alert alert-danger mb-3";
+            alertBox.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>' + err.message;
+            alertBox.classList.remove("d-none");
+        } else {
+            alert("Error: " + err.message);
+        }
+    })
+    .finally(() => {
+        if (btn) btn.disabled = false;
+    });
 }
 </script>
 
