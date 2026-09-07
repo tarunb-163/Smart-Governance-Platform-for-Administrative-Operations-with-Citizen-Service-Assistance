@@ -1,321 +1,312 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>CivicPulse - Notifications</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
+            background: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
         }
-
-        .navbar {
-            background: #123b6d;
+        .top-navbar {
+            height: 68px;
+            background: #0f2744;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-
-        .navbar-brand {
-            font-weight: bold;
-            color: white !important;
-            font-size: 22px;
-        }
-
-        .navbar-text {
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
             color: white;
         }
-
-        .sidebar {
-            min-height: calc(100vh - 56px);
-            background: white;
-            border-right: 1px solid #ddd;
-            padding-top: 20px;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 13px 20px;
-            color: #333;
-            text-decoration: none;
-        }
-
-        .sidebar a:hover {
-            background: #eaf2ff;
-            color: #123b6d;
-        }
-
-        .main-content {
-            padding: 30px;
-        }
-
-        .content-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-        }
-
-        .page-title {
-            color: #123b6d;
-            font-weight: bold;
-        }
-
-        .notification {
-            padding: 18px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            gap: 15px;
-        }
-
-        .notification:last-child {
-            border-bottom: none;
-        }
-
-        .notification-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: #eaf2ff;
-            color: #123b6d;
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.12);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            color: #60a5fa;
+        }
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .brand-subtitle {
+            font-size: 10px;
+            color: #93c5fd;
+            display: block;
+            margin-top: -2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 18px;
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            min-height: calc(100vh - 68px);
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            position: fixed;
+            left: 0;
+            top: 68px;
+            padding: 20px 12px;
+        }
+        .portal-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 1px;
+            padding: 0 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .sidebar a i {
+            font-size: 17px;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar a:hover {
+            background: #f1f5f9;
+            color: #0f2744;
+        }
+        .sidebar a.active {
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+        .sidebar-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 18px 10px;
+        }
+        .logout-link { color: #dc2626 !important; }
+        .logout-link:hover { background: #fee2e2 !important; }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            padding: 32px 36px;
+        }
+        .content-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+            max-width: 860px;
+        }
+        .page-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f2744;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notification-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 12px;
+            background: white;
+            transition: all 0.2s;
+        }
+        .notification-card.unread {
+            background: #f0f9ff;
+            border-color: #bae6fd;
+        }
+        .notification-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+        .notif-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
             flex-shrink: 0;
         }
+        .notif-icon-info { background: #eff6ff; color: #2563eb; }
+        .notif-icon-assigned { background: #fdf4ff; color: #a21caf; }
+        .notif-icon-status { background: #fef3c7; color: #d97706; }
+        .notif-icon-resolved { background: #d1fae5; color: #059669; }
 
-        .notification-title {
-            font-weight: bold;
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: #64748b;
         }
-
-        .notification-time {
-            font-size: 13px;
-            color: #888;
+        .empty-state i {
+            font-size: 40px;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            display: inline-block;
         }
     </style>
 </head>
-
 <body>
 
-<nav class="navbar">
-    <div class="container-fluid">
+<!-- TOP NAVBAR -->
+<nav class="top-navbar">
+    <a href="/citizen/dashboard" class="brand">
+        <div class="brand-icon"><i class="bi bi-buildings-fill"></i></div>
+        <div>
+            <div class="brand-name">CivicPulse</div>
+            <span class="brand-subtitle">Smart Governance Portal</span>
+        </div>
+    </a>
 
-        <a class="navbar-brand" href="/citizen/dashboard">
-            <i class="bi bi-building"></i>
-            CivicPulse
-        </a>
-
-        <span class="navbar-text">
-            <i class="bi bi-person-circle"></i>
-            Citizen
-        </span>
-
+    <div class="user-area">
+        <div class="user-avatar" th:text="${citizenName != null and !#strings.isEmpty(citizenName) ? #strings.substring(citizenName, 0, 1).toUpperCase() : 'C'}">C</div>
+        <div class="d-none d-md-block" style="line-height: 1.2;">
+            <div style="font-size: 13px; font-weight: 600; color: white;" th:text="${citizenName != null ? citizenName : 'Citizen'}">Citizen</div>
+            <div style="font-size: 11px; color: #93c5fd;">Registered Citizen</div>
+        </div>
     </div>
 </nav>
 
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="portal-label">Citizen Menu</div>
+    <a href="/citizen/dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+    <a href="/citizen/complaint-form"><i class="bi bi-plus-circle"></i><span>Register Complaint</span></a>
+    <a href="/citizen/complaints"><i class="bi bi-file-earmark-text"></i><span>My Complaints</span></a>
+    <a href="/citizen/track"><i class="bi bi-search"></i><span>Track Complaint</span></a>
+    <a href="/citizen/notifications" class="active"><i class="bi bi-bell"></i><span>Notifications</span></a>
+    <a href="/citizen/profile"><i class="bi bi-person"></i><span>My Profile</span></a>
+    <div class="sidebar-divider"></div>
+    <a href="/citizen/logout" class="logout-link"><i class="bi bi-box-arrow-right"></i><span>Sign Out</span></a>
+</aside>
 
-<div class="container-fluid">
-
-    <div class="row">
-
-        <div class="col-md-2 sidebar">
-
-            <a href="/citizen/dashboard">
-                <i class="bi bi-speedometer2"></i>
-                Dashboard
-            </a>
-
-            <a href="/citizen/complaint-form">
-                <i class="bi bi-plus-circle"></i>
-                Register Complaint
-            </a>
-
-            <a href="/citizen/complaints">
-                <i class="bi bi-file-text"></i>
-                My Complaints
-            </a>
-
-            <a href="/citizen/track">
-                <i class="bi bi-search"></i>
-                Track Complaint
-            </a>
-
-            <a href="/citizen/notifications">
-                <i class="bi bi-bell"></i>
-                Notifications
-            </a>
-
-            <a href="/citizen/profile">
-                <i class="bi bi-person"></i>
-                My Profile
-            </a>
-
-            <a href="/login">
-                <i class="bi bi-box-arrow-right"></i>
-                Logout
-            </a>
-
-        </div>
-
-
-        <div class="col-md-10 main-content">
-
-            <div class="content-card">
-
-                <div class="d-flex justify-content-between align-items-center mb-4">
-
-                    <div>
-                        <h2 class="page-title">
-                            <i class="bi bi-bell"></i>
-                            Notifications
-                        </h2>
-
-                        <p class="text-muted mb-0">
-                            Stay updated about your complaints.
-                        </p>
-                    </div>
-
-                    <button class="btn btn-outline-primary"
-                            onclick="markRead()">
-                        Mark all as read
-                    </button>
-
-                </div>
-
-
-                <div id="notifications">
-
-                    <div class="notification">
-
-                        <div class="notification-icon">
-                            <i class="bi bi-person-check"></i>
-                        </div>
-
-                        <div>
-
-                            <div class="notification-title">
-                                Complaint assigned to officer
-                            </div>
-
-                            <div>
-                                Complaint <strong>CMP202600124</strong>
-                                has been assigned to a concerned officer.
-                            </div>
-
-                            <div class="notification-time">
-                                Today, 12:00 PM
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="notification">
-
-                        <div class="notification-icon">
-                            <i class="bi bi-arrow-repeat"></i>
-                        </div>
-
-                        <div>
-
-                            <div class="notification-title">
-                                Complaint status updated
-                            </div>
-
-                            <div>
-                                Your complaint CMP202600103 is now
-                                <strong>In Progress</strong>.
-                            </div>
-
-                            <div class="notification-time">
-                                2 days ago
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="notification">
-
-                        <div class="notification-icon">
-                            <i class="bi bi-check-circle"></i>
-                        </div>
-
-                        <div>
-
-                            <div class="notification-title">
-                                Complaint resolved
-                            </div>
-
-                            <div>
-                                Your complaint CMP202600078 has been
-                                successfully resolved.
-                            </div>
-
-                            <div class="notification-time">
-                                10 days ago
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="notification">
-
-                        <div class="notification-icon">
-                            <i class="bi bi-info-circle"></i>
-                        </div>
-
-                        <div>
-
-                            <div class="notification-title">
-                                Welcome to CivicPulse
-                            </div>
-
-                            <div>
-                                You can use CivicPulse to report and track
-                                civic issues in your area.
-                            </div>
-
-                            <div class="notification-time">
-                                15 days ago
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+<!-- MAIN CONTENT -->
+<main class="main-content">
+    <div class="content-card mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h1 class="page-title">
+                    <i class="bi bi-bell-fill text-primary"></i> Notifications
+                </h1>
+                <p class="text-muted small mb-0 mt-1">
+                    Stay updated on grievance milestones, departmental routing, and official updates.
+                </p>
             </div>
-
+            <button class="btn btn-outline-primary btn-sm" onclick="markAllAsRead()">
+                <i class="bi bi-check2-all me-1"></i> Mark all as read
+            </button>
         </div>
 
+        <!-- NOTIFICATION LIST -->
+        <div th:if="${notifications != null and !#lists.isEmpty(notifications)}">
+            <div th:each="n : ${notifications}" class="notification-card" th:classappend="${!n.isRead ? 'unread' : ''}">
+                <div class="notif-icon-box"
+                     th:classappend="${n.type == 'RESOLUTION' ? 'notif-icon-resolved' :
+                                    (n.type == 'STATUS_CHANGE' ? 'notif-icon-status' :
+                                    (n.type == 'ASSIGNED' ? 'notif-icon-assigned' : 'notif-icon-info'))}">
+                    <i th:class="${n.type == 'RESOLUTION' ? 'bi bi-check-circle-fill' :
+                                 (n.type == 'STATUS_CHANGE' ? 'bi bi-arrow-repeat' :
+                                 (n.type == 'ASSIGNED' ? 'bi bi-person-check-fill' : 'bi bi-info-circle-fill'))}"></i>
+                </div>
+
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-baseline flex-wrap">
+                        <strong class="text-dark" th:text="${n.title}">Notification Title</strong>
+                        <small class="text-muted" th:text="${#temporals.format(n.createdAt, 'dd MMM yyyy, hh:mm a')}">Date</small>
+                    </div>
+                    <p class="text-secondary small mb-1 mt-1" th:text="${n.message}">Notification message text</p>
+
+                    <div th:if="${n.complaintNumber != null and !#strings.isEmpty(n.complaintNumber)}">
+                        <a th:href="@{/citizen/track(id=${n.complaintNumber})}" class="small text-primary text-decoration-none fw-semibold">
+                            Track Complaint <span th:text="${n.complaintNumber}"></span> <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" th:if="${notifications == null or #lists.isEmpty(notifications)}">
+            <i class="bi bi-bell-slash"></i>
+            <h5>No notifications yet</h5>
+            <p class="small text-muted mb-0">When your complaints receive status updates or officer assignments, you'll see alerts here.</p>
+        </div>
     </div>
-
-</div>
-
+</main>
 
 <script>
-
-function markRead() {
-
-    alert("All notifications marked as read.");
-
+function markAllAsRead() {
+    fetch('/api/complaints/notifications/read-all', { method: 'POST' })
+        .then(() => {
+            document.querySelectorAll('.notification-card.unread').forEach(el => el.classList.remove('unread'));
+            alert("All notifications marked as read.");
+        })
+        .catch(err => console.error(err));
 }
-
 </script>
 
 </body>

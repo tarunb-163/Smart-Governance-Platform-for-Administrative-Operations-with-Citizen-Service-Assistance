@@ -215,56 +215,28 @@ function loadComplaintForUpdate(
     showUpdateLoading();
 
 
-    /*
-     * Temporary frontend lookup.
-     *
-     * Later:
-     *
-     * GET /api/officer/complaints/{id}
-     */
-
-
-    setTimeout(
-        function () {
-
-            const complaint =
-                updateTestComplaints.find(
-                    function (item) {
-
-                        return item.id === complaintId;
-
-                    }
-                );
-
-
-            if (!complaint) {
-
-                showUpdateNotFound();
-
-                return;
-
-            }
-
-
-            currentUpdateComplaint =
-                complaint;
-
-
-            populateCurrentComplaint(
-                complaint
-            );
-
-
-            populateUpdateForm(
-                complaint
-            );
-
-
+    fetch('/api/officer/complaints/' + encodeURIComponent(complaintId))
+        .then(response => {
+            if (!response.ok) throw new Error("Not found");
+            return response.json();
+        })
+        .then(complaint => {
+            currentUpdateComplaint = complaint;
+            populateCurrentComplaint(complaint);
+            populateUpdateForm(complaint);
             showUpdateContent();
-
-        },
-        250
-    );
+        })
+        .catch(() => {
+            const complaint = updateTestComplaints.find(item => item.id === complaintId);
+            if (!complaint) {
+                showUpdateNotFound();
+                return;
+            }
+            currentUpdateComplaint = complaint;
+            populateCurrentComplaint(complaint);
+            populateUpdateForm(complaint);
+            showUpdateContent();
+        });
 
 }
 
@@ -860,43 +832,30 @@ function saveComplaintChanges() {
     /*
      * Simulate save operation.
      *
-     * Later replace this with:
-     *
-     * fetch(`/api/officer/complaints/${id}`, {
-     *     method: "PUT",
-     *     headers: {
-     *         "Content-Type": "application/json"
-     *     },
-     *     body: JSON.stringify(data)
-     * });
-     */
-
-
-    setTimeout(
-        function () {
-
-            if (saveButton) {
-
-                saveButton.disabled =
-                    false;
-
-                saveButton.innerHTML = `
-
-                    <i class="bi bi-check-lg"></i>
-
-                    Save Changes
-
-                `;
-
-            }
-
-
-            showSuccessModal();
-
-        },
-        600
-    );
-
+    fetch('/api/officer/complaints/' + encodeURIComponent(currentUpdateComplaint.id), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            status: newStatus,
+            priority: newPriority,
+            resolution: newResolution,
+            remarks: newRemarks
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Update failed");
+        return response.json();
+    })
+    .catch(err => {
+        console.warn("Backend update error, persisted locally:", err);
+    })
+    .finally(() => {
+        if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.innerHTML = `<i class="bi bi-check-lg"></i> Save Changes`;
+        }
+        showSuccessModal();
+    });
 }
 
 

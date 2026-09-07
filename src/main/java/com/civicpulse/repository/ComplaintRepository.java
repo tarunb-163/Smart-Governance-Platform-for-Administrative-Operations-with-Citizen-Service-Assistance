@@ -28,6 +28,15 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
 
     List<Complaint> findByDepartmentAndStatus(String department, String status);
 
+    // Citizen specific queries
+    List<Complaint> findByCitizenEmailOrderByCreatedAtDesc(String citizenEmail);
+
+    List<Complaint> findByCitizenEmail(String citizenEmail);
+
+    long countByCitizenEmail(String citizenEmail);
+
+    long countByCitizenEmailAndStatusIgnoreCase(String citizenEmail, String status);
+
     // Fetch join queries
     @Query("SELECT DISTINCT c FROM Complaint c LEFT JOIN FETCH c.attachments WHERE c.id = :id")
     Optional<Complaint> findByIdWithAttachments(@Param("id") Long id);

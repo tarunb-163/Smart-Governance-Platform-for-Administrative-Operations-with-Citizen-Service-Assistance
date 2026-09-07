@@ -45,6 +45,9 @@ public class Complaint {
     @Column(name = "citizen_email")
     private String citizenEmail;
 
+    @Column(name = "citizen_id")
+    private String citizenId;
+
     @Column(name = "submitted_date")
     private String submittedDate;
 
@@ -247,6 +250,14 @@ public class Complaint {
 
     public void setCitizenEmail(String citizenEmail) {
         this.citizenEmail = citizenEmail;
+    }
+
+    public String getCitizenId() {
+        return citizenId;
+    }
+
+    public void setCitizenId(String citizenId) {
+        this.citizenId = citizenId;
     }
 
     public String getSubmittedDate() {

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Sign In | CivicPulse</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            color: #1e293b;
+        }
+        .auth-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            width: 100%;
+            max-width: 440px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .auth-header {
+            background: linear-gradient(135deg, #0f2744 0%, #1e3a8a 100%);
+            padding: 36px 32px 28px;
+            color: white;
+            text-align: center;
+        }
+        .brand-icon {
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .auth-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+        .auth-header p {
+            font-size: 0.88rem;
+            color: #93c5fd;
+            margin: 6px 0 0;
+        }
+        .auth-body {
+            padding: 32px;
+        }
+        .form-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .input-group-text {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #64748b;
+        }
+        .form-control {
+            border-color: #cbd5e1;
+            padding: 11px 14px;
+            font-size: 0.95rem;
+            border-radius: 10px;
+        }
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .btn-primary {
+            background: #1e3a8a;
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background: #172554;
+            transform: translateY(-1px);
+        }
+        .auth-footer {
+            text-align: center;
+            padding: 0 32px 32px;
+            font-size: 0.88rem;
+            color: #64748b;
+        }
+        .auth-footer a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        .demo-credentials {
+            background: #f1f5f9;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <div class="auth-header">
+        <div class="brand-icon">
+            <i class="bi bi-buildings-fill"></i>
+        </div>
+        <h1>CivicPulse Portal</h1>
+        <p>Citizen Sign In & Grievance Dashboard</p>
+    </div>
+
+    <div class="auth-body">
+        <!-- Error Alert -->
+        <div id="errorAlert" class="alert alert-danger d-none py-2 px-3 small" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            <span id="errorMessage">Invalid credentials</span>
+        </div>
+
+        <!-- Success Alert (from Thymeleaf param) -->
+        <div th:if="${successMessage}" class="alert alert-success py-2 px-3 small" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${logoutMessage}" class="alert alert-info py-2 px-3 small" role="alert">
+            <i class="bi bi-info-circle-fill me-1"></i>
+            <span th:text="${logoutMessage}"></span>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="mb-3">
+                <label class="form-label" for="loginEmail">Email Address or Citizen ID</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="text" id="loginEmail" class="form-control" placeholder="citizen@civicpulse.com" required autocomplete="username">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="loginPassword">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility()">
+                        <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberMe" checked>
+                    <label class="form-check-label small text-muted" for="rememberMe">Remember me</label>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary w-100 mb-3">
+                <span id="btnText">Sign In to Dashboard</span>
+                <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+            </button>
+        </form>
+
+        <div class="demo-credentials text-center">
+            <strong>Default Citizen Demo:</strong><br>
+            Email: <code>citizen@civicpulse.com</code> | Password: <code>password123</code>
+        </div>
+    </div>
+
+    <div class="auth-footer">
+        Don't have an account? <a href="/citizen/register">Create Citizen Account</a>
+        <div class="mt-2 pt-2 border-top">
+            <small><a href="/portal" class="text-secondary"><i class="bi bi-arrow-left"></i> Back to Main Portal</a> | <a href="/officer/login" class="text-secondary">Officer Login</a></small>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById("loginPassword");
+    const icon = document.getElementById("togglePasswordIcon");
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.classList.replace("bi-eye", "bi-eye-slash");
+    } else {
+        passwordInput.type = "password";
+        icon.classList.replace("bi-eye-slash", "bi-eye");
+    }
+}
+
+function handleLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    const submitBtn = document.getElementById("submitBtn");
+    const btnText = document.getElementById("btnText");
+    const btnSpinner = document.getElementById("btnSpinner");
+    const errorAlert = document.getElementById("errorAlert");
+    const errorMessage = document.getElementById("errorMessage");
+
+    errorAlert.classList.add("d-none");
+    submitBtn.disabled = true;
+    btnText.textContent = "Authenticating...";
+    btnSpinner.classList.remove("d-none");
+
+    fetch('/api/citizen/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+    })
+    .then(async response => {
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || "Login failed.");
+        }
+        return data;
+    })
+    .then(data => {
+        window.location.href = data.redirectUrl || "/citizen/dashboard";
+    })
+    .catch(err => {
+        errorMessage.textContent = err.message;
+        errorAlert.classList.remove("d-none");
+        submitBtn.disabled = false;
+        btnText.textContent = "Sign In to Dashboard";
+        btnSpinner.classList.add("d-none");
+    });
+}
+</script>
+
+</body>
+</html>

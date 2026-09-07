@@ -139,8 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function initializeComplaintsPage() {
 
-    updateComplaintSummary();
-
     initializeFilters();
 
     initializeRefreshButtons();
@@ -149,7 +147,7 @@ function initializeComplaintsPage() {
 
     initializeSearch();
 
-    updateEmptyState();
+    loadComplaints();
 
 }
 
@@ -1298,35 +1296,18 @@ async function loadComplaints() {
 
 
     try {
-
-        /*
-         * BACKEND API WILL BE CONNECTED HERE.
-         *
-         * Example future endpoint:
-         *
-         * GET /api/officer/complaints
-         *
-         * We intentionally do NOT call an API yet because
-         * the Spring Boot complaint backend has not been
-         * implemented.
-         */
-
-
-        /*
-         * For now:
-         * Keep the complaint list empty.
-         */
-
-        complaintsState.complaints = [];
-
-        complaintsState.filteredComplaints = [];
-
+        const response = await fetch('/api/officer/complaints');
+        if (response.ok) {
+            const data = await response.json();
+            complaintsState.complaints = data;
+            complaintsState.filteredComplaints = [...data];
+        } else {
+            complaintsState.complaints = [];
+            complaintsState.filteredComplaints = [];
+        }
 
         updateComplaintSummary();
-
         applyFilters();
-
-
     } catch (error) {
 
         console.error(

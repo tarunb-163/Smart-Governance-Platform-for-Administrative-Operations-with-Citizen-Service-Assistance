@@ -1,50 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>CivicPulse | Citizen Dashboard</title>
 
-    <!-- Bootstrap -->
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            rel="stylesheet">
-
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
-    <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Google Font -->
-    <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-            rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-
         * {
             box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
-
         body {
             margin: 0;
-            font-family: 'Inter', sans-serif;
-            background: #f5f7fb;
-            color: #263238;
+            background: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
         }
 
-
-        /* =========================
-           TOP NAVBAR
-        ========================== */
-
+        /* Top Navbar */
         .top-navbar {
             height: 68px;
-            background: #123b6d;
+            background: #0f2744;
             color: white;
             display: flex;
             align-items: center;
@@ -53,9 +36,8 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-
-
         .brand {
             display: flex;
             align-items: center;
@@ -63,1093 +45,558 @@
             text-decoration: none;
             color: white;
         }
-
-
         .brand-icon {
             width: 38px;
             height: 38px;
-            border-radius: 9px;
-            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.12);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 21px;
+            font-size: 20px;
+            color: #60a5fa;
         }
-
-
         .brand-name {
-            font-size: 21px;
+            font-size: 1.25rem;
             font-weight: 700;
             letter-spacing: -0.3px;
         }
-
-
         .brand-subtitle {
-            font-size: 11px;
-            opacity: 0.7;
+            font-size: 10px;
+            color: #93c5fd;
             display: block;
             margin-top: -2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
-
         .navbar-right {
             display: flex;
             align-items: center;
-            gap: 22px;
+            gap: 20px;
         }
-
-
-        .notification-button {
+        .notification-btn {
             position: relative;
-            color: white;
-            font-size: 20px;
+            color: #cbd5e1;
+            font-size: 1.25rem;
             text-decoration: none;
+            transition: 0.2s;
         }
-
-
-        .notification-dot {
+        .notification-btn:hover {
+            color: white;
+        }
+        .notif-badge {
             position: absolute;
-            width: 7px;
-            height: 7px;
-            background: #dc3545;
-            border-radius: 50%;
-            top: 1px;
-            right: -2px;
+            top: -4px;
+            right: -6px;
+            font-size: 10px;
+            padding: 2px 5px;
+            border-radius: 999px;
+            background: #ef4444;
+            color: white;
         }
-
-
         .user-area {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             padding-left: 18px;
-            border-left: 1px solid rgba(255,255,255,0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
         }
-
-
         .user-avatar {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: #dbeafe;
-            color: #123b6d;
+            background: #2563eb;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            font-size: 14px;
         }
-
-
         .user-details {
             line-height: 1.2;
         }
-
-
         .user-name {
             font-size: 13px;
             font-weight: 600;
+            color: white;
         }
-
-
         .user-role {
             font-size: 11px;
-            opacity: 0.7;
+            color: #93c5fd;
         }
 
-
-        /* =========================
-           SIDEBAR
-        ========================== */
-
+        /* Sidebar */
         .sidebar {
-            width: 245px;
+            width: 240px;
             min-height: calc(100vh - 68px);
             background: white;
-            border-right: 1px solid #e5e7eb;
+            border-right: 1px solid #e2e8f0;
             position: fixed;
             left: 0;
             top: 68px;
-            padding: 22px 14px;
+            padding: 20px 12px;
         }
-
-
         .portal-label {
             font-size: 10px;
             font-weight: 700;
-            color: #8a94a6;
+            color: #94a3b8;
             letter-spacing: 1px;
-            padding: 0 13px;
+            padding: 0 12px;
             margin-bottom: 12px;
+            text-transform: uppercase;
         }
-
-
         .sidebar a {
             display: flex;
             align-items: center;
-            gap: 13px;
-            padding: 12px 13px;
+            gap: 12px;
+            padding: 11px 14px;
             margin-bottom: 4px;
-            border-radius: 8px;
-            color: #596579;
+            border-radius: 10px;
+            color: #475569;
             text-decoration: none;
             font-size: 13px;
             font-weight: 500;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
-
-
         .sidebar a i {
             font-size: 17px;
             width: 20px;
             text-align: center;
         }
-
-
         .sidebar a:hover {
-            background: #f0f5fb;
-            color: #123b6d;
+            background: #f1f5f9;
+            color: #0f2744;
         }
-
-
         .sidebar a.active {
-            background: #eaf2fb;
-            color: #123b6d;
+            background: #eff6ff;
+            color: #1d4ed8;
             font-weight: 600;
         }
-
-
         .sidebar-divider {
             height: 1px;
-            background: #edf0f4;
-            margin: 22px 10px;
+            background: #e2e8f0;
+            margin: 18px 10px;
         }
-
-
         .logout-link {
-            color: #b42318 !important;
+            color: #dc2626 !important;
         }
-
-
         .logout-link:hover {
-            background: #fff1f0 !important;
+            background: #fee2e2 !important;
         }
 
-
-        /* =========================
-           MAIN CONTENT
-        ========================== */
-
+        /* Main Content */
         .main-content {
-            margin-left: 245px;
-            padding: 32px;
+            margin-left: 240px;
+            padding: 32px 36px;
         }
-
-
         .welcome-section {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
-
-
-        .welcome-label {
-            font-size: 12px;
-            color: #7b8494;
-            margin-bottom: 5px;
-        }
-
-
         .welcome-title {
-            font-size: 27px;
+            font-size: 1.6rem;
             font-weight: 700;
-            color: #172b4d;
+            color: #0f2744;
             margin: 0;
+            letter-spacing: -0.5px;
         }
-
-
         .welcome-text {
-            color: #737d8c;
-            font-size: 13px;
-            margin-top: 7px;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 4px 0 0;
         }
-
-
-        .date-box {
+        .date-badge {
             background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 9px;
-            padding: 10px 15px;
-            color: #596579;
-            font-size: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            color: #475569;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
 
-
-        /* =========================
-           STAT CARDS
-        ========================== */
-
+        /* Stat Cards */
         .stat-card {
             background: white;
-            border: 1px solid #e8ebef;
-            border-radius: 11px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
             padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            transition: all 0.2s;
             height: 100%;
-            transition: 0.2s;
         }
-
-
         .stat-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(20,45,75,0.07);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
         }
-
-
         .stat-top {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
         }
-
-
         .stat-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 9px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 19px;
+            font-size: 20px;
         }
-
-
-        .icon-blue {
-            background: #eaf2fb;
-            color: #123b6d;
-        }
-
-
-        .icon-orange {
-            background: #fff4df;
-            color: #b26a00;
-        }
-
-
-        .icon-green {
-            background: #e8f6ef;
-            color: #198754;
-        }
-
-
-        .stat-label {
-            color: #7b8494;
-            font-size: 12px;
-            margin-top: 15px;
-            margin-bottom: 3px;
-        }
-
+        .stat-blue { background: #eff6ff; color: #2563eb; }
+        .stat-amber { background: #fef3c7; color: #d97706; }
+        .stat-indigo { background: #e0e7ff; color: #4f46e5; }
+        .stat-emerald { background: #d1fae5; color: #059669; }
 
         .stat-number {
-            font-size: 27px;
+            font-size: 1.8rem;
             font-weight: 700;
-            color: #172b4d;
+            color: #0f2744;
+            line-height: 1;
+            margin: 12px 0 4px;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-
-        .stat-description {
-            font-size: 11px;
-            color: #929aa7;
-            margin-top: 2px;
+        /* Quick Actions */
+        .action-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        .action-card:hover {
+            border-color: #93c5fd;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+        }
+        .action-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
         }
 
-
-        /* =========================
-           SECTION HEADER
-        ========================== */
-
+        /* Recent Complaints Table */
+        .content-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            margin-top: 24px;
+        }
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 30px;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
-
-
         .section-title {
-            font-size: 16px;
-            font-weight: 650;
-            color: #172b4d;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f2744;
             margin: 0;
         }
-
-
-        .view-link {
-            color: #123b6d;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-
-        /* =========================
-           QUICK ACTIONS
-        ========================== */
-
-        .action-card {
-            background: white;
-            border: 1px solid #e8ebef;
-            border-radius: 11px;
-            padding: 19px;
-            height: 100%;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            transition: 0.2s;
-        }
-
-
-        .action-card:hover {
-            border-color: #b7cce3;
-            transform: translateY(-2px);
-            box-shadow: 0 7px 18px rgba(20,45,75,0.06);
-        }
-
-
-        .action-icon {
-            width: 39px;
-            height: 39px;
-            border-radius: 8px;
-            background: #eef4fa;
-            color: #123b6d;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 12px;
-            font-size: 18px;
-        }
-
-
-        .action-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #27364d;
-            margin-bottom: 4px;
-        }
-
-
-        .action-description {
-            font-size: 11px;
-            color: #858e9c;
-            margin: 0;
-        }
-
-
-        /* =========================
-           RECENT COMPLAINTS
-        ========================== */
-
-        .complaint-card {
-            background: white;
-            border: 1px solid #e8ebef;
-            border-radius: 11px;
-            overflow: hidden;
-        }
-
-
-        .complaint-table {
-            margin: 0;
-        }
-
-
-        .complaint-table thead th {
-            background: #fafbfc;
-            color: #7b8494;
-            font-size: 10px;
+        .table thead th {
+            font-size: 0.78rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: #64748b;
             font-weight: 600;
-            border-bottom: 1px solid #edf0f3;
-            padding: 13px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 14px;
+            background: #f8fafc;
         }
-
-
-        .complaint-table tbody td {
-            font-size: 12px;
-            color: #475467;
-            padding: 15px 18px;
+        .table tbody td {
+            font-size: 0.88rem;
+            padding: 14px;
             vertical-align: middle;
-            border-color: #f0f2f5;
+            border-bottom: 1px solid #f1f5f9;
         }
-
-
-        .complaint-id {
-            color: #123b6d;
-            font-weight: 600;
-        }
-
-
-        .category-name {
-            font-weight: 500;
-            color: #344054;
-        }
-
-
         .status-badge {
-            padding: 5px 9px;
-            border-radius: 20px;
-            font-size: 10px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
             font-weight: 600;
+            display: inline-block;
         }
-
-
-        .status-pending {
-            background: #fff4df;
-            color: #9a6700;
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #64748b;
         }
-
-
-        .status-progress {
-            background: #eaf2fb;
-            color: #175cd3;
+        .empty-state i {
+            font-size: 40px;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            display: inline-block;
         }
-
-
-        .status-resolved {
-            background: #e8f6ef;
-            color: #087443;
-        }
-
-
-        /* =========================
-           RESPONSIVE
-        ========================== */
 
         @media (max-width: 900px) {
-
-            .sidebar {
-                width: 200px;
-            }
-
-            .main-content {
-                margin-left: 200px;
-            }
-
-            .user-details {
-                display: none;
-            }
-
+            .sidebar { width: 70px; padding: 20px 8px; }
+            .sidebar span, .portal-label, .user-details { display: none; }
+            .main-content { margin-left: 70px; padding: 20px; }
         }
-
-
-        @media (max-width: 700px) {
-
-            .sidebar {
-                position: static;
-                width: 100%;
-                min-height: auto;
-                display: flex;
-                overflow-x: auto;
-                padding: 10px;
-            }
-
-            .sidebar .portal-label,
-            .sidebar-divider {
-                display: none;
-            }
-
-            .sidebar a {
-                white-space: nowrap;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .welcome-section {
-                display: block;
-            }
-
-            .date-box {
-                display: inline-block;
-                margin-top: 12px;
-            }
-
-        }
-
     </style>
-
 </head>
-
-
 <body>
 
-
-<!-- =====================================================
-     TOP NAVBAR
-====================================================== -->
-
+<!-- TOP NAVBAR -->
 <nav class="top-navbar">
-
-
     <a href="/citizen/dashboard" class="brand">
-
         <div class="brand-icon">
-            <i class="bi bi-buildings"></i>
+            <i class="bi bi-buildings-fill"></i>
         </div>
-
         <div>
-
-            <div class="brand-name">
-                CivicPulse
-            </div>
-
-            <span class="brand-subtitle">
-                Smart Governance Platform
-            </span>
-
+            <div class="brand-name">CivicPulse</div>
+            <span class="brand-subtitle">Smart Governance Portal</span>
         </div>
-
     </a>
-
 
     <div class="navbar-right">
-
-        <a href="/citizen/notifications"
-           class="notification-button">
-
+        <a href="/citizen/notifications" class="notification-btn" title="Notifications">
             <i class="bi bi-bell"></i>
-
-            <span class="notification-dot"></span>
-
+            <span class="notif-badge" th:if="${unreadNotificationsCount != null and unreadNotificationsCount > 0}" th:text="${unreadNotificationsCount}"></span>
         </a>
 
-
         <div class="user-area">
-
-            <div class="user-avatar">
-                C
-            </div>
-
+            <div class="user-avatar" th:text="${citizenName != null and !#strings.isEmpty(citizenName) ? #strings.substring(citizenName, 0, 1).toUpperCase() : 'C'}">C</div>
             <div class="user-details">
-
-                <div class="user-name">
-                    Citizen User
-                </div>
-
-                <div class="user-role">
-                    Registered Citizen
-                </div>
-
+                <div class="user-name" th:text="${citizenName != null ? citizenName : 'Citizen User'}">Citizen User</div>
+                <div class="user-role">Registered Citizen</div>
             </div>
-
         </div>
-
     </div>
-
 </nav>
 
-
-
-<!-- =====================================================
-     SIDEBAR
-====================================================== -->
-
+<!-- SIDEBAR -->
 <aside class="sidebar">
-
-
-    <div class="portal-label">
-        CITIZEN PORTAL
-    </div>
-
-
+    <div class="portal-label">Citizen Menu</div>
     <a href="/citizen/dashboard" class="active">
-
-        <i class="bi bi-grid-1x2-fill"></i>
-
-        Dashboard
-
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
     </a>
-
-
     <a href="/citizen/complaint-form">
-
         <i class="bi bi-plus-circle"></i>
-
-        Register Complaint
-
+        <span>Register Complaint</span>
     </a>
-
-
     <a href="/citizen/complaints">
-
         <i class="bi bi-file-earmark-text"></i>
-
-        My Complaints
-
+        <span>My Complaints</span>
     </a>
-
-
     <a href="/citizen/track">
-
         <i class="bi bi-search"></i>
-
-        Track Complaint
-
+        <span>Track Complaint</span>
     </a>
-
-
     <a href="/citizen/notifications">
-
         <i class="bi bi-bell"></i>
-
-        Notifications
-
+        <span>Notifications</span>
     </a>
-
-
     <a href="/citizen/profile">
-
         <i class="bi bi-person"></i>
-
-        My Profile
-
+        <span>My Profile</span>
     </a>
-
 
     <div class="sidebar-divider"></div>
 
-
-    <a href="/login" class="logout-link">
-
+    <a href="/citizen/logout" class="logout-link">
         <i class="bi bi-box-arrow-right"></i>
-
-        Sign Out
-
+        <span>Sign Out</span>
     </a>
-
 </aside>
 
-
-
-<!-- =====================================================
-     MAIN CONTENT
-====================================================== -->
-
+<!-- MAIN CONTENT -->
 <main class="main-content">
-
-
-    <!-- WELCOME -->
-
+    <!-- WELCOME HEADER -->
     <div class="welcome-section">
-
         <div>
-
-            <div class="welcome-label">
-                CITIZEN DASHBOARD
-            </div>
-
             <h1 class="welcome-title">
-                Good morning, Citizen 👋
+                Welcome, <span th:text="${citizenName != null ? citizenName : 'Citizen'}">Citizen</span> 👋
             </h1>
-
             <p class="welcome-text">
-                Stay informed and connected with your local civic services.
+                Monitor your civic grievances, track active repairs, and stay informed with your municipality.
             </p>
-
         </div>
 
-
-        <div class="date-box">
-
-            <i class="bi bi-calendar3 me-1"></i>
-
-            11 August 2026
-
+        <div class="date-badge">
+            <i class="bi bi-calendar3 text-primary"></i>
+            <span th:text="${currentDate}">Monday, 7 September 2026</span>
         </div>
-
     </div>
 
-
-
-    <!-- =================================================
-         STATISTICS
-    ================================================== -->
-
-    <div class="row g-3">
-
-
-        <div class="col-md-4">
-
+    <!-- STATS ROW -->
+    <div class="row g-3 mb-4">
+        <!-- Total -->
+        <div class="col-xl-3 col-sm-6">
             <div class="stat-card">
-
                 <div class="stat-top">
-
-                    <div>
-
-                        <div class="stat-label mt-0">
-                            TOTAL COMPLAINTS
-                        </div>
-
-                        <div class="stat-number">
-                            12
-                        </div>
-
-                    </div>
-
-                    <div class="stat-icon icon-blue">
-
-                        <i class="bi bi-file-earmark-text"></i>
-
-                    </div>
-
+                    <span class="stat-label">Total Filed</span>
+                    <div class="stat-icon stat-blue"><i class="bi bi-folder2-open"></i></div>
                 </div>
-
-                <div class="stat-description">
-                    Complaints submitted by you
-                </div>
-
+                <div class="stat-number" th:text="${totalComplaints}">0</div>
+                <small class="text-muted">All registered complaints</small>
             </div>
-
         </div>
 
-
-
-        <div class="col-md-4">
-
+        <!-- Pending -->
+        <div class="col-xl-3 col-sm-6">
             <div class="stat-card">
-
                 <div class="stat-top">
-
-                    <div>
-
-                        <div class="stat-label mt-0">
-                            IN PROGRESS
-                        </div>
-
-                        <div class="stat-number">
-                            4
-                        </div>
-
-                    </div>
-
-                    <div class="stat-icon icon-orange">
-
-                        <i class="bi bi-hourglass-split"></i>
-
-                    </div>
-
+                    <span class="stat-label">Pending Review</span>
+                    <div class="stat-icon stat-amber"><i class="bi bi-clock-history"></i></div>
                 </div>
-
-                <div class="stat-description">
-                    Complaints awaiting resolution
-                </div>
-
+                <div class="stat-number" th:text="${pendingComplaints}">0</div>
+                <small class="text-muted">Awaiting department action</small>
             </div>
-
         </div>
 
-
-
-        <div class="col-md-4">
-
+        <!-- In Progress -->
+        <div class="col-xl-3 col-sm-6">
             <div class="stat-card">
-
                 <div class="stat-top">
-
-                    <div>
-
-                        <div class="stat-label mt-0">
-                            RESOLVED
-                        </div>
-
-                        <div class="stat-number">
-                            8
-                        </div>
-
-                    </div>
-
-                    <div class="stat-icon icon-green">
-
-                        <i class="bi bi-check-circle"></i>
-
-                    </div>
-
+                    <span class="stat-label">In Progress</span>
+                    <div class="stat-icon stat-indigo"><i class="bi bi-gear-wide-connected"></i></div>
                 </div>
-
-                <div class="stat-description">
-                    Complaints successfully resolved
-                </div>
-
+                <div class="stat-number" th:text="${inProgressComplaints}">0</div>
+                <small class="text-muted">Under investigation/repair</small>
             </div>
-
         </div>
 
+        <!-- Resolved -->
+        <div class="col-xl-3 col-sm-6">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">Resolved</span>
+                    <div class="stat-icon stat-emerald"><i class="bi bi-check2-circle"></i></div>
+                </div>
+                <div class="stat-number" th:text="${resolvedComplaints}">0</div>
+                <small class="text-muted">Successfully addressed</small>
+            </div>
+        </div>
     </div>
 
-
-
-    <!-- =================================================
-         QUICK ACTIONS
-    ================================================== -->
-
-    <div class="section-header">
-
-        <h2 class="section-title">
-            Quick Services
-        </h2>
-
+    <!-- QUICK ACTIONS ROW -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <a href="/citizen/complaint-form" class="action-card">
+                <div class="action-icon"><i class="bi bi-plus-lg"></i></div>
+                <div>
+                    <strong class="d-block" style="font-size: 0.95rem;">Report a Grievance</strong>
+                    <small class="text-muted">Register a pothole, water leak, or street light issue</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="/citizen/track" class="action-card">
+                <div class="action-icon" style="background: #f0fdf4; color: #16a34a;"><i class="bi bi-search"></i></div>
+                <div>
+                    <strong class="d-block" style="font-size: 0.95rem;">Track by Complaint ID</strong>
+                    <small class="text-muted">Check live milestone timeline and assigned officer</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="/citizen/complaints" class="action-card">
+                <div class="action-icon" style="background: #fdf4ff; color: #c026d3;"><i class="bi bi-list-columns-reverse"></i></div>
+                <div>
+                    <strong class="d-block" style="font-size: 0.95rem;">View All Complaints</strong>
+                    <small class="text-muted">Access your complaint history and feedback</small>
+                </div>
+            </a>
+        </div>
     </div>
 
-
-    <div class="row g-3">
-
-
-        <div class="col-lg-3 col-md-6">
-
-            <a href="/citizen/complaint-form"
-               class="action-card">
-
-                <div class="action-icon">
-
-                    <i class="bi bi-plus-lg"></i>
-
-                </div>
-
-                <div class="action-title">
-                    Report an Issue
-                </div>
-
-                <p class="action-description">
-                    Submit a new civic complaint or service request.
-                </p>
-
+    <!-- RECENT COMPLAINTS TABLE -->
+    <div class="content-card">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Your Recent Complaints</h2>
+                <small class="text-muted">Latest grievance records submitted from your account</small>
+            </div>
+            <a href="/citizen/complaints" class="btn btn-sm btn-outline-primary">
+                View All <i class="bi bi-arrow-right"></i>
             </a>
-
         </div>
 
-
-
-        <div class="col-lg-3 col-md-6">
-
-            <a href="/citizen/complaints"
-               class="action-card">
-
-                <div class="action-icon">
-
-                    <i class="bi bi-folder2-open"></i>
-
-                </div>
-
-                <div class="action-title">
-                    My Complaints
-                </div>
-
-                <p class="action-description">
-                    View and manage complaints submitted by you.
-                </p>
-
-            </a>
-
-        </div>
-
-
-
-        <div class="col-lg-3 col-md-6">
-
-            <a href="/citizen/track"
-               class="action-card">
-
-                <div class="action-icon">
-
-                    <i class="bi bi-search"></i>
-
-                </div>
-
-                <div class="action-title">
-                    Track a Complaint
-                </div>
-
-                <p class="action-description">
-                    Check the latest status of a complaint.
-                </p>
-
-            </a>
-
-        </div>
-
-
-
-        <div class="col-lg-3 col-md-6">
-
-            <a href="/citizen/profile"
-               class="action-card">
-
-                <div class="action-icon">
-
-                    <i class="bi bi-person"></i>
-
-                </div>
-
-                <div class="action-title">
-                    My Profile
-                </div>
-
-                <p class="action-description">
-                    Review and update your citizen information.
-                </p>
-
-            </a>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- =================================================
-         RECENT COMPLAINTS
-    ================================================== -->
-
-    <div class="section-header">
-
-        <h2 class="section-title">
-            Recent Complaints
-        </h2>
-
-        <a href="/citizen/complaints"
-           class="view-link">
-
-            View all
-            <i class="bi bi-arrow-right"></i>
-
-        </a>
-
-    </div>
-
-
-    <div class="complaint-card">
-
-        <div class="table-responsive">
-
-            <table class="table complaint-table">
-
+        <div class="table-responsive" th:if="${recentComplaints != null and !#lists.isEmpty(recentComplaints)}">
+            <table class="table table-hover align-middle mb-0">
                 <thead>
-
-                <tr>
-
-                    <th>
-                        Complaint ID
-                    </th>
-
-                    <th>
-                        Category
-                    </th>
-
-                    <th>
-                        Submitted
-                    </th>
-
-                    <th>
-                        Status
-                    </th>
-
-                </tr>
-
+                    <tr>
+                        <th>Complaint ID</th>
+                        <th>Category</th>
+                        <th>Department</th>
+                        <th>Location</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th class="text-end">Action</th>
+                    </tr>
                 </thead>
-
-
                 <tbody>
-
-
-                <tr>
-
-                    <td class="complaint-id">
-                        CMP1001
-                    </td>
-
-                    <td class="category-name">
-                        Road Damage
-                    </td>
-
-                    <td>
-                        08 Aug 2026
-                    </td>
-
-                    <td>
-
-                        <span class="status-badge status-pending">
-                            Pending
-                        </span>
-
-                    </td>
-
-                </tr>
-
-
-                <tr>
-
-                    <td class="complaint-id">
-                        CMP1002
-                    </td>
-
-                    <td class="category-name">
-                        Street Light
-                    </td>
-
-                    <td>
-                        05 Aug 2026
-                    </td>
-
-                    <td>
-
-                        <span class="status-badge status-progress">
-                            In Progress
-                        </span>
-
-                    </td>
-
-                </tr>
-
-
-                <tr>
-
-                    <td class="complaint-id">
-                        CMP1003
-                    </td>
-
-                    <td class="category-name">
-                        Waste Management
-                    </td>
-
-                    <td>
-                        01 Aug 2026
-                    </td>
-
-                    <td>
-
-                        <span class="status-badge status-resolved">
-                            Resolved
-                        </span>
-
-                    </td>
-
-                </tr>
-
-
+                    <tr th:each="c : ${recentComplaints}">
+                        <td>
+                            <strong class="text-primary" th:text="${c.trackingId}">CMP202600124</strong>
+                        </td>
+                        <td th:text="${c.category}">Road Damage</td>
+                        <td class="text-muted small" th:text="${c.department}">Roads / Public Works</td>
+                        <td class="text-muted small" th:text="${c.location}">Main Bus Stop</td>
+                        <td th:text="${c.submittedDate}">Today</td>
+                        <td>
+                            <span class="status-badge"
+                                  th:classappend="${c.status == 'Resolved' ? 'bg-success text-white' :
+                                                 (c.status == 'In Progress' ? 'bg-primary text-white' :
+                                                 (c.status == 'Assigned to Officer' ? 'bg-info text-dark' : 'bg-warning text-dark'))}"
+                                  th:text="${c.status}">
+                                Pending
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a th:href="@{/citizen/track(id=${c.trackingId})}" class="btn btn-sm btn-outline-primary">
+                                Track <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </td>
+                    </tr>
                 </tbody>
-
             </table>
-
         </div>
 
+        <!-- EMPTY STATE IF NO COMPLAINTS -->
+        <div class="empty-state" th:if="${recentComplaints == null or #lists.isEmpty(recentComplaints)}">
+            <i class="bi bi-inbox"></i>
+            <h5>No complaints submitted yet</h5>
+            <p class="small text-muted mb-3">Notice an issue in your locality? Submit a grievance to notify the relevant municipal department.</p>
+            <a href="/citizen/complaint-form" class="btn btn-primary btn-sm px-3">
+                <i class="bi bi-plus-circle me-1"></i> Register Your First Complaint
+            </a>
+        </div>
     </div>
-
-
 </main>
 
-
 </body>
-
 </html>

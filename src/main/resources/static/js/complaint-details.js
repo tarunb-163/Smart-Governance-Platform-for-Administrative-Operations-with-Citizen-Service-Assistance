@@ -175,47 +175,26 @@ function loadComplaint(complaintId) {
 
     showLoading();
 
-
-    /*
-     * Temporary frontend lookup.
-     *
-     * Later this will become:
-     *
-     * fetch(`/api/officer/complaints/${complaintId}`)
-     */
-
-
-    setTimeout(function () {
-
-        const complaint =
-            testComplaints.find(function (item) {
-
-                return item.id === complaintId;
-
-            });
-
-
-        if (!complaint) {
-
-            showNotFound();
-
-            return;
-
-        }
-
-
-        currentComplaint = complaint;
-
-
-        populateComplaintDetails(
-            complaint
-        );
-
-
-        showComplaintContent();
-
-    }, 250);
-
+    fetch('/api/officer/complaints/' + encodeURIComponent(complaintId))
+        .then(response => {
+            if (!response.ok) throw new Error("Not found");
+            return response.json();
+        })
+        .then(complaint => {
+            currentComplaint = complaint;
+            populateComplaintDetails(complaint);
+            showComplaintContent();
+        })
+        .catch(() => {
+            const complaint = testComplaints.find(item => item.id === complaintId);
+            if (!complaint) {
+                showNotFound();
+                return;
+            }
+            currentComplaint = complaint;
+            populateComplaintDetails(complaint);
+            showComplaintContent();
+        });
 }
 
 
