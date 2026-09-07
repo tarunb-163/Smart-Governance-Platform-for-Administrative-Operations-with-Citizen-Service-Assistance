@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
-    <meta charset="UTF-8">
+    <meta charset="utf-8"/>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0"
+          name="viewport"/>
 
     <title>Complaint Details | CivicPulse Admin</title>
 
@@ -36,9 +38,7 @@
             background: #172554;
             color: white;
             padding: 25px 16px;
-
             position: fixed;
-
             top: 0;
             bottom: 0;
             left: 0;
@@ -59,10 +59,8 @@
             display: block;
             color: white;
             text-decoration: none;
-
             padding: 15px;
             margin: 5px 0;
-
             border-radius: 8px;
         }
 
@@ -80,17 +78,10 @@
 
         .topbar {
             background: white;
-
             padding: 25px 35px;
-
-            border-bottom:
-                    1px solid #e5e7eb;
-
+            border-bottom: 1px solid #e5e7eb;
             display: flex;
-
-            justify-content:
-                    space-between;
-
+            justify-content: space-between;
             align-items: center;
         }
 
@@ -110,13 +101,9 @@
 
         .back-btn {
             display: inline-block;
-
             margin-bottom: 20px;
-
             color: #2563eb;
-
             text-decoration: none;
-
             font-weight: 600;
         }
 
@@ -128,11 +115,8 @@
 
         .message {
             padding: 14px 18px;
-
             border-radius: 8px;
-
             margin-bottom: 20px;
-
             font-weight: 600;
         }
 
@@ -150,29 +134,17 @@
 
         .details-card {
             background: white;
-
             border-radius: 14px;
-
             padding: 30px;
-
-            box-shadow:
-                    0 3px 12px
-                    rgba(0, 0, 0, 0.08);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
         }
 
         .details-header {
             display: flex;
-
-            justify-content:
-                    space-between;
-
+            justify-content: space-between;
             align-items: center;
-
-            border-bottom:
-                    1px solid #e5e7eb;
-
+            border-bottom: 1px solid #e5e7eb;
             padding-bottom: 20px;
-
             margin-bottom: 25px;
         }
 
@@ -182,9 +154,7 @@
 
         .complaint-id {
             color: #64748b;
-
             font-size: 14px;
-
             margin-top: 5px;
         }
 
@@ -192,43 +162,29 @@
 
         .info-grid {
             display: grid;
-
-            grid-template-columns:
-                    repeat(2, 1fr);
-
+            grid-template-columns: repeat(2, 1fr);
             gap: 22px;
-
             margin-bottom: 28px;
         }
 
         .info-box {
             background: #f8fafc;
-
             padding: 18px;
-
             border-radius: 9px;
-
-            border:
-                    1px solid #e2e8f0;
+            border: 1px solid #e2e8f0;
         }
 
         .info-box label {
             display: block;
-
             color: #64748b;
-
             font-size: 12px;
-
             margin-bottom: 7px;
-
             text-transform: uppercase;
-
             font-weight: 600;
         }
 
         .info-box p {
             font-size: 15px;
-
             font-weight: 600;
         }
 
@@ -240,33 +196,188 @@
 
         .description h3 {
             margin-bottom: 12px;
-
             font-size: 17px;
         }
 
         .description-box {
             background: #f8fafc;
-
-            border:
-                    1px solid #e2e8f0;
-
+            border: 1px solid #e2e8f0;
             border-radius: 9px;
-
             padding: 20px;
-
             line-height: 1.6;
-
             color: #475569;
+            white-space: pre-line;
+        }
+
+        /* =========================================================
+           AI PRIORITY ASSESSMENT
+           ========================================================= */
+
+        .ai-priority-section {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 24px;
+            border: 1px solid #dbeafe;
+            border-radius: 14px;
+            background: linear-gradient(
+                    135deg,
+                    #f8fbff,
+                    #eef6ff
+            );
+        }
+
+        .ai-priority-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .ai-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .ai-priority-header h3 {
+            margin: 0;
+            font-size: 19px;
+            color: #172554;
+        }
+
+        .ai-subtitle {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .ai-priority-grid {
+            display: grid;
+            grid-template-columns: 180px 180px 1fr;
+            gap: 15px;
+        }
+
+        .ai-box {
+            background: white;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 17px;
+        }
+
+        .ai-box label {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .ai-priority-badge {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 20px;
+            background: #fee2e2;
+            color: #991b1b;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .ai-confidence {
+            font-size: 22px;
+            font-weight: 800;
+            color: #2563eb;
+        }
+
+        .ai-reason {
+            color: #334155;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .ai-powered {
+            margin-top: 16px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        /* ================= PROGRESS ================= */
+
+        .progress-section {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 25px;
+            margin-top: 25px;
+        }
+
+        .progress-section h3 {
+            margin-bottom: 8px;
+        }
+
+        .progress-description {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .progress-current {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 9px;
+            padding: 18px;
+            line-height: 1.6;
+            color: #1e3a8a;
+            margin-bottom: 18px;
+            white-space: pre-line;
+        }
+
+        .progress-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .progress-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+
+        .progress-textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .progress-btn {
+            width: fit-content;
+            padding: 11px 22px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .progress-btn:hover {
+            background: #1d4ed8;
         }
 
         /* ================= STATUS ================= */
 
         .status-section {
-            border-top:
-                    1px solid #e5e7eb;
-
+            border-top: 1px solid #e5e7eb;
             padding-top: 25px;
-
             margin-top: 25px;
         }
 
@@ -274,30 +385,26 @@
             margin-bottom: 15px;
         }
 
+        .status-section p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
         .current-status {
             display: inline-block;
-
             padding: 8px 14px;
-
             border-radius: 20px;
-
             background: #fef3c7;
-
             color: #92400e;
-
             font-weight: bold;
-
             font-size: 13px;
         }
 
         /* ================= ASSIGN ================= */
 
         .assign-section {
-            border-top:
-                    1px solid #e5e7eb;
-
+            border-top: 1px solid #e5e7eb;
             padding-top: 25px;
-
             margin-top: 25px;
         }
 
@@ -307,55 +414,38 @@
 
         .assign-description {
             color: #64748b;
-
             font-size: 14px;
-
             margin-bottom: 18px;
+            line-height: 1.6;
         }
 
         .assign-form {
             display: flex;
-
             gap: 15px;
-
             align-items: center;
         }
 
         .officer-select {
             padding: 11px 15px;
-
-            border:
-                    1px solid #cbd5e1;
-
+            border: 1px solid #cbd5e1;
             border-radius: 7px;
-
             background: white;
-
             min-width: 300px;
-
             font-size: 14px;
         }
 
         .officer-select:focus {
             outline: none;
-
-            border-color:
-                    #2563eb;
+            border-color: #2563eb;
         }
 
         .assign-btn {
             padding: 11px 20px;
-
             background: #2563eb;
-
             color: white;
-
             border: none;
-
             border-radius: 7px;
-
             cursor: pointer;
-
             font-weight: 600;
         }
 
@@ -367,11 +457,8 @@
 
         .not-found {
             background: white;
-
             padding: 50px;
-
             text-align: center;
-
             border-radius: 12px;
         }
 
@@ -384,6 +471,17 @@
         }
 
         /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .ai-priority-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .ai-box:last-child {
+                grid-column: 1 / -1;
+            }
+        }
 
         @media (max-width: 800px) {
 
@@ -401,9 +499,7 @@
 
             .assign-form {
                 flex-direction: column;
-
-                align-items:
-                        stretch;
+                align-items: stretch;
             }
 
             .officer-select {
@@ -411,68 +507,34 @@
                 min-width: 0;
             }
 
+            .ai-priority-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-box:last-child {
+                grid-column: auto;
+            }
         }
 
     </style>
 
-</head>
+    <link rel="stylesheet"
+          th:href="@{/css/admin-sidebar.css}"/>
 
+</head>
 
 <body>
 
-
 <div class="layout">
-
 
     <!-- ================= SIDEBAR ================= -->
 
-    <aside class="sidebar">
-
-        <div class="logo">
-            Civic<span>Pulse</span>
-        </div>
-
-
-        <nav class="menu">
-
-            <a href="/admin/dashboard">
-                Dashboard
-            </a>
-
-            <a href="/admin/complaints"
-               class="active">
-                Complaints
-            </a>
-
-            <a href="/admin/officers">
-                Officers
-            </a>
-
-            <a href="/admin/citizens">
-                Citizens
-            </a>
-
-            <a href="/admin/reports">
-                Reports
-            </a>
-
-            <a href="/admin/profile">
-                Profile
-            </a>
-
-            <a href="/admin/settings">
-                Settings
-            </a>
-
-        </nav>
-
-    </aside>
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar('complaints')}"></aside>
 
 
     <!-- ================= MAIN ================= -->
 
     <main class="main">
-
 
         <!-- ================= TOPBAR ================= -->
 
@@ -493,10 +555,10 @@
 
         <section class="content">
 
+            <!-- BACK -->
 
-            <a
-                    href="/admin/complaints"
-                    class="back-btn">
+            <a class="back-btn"
+               href="/admin/complaints">
 
                 ← Back to Complaints
 
@@ -505,33 +567,32 @@
 
             <!-- ================= SUCCESS ================= -->
 
-            <div
-                    class="message success"
-                    th:if="${success}"
-                    th:text="${success}">
+            <div class="message success"
+                 th:if="${success}"
+                 th:text="${success}">
 
-                Complaint assigned successfully.
+                Complaint updated successfully.
 
             </div>
 
 
             <!-- ================= ERROR ================= -->
 
-            <div
-                    class="message error"
-                    th:if="${error}"
-                    th:text="${error}">
+            <div class="message error"
+                 th:if="${error}"
+                 th:text="${error}">
 
                 Error.
 
             </div>
 
 
-            <!-- ================= COMPLAINT ================= -->
+            <!-- =====================================================
+                 COMPLAINT DETAILS
+                 ===================================================== -->
 
-            <div
-                    class="details-card"
-                    th:if="${complaint != null}">
+            <div class="details-card"
+                 th:if="${complaint != null}">
 
 
                 <!-- ================= HEADER ================= -->
@@ -548,11 +609,8 @@
 
                             Complaint ID:
 
-                            <strong
-                                    th:text="${complaint.id}">
-
+                            <strong th:text="${complaint.id}">
                                 1
-
                             </strong>
 
                         </div>
@@ -567,21 +625,22 @@
                 <div class="info-grid">
 
 
+                    <!-- COMPLAINT NUMBER -->
+
                     <div class="info-box">
 
                         <label>
                             Complaint Number
                         </label>
 
-                        <p
-                                th:text="${complaint.complaintNumber}">
-
+                        <p th:text="${complaint.complaintNumber}">
                             CP-0001
-
                         </p>
 
                     </div>
 
+
+                    <!-- CITIZEN NAME -->
 
                     <div class="info-box">
 
@@ -589,15 +648,14 @@
                             Citizen Name
                         </label>
 
-                        <p
-                                th:text="${complaint.citizenName}">
-
+                        <p th:text="${complaint.citizenName}">
                             Citizen Name
-
                         </p>
 
                     </div>
 
+
+                    <!-- CITIZEN EMAIL -->
 
                     <div class="info-box">
 
@@ -605,15 +663,14 @@
                             Citizen Email
                         </label>
 
-                        <p
-                                th:text="${complaint.citizenEmail}">
-
+                        <p th:text="${complaint.citizenEmail}">
                             citizen@email.com
-
                         </p>
 
                     </div>
 
+
+                    <!-- CATEGORY -->
 
                     <div class="info-box">
 
@@ -621,15 +678,14 @@
                             Category
                         </label>
 
-                        <p
-                                th:text="${complaint.category}">
-
+                        <p th:text="${complaint.category}">
                             Category
-
                         </p>
 
                     </div>
 
+
+                    <!-- DEPARTMENT -->
 
                     <div class="info-box">
 
@@ -637,15 +693,14 @@
                             Department
                         </label>
 
-                        <p
-                                th:text="${complaint.department}">
-
+                        <p th:text="${complaint.department}">
                             Department
-
                         </p>
 
                     </div>
 
+
+                    <!-- LOCATION -->
 
                     <div class="info-box">
 
@@ -653,15 +708,14 @@
                             Location
                         </label>
 
-                        <p
-                                th:text="${complaint.location}">
-
+                        <p th:text="${complaint.location}">
                             Location
-
                         </p>
 
                     </div>
 
+
+                    <!-- PRIORITY -->
 
                     <div class="info-box">
 
@@ -669,15 +723,14 @@
                             Priority
                         </label>
 
-                        <p
-                                th:text="${complaint.priority}">
-
+                        <p th:text="${complaint.priority}">
                             Normal
-
                         </p>
 
                     </div>
 
+
+                    <!-- STATUS -->
 
                     <div class="info-box">
 
@@ -687,9 +740,8 @@
 
                         <p>
 
-                            <span
-                                    class="current-status"
-                                    th:text="${complaint.status}">
+                            <span class="current-status"
+                                  th:text="${complaint.status}">
 
                                 PENDING
 
@@ -708,16 +760,14 @@
                             Assigned Officer
                         </label>
 
-                        <p
-                                th:if="${complaint.assignedOfficer != null}"
-                                th:text="${complaint.assignedOfficer.username}">
+                        <p th:if="${complaint.assignedOfficer != null}"
+                           th:text="${complaint.assignedOfficer.username}">
 
                             Officer
 
                         </p>
 
-                        <p
-                                th:if="${complaint.assignedOfficer == null}">
+                        <p th:if="${complaint.assignedOfficer == null}">
 
                             Not Assigned
 
@@ -726,26 +776,26 @@
                     </div>
 
 
+                    <!-- CREATED AT -->
+
                     <div class="info-box">
 
                         <label>
                             Created At
                         </label>
 
-                        <p
-                                th:text="${complaint.createdAt}">
-
+                        <p th:text="${complaint.createdAt}">
                             Date
-
                         </p>
 
                     </div>
 
-
                 </div>
 
 
-                <!-- ================= DESCRIPTION ================= -->
+                <!-- =================================================
+                     COMPLAINT DESCRIPTION
+                     ================================================= -->
 
                 <div class="description">
 
@@ -753,9 +803,8 @@
                         Complaint Description
                     </h3>
 
-                    <div
-                            class="description-box"
-                            th:text="${complaint.description}">
+                    <div class="description-box"
+                         th:text="${complaint.description}">
 
                         Complaint description will appear here.
 
@@ -765,7 +814,211 @@
 
 
                 <!-- =================================================
-                     CURRENT STATUS
+                     AI PRIORITY ASSESSMENT
+                     ================================================= -->
+
+                <div class="ai-priority-section"
+                     th:if="${complaint.aiPriority != null}">
+
+
+                    <!-- AI HEADER -->
+
+                    <div class="ai-priority-header">
+
+                        <div class="ai-icon">
+                            🤖
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                AI Priority Assessment
+                            </h3>
+
+                            <div class="ai-subtitle">
+                                Intelligent complaint risk analysis
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AI INFORMATION -->
+
+                    <div class="ai-priority-grid">
+
+
+                        <!-- AI PRIORITY -->
+
+                        <div class="ai-box">
+
+                            <label>
+                                AI Predicted Priority
+                            </label>
+
+                            <span class="ai-priority-badge"
+                                  th:text="${complaint.aiPriority}">
+
+                                HIGH
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- CONFIDENCE -->
+
+                        <div class="ai-box">
+
+                            <label>
+                                Confidence
+                            </label>
+
+                            <div class="ai-confidence">
+
+                                <span th:text="${complaint.aiPriorityConfidence}">
+                                    90
+                                </span>%
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- REASON -->
+
+                        <div class="ai-box">
+
+                            <label>
+                                AI Assessment Reason
+                            </label>
+
+                            <div class="ai-reason"
+                                 th:text="${complaint.aiPriorityReason}">
+
+                                Significant risk indicators were detected.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AI FOOTER -->
+
+                    <div class="ai-powered">
+
+                        🤖 Priority automatically assessed using
+                        complaint title, description, category and location.
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     AI NOT AVAILABLE
+                     ================================================= -->
+
+                <div class="ai-priority-section"
+                     th:if="${complaint.aiPriority == null}">
+
+                    <div class="ai-priority-header">
+
+                        <div class="ai-icon">
+                            🤖
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                AI Priority Assessment
+                            </h3>
+
+                            <div class="ai-subtitle">
+                                AI analysis is not available for this complaint.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     PROGRESS UPDATE
+                     ================================================= -->
+
+                <div class="progress-section">
+
+                    <h3>
+                        Complaint Progress Update
+                    </h3>
+
+                    <p class="progress-description">
+
+                        Add the latest update so the citizen can see
+                        what action is currently being taken.
+
+                    </p>
+
+
+                    <!-- CURRENT SAVED PROGRESS -->
+
+                    <div class="progress-current"
+                         th:if="${complaint.progressUpdate != null
+                         and !complaint.progressUpdate.isBlank()}"
+                         th:text="${complaint.progressUpdate}">
+
+                    </div>
+
+
+                    <!-- NO PROGRESS -->
+
+                    <div class="progress-current"
+                         th:if="${complaint.progressUpdate == null
+                         or complaint.progressUpdate.isBlank()}">
+
+                        No progress update has been added yet.
+
+                    </div>
+
+
+                    <!-- SAVE PROGRESS FORM -->
+
+                    <form class="progress-form"
+                          method="post"
+                          th:action="@{/admin/complaints/{id}/progress(id=${complaint.id})}">
+
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+
+                        <textarea class="progress-textarea"
+                                  name="progressUpdate"
+                                  placeholder="Example: Inspection has been completed. The repair team has been assigned and work will begin tomorrow."
+                                  th:text="${complaint.progressUpdate}">
+                        </textarea>
+
+
+                        <button class="progress-btn"
+                                type="submit">
+
+                            Save Progress Update
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- =================================================
+                     STATUS
                      ================================================= -->
 
                 <div class="status-section">
@@ -775,16 +1028,18 @@
                     </h3>
 
                     <p>
+
                         The administrator cannot change the complaint
                         status. The assigned officer is responsible for
                         processing and resolving the complaint.
+
                     </p>
 
-                    <br>
+                    <br/>
 
-                    <span
-                            class="current-status"
-                            th:text="${complaint.status}">
+
+                    <span class="current-status"
+                          th:text="${complaint.status}">
 
                         PENDING
 
@@ -812,20 +1067,22 @@
                     </p>
 
 
-                    <form
-                            class="assign-form"
-                            th:action="@{/admin/complaints/{id}/assign(id=${complaint.id})}"
-                            method="post">
+                    <form class="assign-form"
+                          method="post"
+                          th:action="@{/admin/complaints/{id}/assign(id=${complaint.id})}">
 
 
-                        <select
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+
+                        <select class="officer-select"
                                 name="officerId"
-                                class="officer-select"
                                 required>
 
 
-                            <option
-                                    value=""
+                            <option value=""
                                     disabled
                                     th:selected="${complaint.assignedOfficer == null}">
 
@@ -834,29 +1091,25 @@
                             </option>
 
 
-                            <option
-                                    th:each="officer : ${officers}"
-                                    th:value="${officer.id}"
+                            <option th:each="officer : ${officers}"
                                     th:selected="${complaint.assignedOfficer != null
                                     and complaint.assignedOfficer.id == officer.id}"
-                                    th:text="${officer.username}">
+                                    th:text="${officer.username}"
+                                    th:value="${officer.id}">
 
                                 Officer
 
                             </option>
 
-
                         </select>
 
 
-                        <button
-                                type="submit"
-                                class="assign-btn">
+                        <button class="assign-btn"
+                                type="submit">
 
                             Assign Complaint
 
                         </button>
-
 
                     </form>
 
@@ -866,11 +1119,12 @@
             </div>
 
 
-            <!-- ================= NOT FOUND ================= -->
+            <!-- =====================================================
+                 NOT FOUND
+                 ===================================================== -->
 
-            <div
-                    class="not-found"
-                    th:if="${complaint == null}">
+            <div class="not-found"
+                 th:if="${complaint == null}">
 
                 <h2>
                     Complaint Not Found
@@ -888,7 +1142,6 @@
     </main>
 
 </div>
-
 
 </body>
 

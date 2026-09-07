@@ -1,16 +1,10 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
 
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Complaints | CivicPulse Admin</title>
-
     <style>
 
         * {
@@ -434,444 +428,218 @@
         }
 
     </style>
-
-</head>
-
-
+    <link rel="stylesheet" th:href="@{/css/admin-sidebar.css}"/></head>
 <body>
-
-
 <div class="layout">
-
-
     <!-- ================= SIDEBAR ================= -->
-
-    <aside class="sidebar">
-
-        <div class="logo">
-            Civic<span>Pulse</span>
-        </div>
-
-
-        <nav class="menu">
-
-            <a href="/admin/dashboard">
-                Dashboard
-            </a>
-
-            <a href="/admin/complaints"
-               class="active">
-                Complaints
-            </a>
-
-            <a href="/admin/officers">
-                Officers
-            </a>
-
-            <a href="/admin/citizens">
-                Citizens
-            </a>
-
-            <a href="/admin/reports">
-                Reports
-            </a>
-
-            <a href="/admin/profile">
-                Profile
-            </a>
-
-            <a href="/admin/settings">
-                Settings
-            </a>
-
-        </nav>
-
-    </aside>
-
-
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar('complaints')}"></aside>
     <!-- ================= MAIN ================= -->
-
     <main class="main">
-
-
         <!-- ================= TOP BAR ================= -->
-
         <header class="topbar">
-
             <h1>
                 Complaints Management
             </h1>
-
             <div class="admin-name">
                 Administrator
             </div>
-
         </header>
-
-
         <!-- ================= CONTENT ================= -->
-
         <section class="content">
-
-
             <!-- ================= SUCCESS ================= -->
-
-            <div
-                    th:if="${successMessage}"
-                    class="message success"
-                    th:text="${successMessage}">
+            <div class="message success" th:if="${successMessage}" th:text="${successMessage}">
             </div>
-
-
             <!-- ================= ERROR ================= -->
-
-            <div
-                    th:if="${errorMessage}"
-                    class="message error"
-                    th:text="${errorMessage}">
+            <div class="message error" th:if="${errorMessage}" th:text="${errorMessage}">
             </div>
-
-
             <!-- ================= STATISTICS ================= -->
-
             <div class="stats">
-
-
                 <!-- TOTAL -->
-
                 <div class="card">
-
                     <h3>
                         Total Complaints
                     </h3>
-
                     <p th:text="${totalComplaints}">
                         0
                     </p>
-
                 </div>
-
-
                 <!-- PENDING -->
-
                 <div class="card">
-
                     <h3>
                         Pending
                     </h3>
-
                     <p th:text="${pendingComplaints}">
                         0
                     </p>
-
                 </div>
-
-
                 <!-- IN PROGRESS -->
-
                 <div class="card">
-
                     <h3>
                         In Progress
                     </h3>
-
                     <p th:text="${inProgressComplaints}">
                         0
                     </p>
-
                 </div>
-
-
                 <!-- RESOLVED -->
-
                 <div class="card">
-
                     <h3>
                         Resolved
                     </h3>
-
                     <p th:text="${resolvedComplaints}">
                         0
                     </p>
-
                 </div>
-
             </div>
-
-
             <!-- ================= COMPLAINT TABLE ================= -->
-
             <div class="table-container">
-
-
                 <div class="table-header">
-
                     <h2>
                         All Complaints
                     </h2>
-
-
-                    <select
-                            class="filter"
-                            id="statusFilter">
-
+                    <select class="filter" id="statusFilter">
                         <option value="ALL">
                             All Status
                         </option>
-
                         <option value="PENDING">
                             Pending
                         </option>
-
                         <option value="IN_PROGRESS">
                             In Progress
                         </option>
-
                         <option value="UNDER_REVIEW">
                             Under Review
                         </option>
-
                         <option value="RESOLVED">
                             Resolved
                         </option>
-
                         <option value="CLOSED">
                             Closed
                         </option>
-
                     </select>
-
                 </div>
-
-
                 <table>
-
-
                     <thead>
-
                     <tr>
-
                         <th>
                             ID
                         </th>
-
                         <th>
                             Citizen
                         </th>
-
                         <th>
                             Category
                         </th>
-
                         <th>
                             Location
                         </th>
-
                         <th>
                             Description
                         </th>
-
                         <th>
                             Status
                         </th>
-
                         <th>
                             Assigned Officer
                         </th>
-
                         <th>
                             Action
                         </th>
-
                     </tr>
-
                     </thead>
-
-
                     <tbody id="complaintsTable">
-
-
                     <!-- ================= DATABASE DATA ================= -->
-
-                    <tr
-                            th:each="complaint : ${complaints}"
-                            th:attr="data-status=${complaint.status}">
-
-
+                    <tr th:attr="data-status=${complaint.status}" th:each="complaint : ${complaints}">
                         <!-- ID -->
-
                         <td th:text="${complaint.id}">
                             1
                         </td>
-
-
                         <!-- CITIZEN -->
-
                         <td th:text="${complaint.citizenName}">
                             Citizen
                         </td>
-
-
                         <!-- CATEGORY -->
-
                         <td th:text="${complaint.category}">
                             Category
                         </td>
-
-
                         <!-- LOCATION -->
-
                         <td th:text="${complaint.location}">
                             Location
                         </td>
-
-
                         <!-- DESCRIPTION -->
-
                         <td th:text="${complaint.description}">
                             Description
                         </td>
-
-
                         <!-- STATUS -->
-
                         <td>
-
-                            <span
-                                    class="status"
-
-                                    th:classappend="${complaint.status != null and #strings.toUpperCase(complaint.status).replace(' ', '_') == 'PENDING'} ? ' pending' :
+<span class="status" th:classappend="${complaint.status != null and #strings.toUpperCase(complaint.status).replace(' ', '_') == 'PENDING'} ? ' pending' :
                                     (${complaint.status != null and #strings.toUpperCase(complaint.status).replace(' ', '_') == 'RESOLVED'} ? ' resolved' :
                                     (${complaint.status != null and #strings.toUpperCase(complaint.status).replace(' ', '_') == 'IN_PROGRESS'} ? ' progress' :
-                                    (${complaint.status != null and #strings.toUpperCase(complaint.status).replace(' ', '_') == 'UNDER_REVIEW'} ? ' review' : ' unknown')))"
-
-                                    th:text="${complaint.status}">
+                                    (${complaint.status != null and #strings.toUpperCase(complaint.status).replace(' ', '_') == 'UNDER_REVIEW'} ? ' review' : ' unknown')))" th:text="${complaint.status}">
 
                                 PENDING
 
                             </span>
-
                         </td>
-
-
                         <!-- ================= ASSIGNED OFFICER ================= -->
-
                         <td>
-
-                            <div
-                                    th:if="${complaint.assignedOfficer != null}"
-                                    class="assigned">
+                            <div class="assigned" th:if="${complaint.assignedOfficer != null}">
 
                                 Assigned:
 
-                                <span
-                                        th:text="${complaint.assignedOfficer.username}">
+                                <span th:text="${complaint.assignedOfficer.username}">
                                     Officer
                                 </span>
-
                             </div>
-
-
-                            <div
-                                    th:if="${complaint.assignedOfficer == null}"
-                                    class="not-assigned">
+                            <div class="not-assigned" th:if="${complaint.assignedOfficer == null}">
 
                                 Not Assigned
 
                             </div>
-
-
                             <!-- ASSIGN / REASSIGN -->
-
-                            <form
-                                    class="assign-form"
-                                    th:action="@{/admin/complaints/{id}/assign(id=${complaint.id})}"
-                                    method="post">
-
-
-                                <select
-                                        name="officerId"
-                                        class="officer-select"
-                                        required>
-
+                            <form class="assign-form" method="post" th:action="@{/admin/complaints/{id}/assign(id=${complaint.id})}">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <select class="officer-select" name="officerId" required="">
                                     <option value="">
                                         Select Officer
                                     </option>
-
-
-                                    <option
-                                            th:each="officer : ${officers}"
-                                            th:value="${officer.id}"
-                                            th:text="${officer.username}">
+                                    <option th:each="officer : ${officers}" th:text="${officer.username}" th:value="${officer.id}">
 
                                         Officer
 
                                     </option>
-
                                 </select>
-
-
-                                <button
-                                        type="submit"
-                                        class="assign-btn">
+                                <button class="assign-btn" type="submit">
 
                                     Assign
 
                                 </button>
-
                             </form>
-
                         </td>
-
-
                         <!-- ================= VIEW ================= -->
-
                         <td>
-
-                            <a
-                                    class="btn"
-                                    th:href="@{/admin/complaints/{id}(id=${complaint.id})}">
+                            <a class="btn" th:href="@{/admin/complaints/{id}(id=${complaint.id})}">
 
                                 View
 
                             </a>
-
                         </td>
-
                     </tr>
-
-
                     <!-- ================= NO DATA ================= -->
-
-                    <tr
-                            th:if="${#lists.isEmpty(complaints)}">
-
-                        <td
-                                colspan="8"
-                                class="empty">
+                    <tr th:if="${#lists.isEmpty(complaints)}">
+                        <td class="empty" colspan="8">
 
                             No complaints found.
 
                         </td>
-
                     </tr>
-
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </section>
-
     </main>
-
 </div>
-
-
 <!-- ================= STATUS FILTER ================= -->
-
 <script>
 
     const filter =
@@ -923,8 +691,5 @@
     );
 
 </script>
-
-
 </body>
-
 </html>

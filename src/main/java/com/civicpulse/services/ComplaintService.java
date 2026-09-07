@@ -23,16 +23,14 @@ public class ComplaintService {
     public ComplaintService(
             ComplaintRepository complaintRepository) {
 
-        this.complaintRepository =
-                complaintRepository;
+        this.complaintRepository = complaintRepository;
     }
 
 
-    /*
-     * =========================================================
-     * GET COMPLAINTS FOR CITIZEN
-     * =========================================================
-     */
+    // =========================================================
+    // GET COMPLAINTS FOR CITIZEN
+    // =========================================================
+
     @Transactional(readOnly = true)
     public List<Complaint> getComplaintsForCitizen(
             String citizenEmail) {
@@ -50,11 +48,10 @@ public class ComplaintService {
     }
 
 
-    /*
-     * =========================================================
-     * API / DTO RETRIEVAL
-     * =========================================================
-     */
+    // =========================================================
+    // API / DTO RETRIEVAL
+    // =========================================================
+
     @Transactional(readOnly = true)
     public ComplaintDetailsDTO getComplaintDetailsById(
             String id) {
@@ -73,21 +70,17 @@ public class ComplaintService {
         Complaint complaint =
                 complaintOptional.get();
 
-        /*
-         * Initialize lazy attachments while
-         * transaction is active.
-         */
+        // Initialize lazy attachments while transaction is active
         complaint.getAttachments().size();
 
         return mapToDTO(complaint);
     }
 
 
-    /*
-     * =========================================================
-     * OFFICER COMPLAINTS
-     * =========================================================
-     */
+    // =========================================================
+    // OFFICER COMPLAINTS
+    // =========================================================
+
     @Transactional(readOnly = true)
     public List<Complaint> getComplaintsForOfficer(
             Officer officer) {
@@ -101,11 +94,10 @@ public class ComplaintService {
     }
 
 
-    /*
-     * =========================================================
-     * BASIC FIND
-     * =========================================================
-     */
+    // =========================================================
+    // BASIC FIND
+    // =========================================================
+
     @Transactional(readOnly = true)
     public Optional<Complaint> findById(
             Long id) {
@@ -131,11 +123,10 @@ public class ComplaintService {
     }
 
 
-    /*
-     * =========================================================
-     * SAVE
-     * =========================================================
-     */
+    // =========================================================
+    // SAVE
+    // =========================================================
+
     @Transactional
     public Complaint save(
             Complaint complaint) {
@@ -146,11 +137,10 @@ public class ComplaintService {
     }
 
 
-    /*
-     * =========================================================
-     * UPDATE
-     * =========================================================
-     */
+    // =========================================================
+    // UPDATE
+    // =========================================================
+
     @Transactional
     public Complaint update(
             Complaint complaint) {
@@ -161,11 +151,35 @@ public class ComplaintService {
     }
 
 
-    /*
-     * =========================================================
-     * OFFICER STATUS
-     * =========================================================
-     */
+    // =========================================================
+    // UPDATE COMPLAINT PROGRESS
+    // =========================================================
+
+    @Transactional
+    public Complaint updateComplaintProgress(
+            Long complaintId,
+            String progressUpdate) {
+
+        Optional<Complaint> complaintOptional =
+                complaintRepository.findById(complaintId);
+
+        if (complaintOptional.isEmpty()) {
+            return null;
+        }
+
+        Complaint complaint =
+                complaintOptional.get();
+
+        complaint.setProgressUpdate(progressUpdate);
+
+        return complaintRepository.save(complaint);
+    }
+
+
+    // =========================================================
+    // OFFICER STATUS
+    // =========================================================
+
     @Transactional(readOnly = true)
     public List<Complaint> getComplaintsByStatus(
             Officer officer,
@@ -186,11 +200,10 @@ public class ComplaintService {
     }
 
 
-    /*
-     * =========================================================
-     * OFFICER PRIORITY
-     * =========================================================
-     */
+    // =========================================================
+    // OFFICER PRIORITY
+    // =========================================================
+
     @Transactional(readOnly = true)
     public List<Complaint> getComplaintsByPriority(
             Officer officer,
@@ -211,11 +224,10 @@ public class ComplaintService {
     }
 
 
-    /*
-     * =========================================================
-     * FIND BY ID / COMPLAINT NUMBER
-     * =========================================================
-     */
+    // =========================================================
+    // FIND BY ID / COMPLAINT NUMBER
+    // =========================================================
+
     private Optional<Complaint> findByStringIdentifier(
             String identifier) {
 
@@ -225,9 +237,7 @@ public class ComplaintService {
             return Optional.empty();
         }
 
-        /*
-         * First try numeric database ID.
-         */
+        // First try numeric database ID
         try {
 
             Long numericId =
@@ -245,13 +255,9 @@ public class ComplaintService {
 
         } catch (NumberFormatException ignored) {
 
-            /*
-             * Not a numeric ID.
-             *
-             * Continue with complaint number.
-             */
+            // Not a numeric ID.
+            // Continue with complaint number.
         }
-
 
         return complaintRepository
                 .findByComplaintNumberWithAttachments(
@@ -260,11 +266,10 @@ public class ComplaintService {
     }
 
 
-    /*
-     * =========================================================
-     * DTO MAPPING
-     * =========================================================
-     */
+    // =========================================================
+    // DTO MAPPING
+    // =========================================================
+
     private ComplaintDetailsDTO mapToDTO(
             Complaint complaint) {
 
@@ -272,9 +277,7 @@ public class ComplaintService {
                 new ComplaintDetailsDTO();
 
 
-        /*
-         * Complaint ID
-         */
+        // Complaint ID
         dto.setId(
                 complaint.getComplaintNumber() != null
                         ? complaint.getComplaintNumber()
@@ -284,9 +287,10 @@ public class ComplaintService {
         );
 
 
-        /*
-         * Basic information
-         */
+        // =====================================================
+        // BASIC INFORMATION
+        // =====================================================
+
         dto.setTitle(
                 complaint.getTitle()
         );
@@ -316,9 +320,32 @@ public class ComplaintService {
         );
 
 
-        /*
-         * Dates
-         */
+        // =====================================================
+        // PROGRESS UPDATE - NEW
+        // =====================================================
+
+        dto.setProgressUpdate(
+                complaint.getProgressUpdate()
+        );
+
+
+        // =====================================================
+        // RESOLUTION
+        // =====================================================
+
+        dto.setResolution(
+                complaint.getResolution()
+        );
+
+        dto.setRemarks(
+                complaint.getRemarks()
+        );
+
+
+        // =====================================================
+        // DATES
+        // =====================================================
+
         dto.setCreatedAt(
                 complaint.getCreatedAt()
         );
@@ -336,9 +363,10 @@ public class ComplaintService {
         );
 
 
-        /*
-         * Attachments
-         */
+        // =====================================================
+        // ATTACHMENTS
+        // =====================================================
+
         if (complaint.getAttachments() != null &&
                 !complaint.getAttachments().isEmpty()) {
 
@@ -363,22 +391,19 @@ public class ComplaintService {
             );
         }
 
-
         return dto;
     }
 
 
-    /*
-     * =========================================================
-     * ATTACHMENT DTO
-     * =========================================================
-     */
+    // =========================================================
+    // ATTACHMENT DTO
+    // =========================================================
+
     private AttachmentDTO mapAttachmentToDTO(
             ComplaintAttachment attachment) {
 
         AttachmentDTO dto =
                 new AttachmentDTO();
-
 
         dto.setId(
                 attachment.getId()
@@ -401,9 +426,7 @@ public class ComplaintService {
         );
 
 
-        /*
-         * Attachment URL
-         */
+        // Attachment URL
         if (attachment.getStoredFileName() != null &&
                 !attachment.getStoredFileName().isBlank()) {
 
@@ -417,8 +440,114 @@ public class ComplaintService {
             dto.setFileUrl("#");
         }
 
-
         return dto;
     }
-}
 
+
+    // =========================================================
+    // ADMIN METHODS
+    // =========================================================
+
+    @Transactional(readOnly = true)
+    public List<Complaint> getAllComplaints() {
+
+        return complaintRepository.findAll();
+    }
+
+
+    @Transactional(readOnly = true)
+    public Complaint getComplaintById(Long id) {
+
+        return complaintRepository
+                .findById(id)
+                .orElse(null);
+    }
+
+
+    @Transactional(readOnly = true)
+    public long getTotalComplaints() {
+
+        return complaintRepository.count();
+    }
+
+
+    @Transactional(readOnly = true)
+    public long getPendingComplaints() {
+
+        return complaintRepository.findAll()
+                .stream()
+                .filter(complaint ->
+                        complaint.getStatus() != null &&
+                                complaint.getStatus()
+                                        .equalsIgnoreCase("PENDING")
+                )
+                .count();
+    }
+
+
+    @Transactional(readOnly = true)
+    public long getUnderReviewComplaints() {
+
+        return complaintRepository.findAll()
+                .stream()
+                .filter(complaint ->
+                        complaint.getStatus() != null &&
+                                (
+                                        complaint.getStatus()
+                                                .equalsIgnoreCase("UNDER REVIEW")
+                                                ||
+                                                complaint.getStatus()
+                                                        .equalsIgnoreCase("UNDER_REVIEW")
+                                )
+                )
+                .count();
+    }
+
+
+    @Transactional(readOnly = true)
+    public long getResolvedComplaints() {
+
+        return complaintRepository.findAll()
+                .stream()
+                .filter(complaint ->
+                        complaint.getStatus() != null &&
+                                complaint.getStatus()
+                                        .equalsIgnoreCase("RESOLVED")
+                )
+                .count();
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<Complaint> getRecentComplaints() {
+
+        return complaintRepository.findAll()
+                .stream()
+                .sorted(
+                        (c1, c2) -> {
+
+                            if (c1.getCreatedAt() == null) {
+                                return 1;
+                            }
+
+                            if (c2.getCreatedAt() == null) {
+                                return -1;
+                            }
+
+                            return c2.getCreatedAt()
+                                    .compareTo(
+                                            c1.getCreatedAt()
+                                    );
+                        }
+                )
+                .limit(5)
+                .collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    public Complaint saveComplaint(Complaint complaint) {
+
+        return complaintRepository.save(complaint);
+    }
+}

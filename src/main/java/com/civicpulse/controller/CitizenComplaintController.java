@@ -4,6 +4,7 @@ import com.civicpulse.entites.Citizen;
 import com.civicpulse.entites.Complaint;
 import com.civicpulse.entites.ComplaintAttachment;
 import com.civicpulse.repositories.CitizenRepository;
+import com.civicpulse.services.AiPriorityService;
 import com.civicpulse.services.ComplaintAttachmentService;
 import com.civicpulse.services.ComplaintService;
 
@@ -30,17 +31,20 @@ public class CitizenComplaintController {
     private final ComplaintService complaintService;
     private final ComplaintAttachmentService attachmentService;
     private final CitizenRepository citizenRepository;
+    private final AiPriorityService aiPriorityService;
 
     private static final String UPLOAD_DIR = "uploads/";
 
     public CitizenComplaintController(
             ComplaintService complaintService,
             ComplaintAttachmentService attachmentService,
-            CitizenRepository citizenRepository) {
+            CitizenRepository citizenRepository,
+            AiPriorityService aiPriorityService) {
 
         this.complaintService = complaintService;
         this.attachmentService = attachmentService;
         this.citizenRepository = citizenRepository;
+        this.aiPriorityService = aiPriorityService;
     }
 
     /*
@@ -81,7 +85,10 @@ public class CitizenComplaintController {
             @RequestParam("location")
             String location,
 
-            @RequestParam(value = "attachment", required = false)
+            @RequestParam(
+                    value = "attachment",
+                    required = false
+            )
             MultipartFile attachment,
 
             Authentication authentication,
@@ -125,6 +132,12 @@ public class CitizenComplaintController {
                     complaintNumber
             );
 
+            /*
+             * =================================================
+             * BASIC COMPLAINT INFORMATION
+             * =================================================
+             */
+
             complaint.setTitle(title);
 
             complaint.setDescription(description);
@@ -135,15 +148,79 @@ public class CitizenComplaintController {
 
             /*
              * =================================================
-             * DEFAULT VALUES
+             * DEFAULT STATUS
              * =================================================
              */
 
             complaint.setStatus("PENDING");
 
-            complaint.setPriority(
-                    determinePriority(category)
+            /*
+             * =================================================
+             * AI PRIORITY PREDICTION
+             * =================================================
+             *
+             * AI analyzes:
+             * - Title
+             * - Description
+             * - Category
+             * - Location
+             *
+             * Result:
+             * - LOW
+             * - MEDIUM
+             * - HIGH
+             * - CRITICAL
+             *
+             * Also stores:
+             * - Reason
+             * - Confidence
+             */
+
+            AiPriorityService.PriorityResult aiResult =
+                    aiPriorityService.predictPriority(
+                            title,
+                            description,
+                            category,
+                            location
+                    );
+
+            /*
+             * AI predicted priority
+             */
+
+            complaint.setAiPriority(
+                    aiResult.getPriority()
             );
+
+            /*
+             * Use AI priority as complaint priority
+             */
+
+            complaint.setPriority(
+                    aiResult.getPriority()
+            );
+
+            /*
+             * AI explanation
+             */
+
+            complaint.setAiPriorityReason(
+                    aiResult.getReason()
+            );
+
+            /*
+             * AI confidence percentage
+             */
+
+            complaint.setAiPriorityConfidence(
+                    aiResult.getConfidence()
+            );
+
+            /*
+             * =================================================
+             * DEPARTMENT
+             * =================================================
+             */
 
             complaint.setDepartment(
                     determineDepartment(category)
@@ -205,6 +282,25 @@ public class CitizenComplaintController {
             redirectAttributes.addFlashAttribute(
                     "complaintNumber",
                     savedComplaint.getComplaintNumber()
+            );
+
+            /*
+             * Also pass AI priority information
+             */
+
+            redirectAttributes.addFlashAttribute(
+                    "aiPriority",
+                    savedComplaint.getAiPriority()
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "aiPriorityReason",
+                    savedComplaint.getAiPriorityReason()
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "aiPriorityConfidence",
+                    savedComplaint.getAiPriorityConfidence()
             );
 
             return "redirect:/citizen/complaints";
@@ -373,32 +469,6 @@ public class CitizenComplaintController {
 
     /*
      * =========================================================
-     * DETERMINE PRIORITY
-     * =========================================================
-     */
-
-    private String determinePriority(
-            String category) {
-
-        if (category == null) {
-            return "MEDIUM";
-        }
-
-        String value =
-                category.toLowerCase();
-
-        if (value.contains("water")
-                || value.contains("electricity")
-                || value.contains("sanitation")) {
-
-            return "HIGH";
-        }
-
-        return "MEDIUM";
-    }
-
-    /*
-     * =========================================================
      * DETERMINE DEPARTMENT
      * =========================================================
      */
@@ -435,4 +505,3 @@ public class CitizenComplaintController {
         }
     }
 }
-

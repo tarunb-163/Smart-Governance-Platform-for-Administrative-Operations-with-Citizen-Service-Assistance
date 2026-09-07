@@ -9,1051 +9,604 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>CivicPulse - Track Complaint</title>
-
-
-    <!-- Bootstrap -->
+    <title>Track Complaint - CivicPulse</title>
 
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
             rel="stylesheet">
 
-
-    <!-- Bootstrap Icons -->
-
     <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
 
     <style>
 
         body {
-            margin: 0;
+            background: #f5f7fb;
             font-family: Arial, sans-serif;
-            background: #f4f7fb;
+            color: #1f2937;
         }
 
-
-        .navbar {
-            background: #123b6d;
+        .container-main {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
-
-
-        .navbar-brand {
-            font-weight: bold;
-            color: white !important;
-            font-size: 22px;
-        }
-
-
-        .navbar-text {
-            color: white;
-        }
-
-
-        .sidebar {
-            min-height: calc(100vh - 56px);
-            background: white;
-            border-right: 1px solid #ddd;
-            padding-top: 20px;
-        }
-
-
-        .sidebar a {
-            display: block;
-            padding: 13px 20px;
-            color: #333;
-            text-decoration: none;
-        }
-
-
-        .sidebar a:hover {
-            background: #eaf2ff;
-            color: #123b6d;
-        }
-
-
-        .sidebar a.active {
-            background: #eaf2ff;
-            color: #123b6d;
-            font-weight: bold;
-        }
-
-
-        .main-content {
-            padding: 30px;
-        }
-
-
-        .content-card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-        }
-
 
         .page-title {
-            color: #123b6d;
-            font-weight: bold;
+            font-size: 30px;
+            font-weight: 700;
+            color: #172554;
+            margin-bottom: 8px;
         }
 
-
-        .search-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 25px;
+        .page-subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
         }
 
-
-        .status-card {
-            border: 1px solid #ddd;
-            border-radius: 10px;
+        .card-custom {
+            background: white;
+            border-radius: 14px;
             padding: 25px;
-            margin-top: 25px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 25px;
         }
 
-
-        .detail-label {
-            color: #6c757d;
-            font-size: 14px;
-            margin-bottom: 4px;
+        .search-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
         }
 
+        .form-control {
+            height: 48px;
+            border-radius: 8px;
+        }
 
-        .detail-value {
+        .btn-track {
+            height: 48px;
+            border-radius: 8px;
             font-weight: 600;
-            font-size: 16px;
         }
 
-
-        .timeline {
-            position: relative;
-            margin-top: 30px;
-            padding-left: 45px;
+        .error-box {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
-
-        .timeline::before {
-            content: "";
-            position: absolute;
-            left: 17px;
-            top: 5px;
-            bottom: 5px;
-            width: 3px;
-            background: #d9e2ef;
-        }
-
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 35px;
-        }
-
-
-        .timeline-icon {
-            position: absolute;
-            left: -38px;
-            top: 0;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #198754;
-            color: white;
+        .complaint-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
 
-
-        .timeline-item.active .timeline-icon {
-            background: #0d6efd;
+        .complaint-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #172554;
         }
-
-
-        .timeline-item.pending .timeline-icon {
-            background: #adb5bd;
-        }
-
-
-        .timeline-title {
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-
-
-        .timeline-item.pending {
-            opacity: 0.7;
-        }
-
 
         .status-badge {
-            font-size: 15px;
-            padding: 8px 14px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            background: #e0f2fe;
+            color: #0369a1;
         }
 
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 18px;
+            height: 100%;
+        }
 
-        .resolution-box {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
+        .info-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .description-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 18px;
             margin-top: 20px;
         }
 
-
-        .btn-primary {
-            background: #123b6d;
-            border: none;
+        .progress-update-box {
+            margin-top: 25px;
+            padding: 20px;
+            border: 1px solid #cfe2ff;
+            border-radius: 10px;
+            background: #eef6ff;
+            color: #183b66;
         }
 
+        .progress-update-box h5 {
+            color: #123b6d;
+            font-weight: 700;
+        }
 
-        .btn-primary:hover {
-            background: #0d2c52;
+        .progress-update-box p {
+            line-height: 1.6;
+        }
+
+        .timeline {
+            margin-top: 25px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #dbeafe;
+            color: #2563eb;
+            flex-shrink: 0;
+        }
+
+        .timeline-content h6 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .timeline-content p {
+            margin: 4px 0 0;
+            color: #64748b;
         }
 
     </style>
 
 </head>
 
-
 <body>
 
+<div class="container-main">
 
-<!-- =========================================================
-     NAVBAR
-========================================================= -->
+    <!-- PAGE HEADER -->
 
-<nav class="navbar">
+    <div>
+        <h1 class="page-title">
+            Track Complaint
+        </h1>
 
-    <div class="container-fluid">
-
-        <a
-                class="navbar-brand"
-                th:href="@{/citizen/dashboard}">
-
-            <i class="bi bi-building"></i>
-
-            CivicPulse
-
-        </a>
+        <p class="page-subtitle">
+            Enter your complaint number to check the latest status and progress.
+        </p>
+    </div>
 
 
-        <span class="navbar-text">
+    <!-- SEARCH CARD -->
 
-            <i class="bi bi-person-circle"></i>
+    <div class="card-custom">
 
-            <span
-                    th:text="${citizen != null
-                    ? citizen.fullName
-                    : 'Citizen'}">
+        <div class="search-title">
+            <i class="bi bi-search me-2"></i>
+            Find Your Complaint
+        </div>
 
-                Citizen
+        <form
+                method="get"
+                action="/citizen/track">
 
-            </span>
+            <div class="row g-3">
 
+                <div class="col-md-9">
+
+                    <input
+                            type="text"
+                            name="complaintNumber"
+                            class="form-control"
+                            placeholder="Enter complaint number e.g. CP-20260904-C65A9A"
+                            th:value="${searchedComplaintNumber}"
+                            required>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <button
+                            type="submit"
+                            class="btn btn-primary btn-track w-100">
+
+                        <i class="bi bi-search me-1"></i>
+                        Track Complaint
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- ERROR MESSAGE -->
+
+    <div
+            th:if="${errorMessage != null}"
+            class="error-box">
+
+        <i class="bi bi-exclamation-circle me-2"></i>
+
+        <span th:text="${errorMessage}">
+            Complaint not found.
         </span>
 
     </div>
 
-</nav>
 
+    <!-- COMPLAINT DETAILS -->
 
+    <div
+            th:if="${complaint != null}"
+            class="card-custom">
 
-<div class="container-fluid">
+        <!-- HEADER -->
 
-    <div class="row">
+        <div class="complaint-header">
 
+            <div>
 
-        <!-- =================================================
-             SIDEBAR
-        ================================================== -->
+                <div class="info-label">
+                    Complaint Number
+                </div>
 
-        <div class="col-md-2 sidebar">
+                <div
+                        class="complaint-number"
+                        th:text="${complaint.complaintNumber}">
+                    CP-20260904-C65A9A
+                </div>
 
+            </div>
 
-            <a
-                    th:href="@{/citizen/dashboard}">
-
-                <i class="bi bi-speedometer2"></i>
-
-                Dashboard
-
-            </a>
-
-
-            <a
-                    th:href="@{/citizen/complaint-form}">
-
-                <i class="bi bi-plus-circle"></i>
-
-                Register Complaint
-
-            </a>
-
-
-            <a
-                    th:href="@{/citizen/complaints}">
-
-                <i class="bi bi-file-text"></i>
-
-                My Complaints
-
-            </a>
-
-
-            <a
-                    th:href="@{/citizen/track}"
-                    class="active">
-
-                <i class="bi bi-search"></i>
-
-                Track Complaint
-
-            </a>
-
-
-            <a
-                    th:href="@{/citizen/notifications}">
-
-                <i class="bi bi-bell"></i>
-
-                Notifications
-
-            </a>
-
-
-            <a
-                    th:href="@{/citizen/profile}">
-
-                <i class="bi bi-person"></i>
-
-                My Profile
-
-            </a>
-
-
-            <a
-                    th:href="@{/logout}">
-
-                <i class="bi bi-box-arrow-right"></i>
-
-                Logout
-
-            </a>
+            <div
+                    class="status-badge"
+                    th:text="${complaint.status}">
+                PENDING
+            </div>
 
         </div>
 
 
+        <!-- BASIC DETAILS -->
 
-        <!-- =================================================
-             MAIN CONTENT
-        ================================================== -->
+        <div class="row g-3">
 
-        <div class="col-md-10 main-content">
+            <div class="col-md-6">
 
-            <div class="content-card">
+                <div class="info-box">
 
-
-                <!-- =================================================
-                     PAGE TITLE
-                ================================================== -->
-
-                <h2 class="page-title mb-2">
-
-                    <i class="bi bi-search"></i>
-
-                    Track Complaint
-
-                </h2>
-
-
-                <p class="text-muted">
-
-                    Enter your complaint number to view its current
-                    status and progress.
-
-                </p>
-
-
-
-                <!-- =================================================
-                     SEARCH BOX
-                ================================================== -->
-
-                <div class="search-box">
-
-
-                    <form
-                            th:action="@{/citizen/track}"
-                            method="get">
-
-
-                        <label
-                                for="complaintNumber"
-                                class="form-label">
-
-                            Complaint Number
-
-                        </label>
-
-
-                        <div class="input-group">
-
-                            <input
-                                    type="text"
-                                    id="complaintNumber"
-                                    name="complaintNumber"
-                                    class="form-control"
-                                    placeholder="Example: CP-20260812-ABC123"
-                                    th:value="${searchedComplaintNumber}"
-                                    required>
-
-
-                            <button
-                                    type="submit"
-                                    class="btn btn-primary">
-
-                                <i class="bi bi-search"></i>
-
-                                Track
-
-                            </button>
-
-                        </div>
-
-
-                        <small class="text-muted">
-
-                            Enter the complaint number you received
-                            after submitting your complaint.
-
-                        </small>
-
-
-                    </form>
-
-                </div>
-
-
-
-                <!-- =================================================
-                     ERROR MESSAGE
-                ================================================== -->
-
-                <div
-                        th:if="${errorMessage}"
-                        class="alert alert-danger mt-4">
-
-                    <i class="bi bi-exclamation-triangle"></i>
-
-                    <span
-                            th:text="${errorMessage}">
-
-                        Complaint not found.
-
-                    </span>
-
-                </div>
-
-
-
-                <!-- =================================================
-                     COMPLAINT DETAILS
-                ================================================== -->
-
-                <div
-                        th:if="${complaint != null}"
-                        class="status-card">
-
-
-                    <div class="row">
-
-
-                        <!-- COMPLAINT NUMBER -->
-
-                        <div class="col-md-6 mb-4">
-
-                            <div class="detail-label">
-
-                                Complaint Number
-
-                            </div>
-
-                            <div
-                                    class="detail-value"
-                                    th:text="${complaint.complaintNumber}">
-
-                                CP-20260812-ABC123
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- CATEGORY -->
-
-                        <div class="col-md-6 mb-4">
-
-                            <div class="detail-label">
-
-                                Category
-
-                            </div>
-
-                            <div
-                                    class="detail-value"
-                                    th:text="${complaint.category}">
-
-                                Road Damage
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- TITLE -->
-
-                        <div class="col-md-6 mb-4">
-
-                            <div class="detail-label">
-
-                                Complaint Subject
-
-                            </div>
-
-                            <div
-                                    class="detail-value"
-                                    th:text="${complaint.title}">
-
-                                Road Damage
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- LOCATION -->
-
-                        <div class="col-md-6 mb-4">
-
-                            <div class="detail-label">
-
-                                Location
-
-                            </div>
-
-                            <div
-                                    class="detail-value"
-                                    th:text="${complaint.location}">
-
-                                Location
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- SUBMITTED DATE -->
-
-                        <div class="col-md-6 mb-4">
-
-                            <div class="detail-label">
-
-                                Submitted Date
-
-                            </div>
-
-                            <div
-                                    class="detail-value"
-                                    th:if="${complaint.createdAt != null}"
-                                    th:text="${#temporals.format(
-                                        complaint.createdAt,
-                                        'dd MMM yyyy, hh:mm a'
-                                    )}">
-
-                                12 Aug 2026
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- PRIORITY -->
-
-                        <div class="col-md-6 mb-4">
-
-                            <div class="detail-label">
-
-                                Priority
-
-                            </div>
-
-                            <div>
-
-                                <span
-                                        class="badge bg-warning text-dark status-badge"
-                                        th:text="${complaint.priority}">
-
-                                    MEDIUM
-
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- DEPARTMENT -->
-
-                        <div class="col-md-6 mb-4">
-
-                            <div class="detail-label">
-
-                                Department
-
-                            </div>
-
-                            <div
-                                    class="detail-value"
-                                    th:text="${complaint.department != null
-                                    ? complaint.department
-                                    : 'Not Assigned'}">
-
-                                GENERAL
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- CURRENT STATUS -->
-
-                        <div class="col-md-6 mb-4">
-
-                            <div class="detail-label">
-
-                                Current Status
-
-                            </div>
-
-                            <div>
-
-                                <span
-                                        th:if="${complaint.status == 'PENDING'}"
-                                        class="badge bg-warning text-dark status-badge">
-
-                                    Pending
-
-                                </span>
-
-
-                                <span
-                                        th:if="${complaint.status == 'ASSIGNED'}"
-                                        class="badge bg-primary status-badge">
-
-                                    Assigned
-
-                                </span>
-
-
-                                <span
-                                        th:if="${complaint.status == 'IN_PROGRESS'}"
-                                        class="badge bg-info text-dark status-badge">
-
-                                    In Progress
-
-                                </span>
-
-
-                                <span
-                                        th:if="${complaint.status == 'RESOLVED'}"
-                                        class="badge bg-success status-badge">
-
-                                    Resolved
-
-                                </span>
-
-
-                                <span
-                                        th:if="${complaint.status == 'REJECTED'}"
-                                        class="badge bg-danger status-badge">
-
-                                    Rejected
-
-                                </span>
-
-                            </div>
-
-                        </div>
-
+                    <div class="info-label">
+                        Complaint Title
                     </div>
-
-
-
-                    <!-- =================================================
-                         TIMELINE
-                    ================================================== -->
-
-                    <h5 class="mt-4 mb-3">
-
-                        Complaint Progress
-
-                    </h5>
-
-
-                    <div class="timeline">
-
-
-                        <!-- =================================================
-                             SUBMITTED
-                        ================================================== -->
-
-                        <div class="timeline-item">
-
-
-                            <div class="timeline-icon">
-
-                                <i class="bi bi-check"></i>
-
-                            </div>
-
-
-                            <div>
-
-                                <div class="timeline-title">
-
-                                    Complaint Submitted
-
-                                </div>
-
-
-                                <small
-                                        class="text-muted"
-                                        th:if="${complaint.createdAt != null}"
-                                        th:text="${#temporals.format(
-                                            complaint.createdAt,
-                                            'dd MMM yyyy, hh:mm a'
-                                        )}">
-
-                                    Date
-
-                                </small>
-
-
-                                <p class="mb-0 mt-1">
-
-                                    Your complaint has been
-                                    successfully submitted.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- =================================================
-                             ASSIGNED
-                        ================================================== -->
-
-                        <div
-                                class="timeline-item"
-                                th:classappend="${complaint.assignedAt != null
-                                    ? ' active'
-                                    : ' pending'}">
-
-
-                            <div class="timeline-icon">
-
-                                <i class="bi bi-person-check"></i>
-
-                            </div>
-
-
-                            <div>
-
-                                <div class="timeline-title">
-
-                                    Assigned to Officer
-
-                                </div>
-
-
-                                <small
-                                        class="text-muted"
-                                        th:if="${complaint.assignedAt != null}"
-                                        th:text="${#temporals.format(
-                                            complaint.assignedAt,
-                                            'dd MMM yyyy, hh:mm a'
-                                        )}">
-
-                                    Date
-
-                                </small>
-
-
-                                <small
-                                        class="text-muted"
-                                        th:if="${complaint.assignedAt == null}">
-
-                                    Pending
-
-                                </small>
-
-
-                                <p class="mb-0 mt-1">
-
-                                    <span
-                                            th:if="${complaint.assignedAt != null}">
-
-                                        Your complaint has been assigned
-                                        to a concerned officer.
-
-                                    </span>
-
-
-                                    <span
-                                            th:if="${complaint.assignedAt == null}">
-
-                                        Your complaint is waiting to be
-                                        assigned to an officer.
-
-                                    </span>
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- =================================================
-                             IN PROGRESS
-                        ================================================== -->
-
-                        <div
-                                class="timeline-item"
-                                th:classappend="${complaint.inProgressAt != null
-                                    ? ' active'
-                                    : ' pending'}">
-
-
-                            <div class="timeline-icon">
-
-                                <i class="bi bi-hourglass-split"></i>
-
-                            </div>
-
-
-                            <div>
-
-                                <div class="timeline-title">
-
-                                    In Progress
-
-                                </div>
-
-
-                                <small
-                                        class="text-muted"
-                                        th:if="${complaint.inProgressAt != null}"
-                                        th:text="${#temporals.format(
-                                            complaint.inProgressAt,
-                                            'dd MMM yyyy, hh:mm a'
-                                        )}">
-
-                                    Date
-
-                                </small>
-
-
-                                <small
-                                        class="text-muted"
-                                        th:if="${complaint.inProgressAt == null}">
-
-                                    Pending
-
-                                </small>
-
-
-                                <p class="mb-0 mt-1">
-
-                                    <span
-                                            th:if="${complaint.inProgressAt != null}">
-
-                                        The concerned officer is currently
-                                        working on your complaint.
-
-                                    </span>
-
-
-                                    <span
-                                            th:if="${complaint.inProgressAt == null}">
-
-                                        This stage has not started yet.
-
-                                    </span>
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- =================================================
-                             RESOLVED
-                        ================================================== -->
-
-                        <div
-                                class="timeline-item"
-                                th:classappend="${complaint.resolvedAt != null
-                                    ? ' active'
-                                    : ' pending'}">
-
-
-                            <div class="timeline-icon">
-
-                                <i class="bi bi-check-circle"></i>
-
-                            </div>
-
-
-                            <div>
-
-                                <div class="timeline-title">
-
-                                    Resolution
-
-                                </div>
-
-
-                                <small
-                                        class="text-muted"
-                                        th:if="${complaint.resolvedAt != null}"
-                                        th:text="${#temporals.format(
-                                            complaint.resolvedAt,
-                                            'dd MMM yyyy, hh:mm a'
-                                        )}">
-
-                                    Date
-
-                                </small>
-
-
-                                <small
-                                        class="text-muted"
-                                        th:if="${complaint.resolvedAt == null}">
-
-                                    Pending
-
-                                </small>
-
-
-                                <p class="mb-0 mt-1">
-
-                                    <span
-                                            th:if="${complaint.resolvedAt != null}">
-
-                                        Your complaint has been resolved.
-
-                                    </span>
-
-
-                                    <span
-                                            th:if="${complaint.resolvedAt == null}">
-
-                                        The complaint will be marked resolved
-                                        after the issue is addressed.
-
-                                    </span>
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- =================================================
-                         RESOLUTION
-                    ================================================== -->
 
                     <div
-                            th:if="${complaint.resolution != null
-                                && !complaint.resolution.isBlank()}"
-                            class="resolution-box">
-
-
-                        <h6>
-
-                            <i class="bi bi-check-circle text-success"></i>
-
-                            Resolution Details
-
-                        </h6>
-
-
-                        <p
-                                class="mb-0"
-                                th:text="${complaint.resolution}">
-
-                            Resolution details.
-
-                        </p>
-
+                            class="info-value"
+                            th:text="${complaint.title}">
+                        Complaint title
                     </div>
-
-
-
-                    <!-- =================================================
-                         REMARKS
-                    ================================================== -->
-
-                    <div
-                            th:if="${complaint.remarks != null
-                                && !complaint.remarks.isBlank()}"
-                            class="resolution-box">
-
-
-                        <h6>
-
-                            <i class="bi bi-chat-left-text"></i>
-
-                            Remarks
-
-                        </h6>
-
-
-                        <p
-                                class="mb-0"
-                                th:text="${complaint.remarks}">
-
-                            Remarks.
-
-                        </p>
-
-                    </div>
-
 
                 </div>
 
+            </div>
 
+
+            <div class="col-md-6">
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Category
+                    </div>
+
+                    <div
+                            class="info-value"
+                            th:text="${complaint.category}">
+                        Other
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Location
+                    </div>
+
+                    <div
+                            class="info-value"
+                            th:text="${complaint.location}">
+                        Noida 52
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Department
+                    </div>
+
+                    <div
+                            class="info-value"
+                            th:text="${complaint.department != null ? complaint.department : 'Not Assigned'}">
+                        Electricity
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Priority
+                    </div>
+
+                    <div
+                            class="info-value"
+                            th:text="${complaint.priority != null ? complaint.priority : 'Normal'}">
+                        Normal
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Assigned Officer
+                    </div>
+
+                    <div
+                            class="info-value"
+                            th:text="${complaint.assignedOfficer != null ? complaint.assignedOfficer.fullName : 'Not Assigned'}">
+                        Not Assigned
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+
+        <div
+                class="description-box"
+                th:if="${complaint.description != null and !#strings.isEmpty(complaint.description.trim())}">
+
+            <div class="info-label">
+                Description
+            </div>
+
+            <div
+                    th:text="${complaint.description}">
+                Complaint description
+            </div>
+
+        </div>
+
+
+        <!-- PROGRESS UPDATE -->
+
+        <div
+                th:if="${complaint.progressUpdate != null and !#strings.isEmpty(complaint.progressUpdate.trim())}"
+                class="progress-update-box">
+
+            <div class="d-flex align-items-center gap-2 mb-2">
+
+                <i class="bi bi-tools text-primary"></i>
+
+                <h5 class="mb-0">
+                    Latest Work Progress
+                </h5>
+
+            </div>
+
+            <p
+                    class="mb-0"
+                    th:text="${complaint.progressUpdate}">
+                Latest work progress update from the concerned officer.
+            </p>
+
+        </div>
+
+
+        <!-- TIMELINE -->
+
+        <div class="timeline">
+
+            <h5 class="mb-4">
+                Complaint Progress
+            </h5>
+
+
+            <!-- SUBMITTED -->
+
+            <div class="timeline-item">
+
+                <div class="timeline-icon">
+                    <i class="bi bi-file-earmark-check"></i>
+                </div>
+
+                <div class="timeline-content">
+
+                    <h6>
+                        Complaint Submitted
+                    </h6>
+
+                    <p
+                            th:if="${complaint.createdAt != null}"
+                            th:text="${#temporals.format(complaint.createdAt, 'dd MMM yyyy, hh:mm a')}">
+                        Date
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ASSIGNED -->
+
+            <div
+                    class="timeline-item"
+                    th:if="${complaint.assignedAt != null}">
+
+                <div class="timeline-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+
+                <div class="timeline-content">
+
+                    <h6>
+                        Officer Assigned
+                    </h6>
+
+                    <p
+                            th:text="${#temporals.format(complaint.assignedAt, 'dd MMM yyyy, hh:mm a')}">
+                        Date
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- IN PROGRESS -->
+
+            <div
+                    class="timeline-item"
+                    th:if="${complaint.inProgressAt != null}">
+
+                <div class="timeline-icon">
+                    <i class="bi bi-tools"></i>
+                </div>
+
+                <div class="timeline-content">
+
+                    <h6>
+                        Work In Progress
+                    </h6>
+
+                    <p
+                            th:text="${#temporals.format(complaint.inProgressAt, 'dd MMM yyyy, hh:mm a')}">
+                        Date
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESOLVED -->
+
+            <div
+                    class="timeline-item"
+                    th:if="${complaint.resolvedAt != null}">
+
+                <div class="timeline-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+
+                <div class="timeline-content">
+
+                    <h6>
+                        Complaint Resolved
+                    </h6>
+
+                    <p
+                            th:text="${#temporals.format(complaint.resolvedAt, 'dd MMM yyyy, hh:mm a')}">
+                        Date
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESOLUTION -->
+
+        <div
+                class="description-box"
+                th:if="${complaint.resolution != null and !#strings.isEmpty(complaint.resolution.trim())}">
+
+            <div class="info-label">
+                Resolution
+            </div>
+
+            <div
+                    th:text="${complaint.resolution}">
+                Resolution details
+            </div>
+
+        </div>
+
+
+        <!-- REMARKS -->
+
+        <div
+                class="description-box"
+                th:if="${complaint.remarks != null and !#strings.isEmpty(complaint.remarks.trim())}">
+
+            <div class="info-label">
+                Remarks
+            </div>
+
+            <div
+                    th:text="${complaint.remarks}">
+                Remarks
             </div>
 
         </div>
@@ -1062,6 +615,10 @@
 
 </div>
 
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
 
 </body>
 

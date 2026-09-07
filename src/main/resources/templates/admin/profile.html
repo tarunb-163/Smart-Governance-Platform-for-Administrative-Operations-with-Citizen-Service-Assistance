@@ -1,21 +1,12 @@
 
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
 
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <meta name="description"
-          content="CivicPulse Smart Governance Management Platform">
-
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="CivicPulse Smart Governance Management Platform" name="description"/>
     <title>Profile | CivicPulse Admin</title>
-
-
     <style>
 
         * {
@@ -429,299 +420,133 @@
         }
 
     </style>
-
-</head>
-
-
+    <link rel="stylesheet" th:href="@{/css/admin-sidebar.css}"/><style>.profile-message{margin:0 0 18px;padding:12px 15px;border-radius:9px}.profile-message.success{background:#ecfdf3;color:#166534}.profile-message.error{background:#fef2f2;color:#991b1b}</style></head>
 <body>
-
-
 <!-- =========================================================
      SIDEBAR
 ========================================================= -->
-
-<aside class="sidebar">
-
-    <div class="logo">
-
-        Civic<span>Pulse</span>
-
-    </div>
-
-
-    <div class="menu">
-
-        <div class="menu-title">
-            Main Menu
-        </div>
-
-
-        <a href="/admin/dashboard">
-            ⌂ Dashboard
-        </a>
-
-
-        <a href="/admin/complaints">
-            ▣ Complaints
-        </a>
-
-
-        <a href="/admin/officers">
-            ♙ Officers
-        </a>
-
-
-        <a href="/admin/citizens">
-            ♟ Citizens
-        </a>
-
-
-        <div class="menu-title">
-            Management
-        </div>
-
-
-        <a href="/admin/reports">
-            ▤ Reports
-        </a>
-
-
-        <a href="/admin/settings">
-            ⚙ Settings
-        </a>
-
-
-        <a href="/admin/profile"
-           class="active">
-            ◉ Profile
-        </a>
-
-    </div>
-
-</aside>
-
-
-
+<aside th:replace="~{fragments/admin-sidebar :: sidebar('profile')}"></aside>
 <!-- =========================================================
      MAIN
 ========================================================= -->
-
 <main class="main">
-
-
     <!-- =====================================================
-         TOPBAR
-    ====================================================== -->
-
+             TOPBAR
+        ====================================================== -->
     <header class="topbar">
-
         <strong>
             Admin Profile
         </strong>
-
-
         <span>
             Administrator
         </span>
-
     </header>
-
-
-
     <!-- =====================================================
-         CONTENT
-    ====================================================== -->
-
+             CONTENT
+        ====================================================== -->
     <section class="content">
 
-
+        <div th:if="${success}" class="profile-message success" th:text="${success}"></div>
+        <div th:if="${error}" class="profile-message error" th:text="${error}"></div>
         <!-- =================================================
-             TITLE
-        ================================================== -->
-
+                     TITLE
+                ================================================== -->
         <div class="title">
-
             <h1>
                 Admin Profile
             </h1>
-
-
             <p>
                 Manage your administrator profile and account.
             </p>
-
         </div>
-
-
-
         <!-- =================================================
-             PROFILE GRID
-        ================================================== -->
-
+                     PROFILE GRID
+                ================================================== -->
         <div class="grid">
-
-
             <!-- =================================================
-                 PROFILE INFORMATION
-            ================================================== -->
-
+                             PROFILE INFORMATION
+                        ================================================== -->
             <div class="panel">
-
                 <h2>
                     Profile Information
                 </h2>
-
-
                 <div class="item">
-
                     <label>
                         Name
                     </label>
-
-                    <br>
-
-                    <strong
-                            th:text="${adminName}">
+                    <br/>
+                    <strong th:text="${adminName}">
                         Administrator
                     </strong>
-
                 </div>
-
-
                 <div class="item">
-
                     <label>
                         Role
                     </label>
-
-                    <br>
-
-                    <strong
-                            th:text="${adminRole}">
+                    <br/>
+                    <strong th:text="${adminRole}">
                         System Admin
                     </strong>
-
                 </div>
-
-
                 <div class="item">
-
                     <label>
                         Account
                     </label>
-
-                    <br>
-
-                    <strong
-                            th:text="${accountType}">
+                    <br/>
+                    <strong th:text="${accountType}">
                         Administrator
                     </strong>
-
                 </div>
-
-
                 <!-- =================================================
-                     LOGOUT
-                ================================================== -->
-
+                                     LOGOUT
+                                ================================================== -->
                 <div class="logout-section">
-
                     <p>
                         Finished managing CivicPulse?
                     </p>
-
-
-                    <form method="post"
-                          action="/logout">
-
-
+                    <form action="/logout" method="post">
                         <!-- CSRF TOKEN -->
+                        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                        <button class="logout-btn" type="submit">
 
-                        <input
-                                type="hidden"
-                                th:name="${_csrf.parameterName}"
-                                th:value="${_csrf.token}">
-
-
-                        <button
-                                type="submit"
-                                class="logout-btn">
-
-                            ↪ &nbsp; Logout
+                            ↪   Logout
 
                         </button>
-
-
                     </form>
-
                 </div>
-
             </div>
-
-
-
             <!-- =================================================
-                 PROFILE SETTINGS
-            ================================================== -->
-
+                             PROFILE SETTINGS
+                        ================================================== -->
             <div class="panel">
-
                 <h2>
                     Profile Settings
                 </h2>
-
-
-                <form>
-
-
+                <form action="/admin/profile" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <label>
 
                         Display Name
 
 
-                        <input
-                                type="text"
-                                th:value="${adminName}"
-                                value="Administrator">
-
+                        <input name="displayName" required th:value="${adminName}" type="text" value="Administrator"/>
                     </label>
-
-
-                    <label
-                            style="display:block;margin-top:14px">
+                    <label style="display:block;margin-top:14px">
 
                         Email
 
 
-                        <input
-                                type="email"
-                                placeholder="admin@example.com">
-
+                        <input name="email" required th:value="${adminEmail}" placeholder="admin@example.com" type="email"/>
                     </label>
-
-
-                    <button
-                            type="button"
-                            class="save-btn">
+                    <button class="save-btn" type="submit">
 
                         Save Changes
 
                     </button>
-
-
                 </form>
-
             </div>
-
-
         </div>
-
     </section>
-
 </main>
-
-
 </body>
-
 </html>
-

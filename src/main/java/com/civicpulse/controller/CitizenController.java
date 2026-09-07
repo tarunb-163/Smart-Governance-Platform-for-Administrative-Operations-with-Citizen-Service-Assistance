@@ -1,39 +1,35 @@
 package com.civicpulse.controller;
 
 import com.civicpulse.entites.Citizen;
+import com.civicpulse.entites.Complaint;
 import com.civicpulse.repositories.CitizenRepository;
+import com.civicpulse.repositories.ComplaintRepository;
 import com.civicpulse.services.ComplaintService;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 @Controller
 public class CitizenController {
 
     private final CitizenRepository citizenRepository;
-
     private final ComplaintService complaintService;
-
+    private final ComplaintRepository complaintRepository;
 
     public CitizenController(
             CitizenRepository citizenRepository,
-            ComplaintService complaintService) {
+            ComplaintService complaintService,
+            ComplaintRepository complaintRepository) {
 
-        this.citizenRepository =
-                citizenRepository;
-
-        this.complaintService =
-                complaintService;
+        this.citizenRepository = citizenRepository;
+        this.complaintService = complaintService;
+        this.complaintRepository = complaintRepository;
     }
-
 
     // =========================================================
     // CITIZEN DASHBOARD
@@ -44,113 +40,32 @@ public class CitizenController {
             Authentication authentication,
             Model model) {
 
-        String username =
-                authentication.getName();
+        Citizen citizen = getLoggedInCitizen(authentication);
 
+        var complaints = complaintService
+                .getComplaintsForCitizen(citizen.getEmail());
 
-        Citizen citizen =
-                citizenRepository
-                        .findByUsername(username)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Citizen not found: "
-                                                + username
-                                )
-                        );
+        long totalComplaints = complaints.size();
 
+        long pendingComplaints = complaints.stream()
+                .filter(c -> "PENDING".equalsIgnoreCase(c.getStatus()))
+                .count();
 
-        /*
-         * Get complaints submitted by citizen.
-         */
+        long inProgressComplaints = complaints.stream()
+                .filter(c -> "IN_PROGRESS".equalsIgnoreCase(c.getStatus()))
+                .count();
 
-        var complaints =
-                complaintService
-                        .getComplaintsForCitizen(
-                                citizen.getEmail()
-                        );
+        long resolvedComplaints = complaints.stream()
+                .filter(c -> "RESOLVED".equalsIgnoreCase(c.getStatus()))
+                .count();
 
+        model.addAttribute("citizen", citizen);
+        model.addAttribute("complaints", complaints);
 
-        /*
-         * Citizen information.
-         */
-
-        model.addAttribute(
-                "citizen",
-                citizen
-        );
-
-
-        /*
-         * Complaints.
-         */
-
-        model.addAttribute(
-                "complaints",
-                complaints
-        );
-
-
-        // =====================================================
-        // STATISTICS
-        // =====================================================
-
-        long totalComplaints =
-                complaints.size();
-
-
-        long pendingComplaints =
-                complaints.stream()
-                        .filter(c ->
-                                "PENDING".equalsIgnoreCase(
-                                        c.getStatus()
-                                )
-                        )
-                        .count();
-
-
-        long inProgressComplaints =
-                complaints.stream()
-                        .filter(c ->
-                                "IN_PROGRESS".equalsIgnoreCase(
-                                        c.getStatus()
-                                )
-                        )
-                        .count();
-
-
-        long resolvedComplaints =
-                complaints.stream()
-                        .filter(c ->
-                                "RESOLVED".equalsIgnoreCase(
-                                        c.getStatus()
-                                )
-                        )
-                        .count();
-
-
-        model.addAttribute(
-                "totalComplaints",
-                totalComplaints
-        );
-
-
-        model.addAttribute(
-                "pendingComplaints",
-                pendingComplaints
-        );
-
-
-        model.addAttribute(
-                "inProgressComplaints",
-                inProgressComplaints
-        );
-
-
-        model.addAttribute(
-                "resolvedComplaints",
-                resolvedComplaints
-        );
-
+        model.addAttribute("totalComplaints", totalComplaints);
+        model.addAttribute("pendingComplaints", pendingComplaints);
+        model.addAttribute("inProgressComplaints", inProgressComplaints);
+        model.addAttribute("resolvedComplaints", resolvedComplaints);
 
         return "citizen/dashboard";
     }
@@ -165,39 +80,13 @@ public class CitizenController {
             Authentication authentication,
             Model model) {
 
-        String username =
-                authentication.getName();
+        Citizen citizen = getLoggedInCitizen(authentication);
 
+        var complaints = complaintService
+                .getComplaintsForCitizen(citizen.getEmail());
 
-        Citizen citizen =
-                citizenRepository
-                        .findByUsername(username)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Citizen not found: "
-                                                + username
-                                )
-                        );
-
-
-        var complaints =
-                complaintService
-                        .getComplaintsForCitizen(
-                                citizen.getEmail()
-                        );
-
-
-        model.addAttribute(
-                "citizen",
-                citizen
-        );
-
-
-        model.addAttribute(
-                "complaints",
-                complaints
-        );
-
+        model.addAttribute("citizen", citizen);
+        model.addAttribute("complaints", complaints);
 
         return "citizen/complaints";
     }
@@ -209,36 +98,89 @@ public class CitizenController {
 
     @GetMapping("/citizen/track")
     public String trackComplaint(
+            @RequestParam(required = false) String complaintNumber,
             Authentication authentication,
             Model model) {
 
-        String username =
-                authentication.getName();
+        Citizen citizen = getLoggedInCitizen(authentication);
 
+        model.addAttribute("citizen", citizen);
 
-        Citizen citizen =
-                citizenRepository
-                        .findByUsername(username)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Citizen not found: "
-                                                + username
-                                )
-                        );
+        /*
+         * First time page open:
+         * only tracking/search form will be displayed.
+         */
+        if (complaintNumber == null
+                || complaintNumber.trim().isEmpty()) {
 
+            return "citizen/track";
+        }
 
-        model.addAttribute(
-                "citizen",
-                citizen
-        );
+        String number = complaintNumber.trim();
 
+        /*
+         * Find complaint using complaint number.
+         */
+        Complaint complaint = complaintRepository
+                .findByComplaintNumber(number)
+                .orElse(null);
+
+        /*
+         * Complaint not found.
+         */
+        if (complaint == null) {
+
+            model.addAttribute(
+                    "errorMessage",
+                    "Complaint not found. Please check your complaint number."
+            );
+
+            model.addAttribute(
+                    "searchedComplaintNumber",
+                    number
+            );
+
+            return "citizen/track";
+        }
+
+        /*
+         * Security check:
+         *
+         * Complaint entity does NOT have a Citizen relationship.
+         * Therefore ownership is checked using citizenEmail.
+         */
+        String complaintEmail = complaint.getCitizenEmail();
+        String citizenEmail = citizen.getEmail();
+
+        if (complaintEmail == null
+                || citizenEmail == null
+                || !complaintEmail.equalsIgnoreCase(citizenEmail)) {
+
+            model.addAttribute(
+                    "errorMessage",
+                    "You are not authorized to view this complaint."
+            );
+
+            model.addAttribute(
+                    "searchedComplaintNumber",
+                    number
+            );
+
+            return "citizen/track";
+        }
+
+        /*
+         * Everything is valid.
+         * Send complaint object to Thymeleaf.
+         */
+        model.addAttribute("complaint", complaint);
 
         return "citizen/track";
     }
 
 
     // =========================================================
-    // NOTIFICATIONS
+    // CITIZEN NOTIFICATIONS
     // =========================================================
 
     @GetMapping("/citizen/notifications")
@@ -246,33 +188,16 @@ public class CitizenController {
             Authentication authentication,
             Model model) {
 
-        String username =
-                authentication.getName();
+        Citizen citizen = getLoggedInCitizen(authentication);
 
-
-        Citizen citizen =
-                citizenRepository
-                        .findByUsername(username)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Citizen not found: "
-                                                + username
-                                )
-                        );
-
-
-        model.addAttribute(
-                "citizen",
-                citizen
-        );
-
+        model.addAttribute("citizen", citizen);
 
         return "citizen/notifications";
     }
 
 
     // =========================================================
-    // PROFILE - GET
+    // CITIZEN PROFILE - GET
     // =========================================================
 
     @GetMapping("/citizen/profile")
@@ -280,137 +205,77 @@ public class CitizenController {
             Authentication authentication,
             Model model) {
 
-        String username =
-                authentication.getName();
+        Citizen citizen = getLoggedInCitizen(authentication);
 
-
-        Citizen citizen =
-                citizenRepository
-                        .findByUsername(username)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Citizen not found: "
-                                                + username
-                                )
-                        );
-
-
-        model.addAttribute(
-                "citizen",
-                citizen
-        );
-
+        model.addAttribute("citizen", citizen);
 
         return "citizen/profile";
     }
 
 
     // =========================================================
-    // PROFILE - POST
-    // =========================================================
-    //
-    // POST /citizen/profile
-    //
-    // Updates the currently logged-in citizen.
-    //
+    // CITIZEN PROFILE - UPDATE
     // =========================================================
 
     @PostMapping("/citizen/profile")
     public String updateProfile(
+            @RequestParam String fullName,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String address,
             Authentication authentication,
-            Model model,
-
-            @RequestParam("fullName")
-            String fullName,
-
-            @RequestParam("email")
-            String email,
-
-            @RequestParam("phone")
-            String phone,
-
-            @RequestParam(
-                    value = "address",
-                    required = false
-            )
-            String address,
-
             RedirectAttributes redirectAttributes) {
 
+        Citizen citizen = getLoggedInCitizen(authentication);
 
-        /*
-         * NEVER get username from the HTML form.
-         *
-         * Always get it from Spring Security.
-         */
+        citizen.setFullName(fullName);
 
-        String username =
-                authentication.getName();
+        if (email != null && !email.trim().isEmpty()) {
+            citizen.setEmail(email.trim());
+        }
 
+        if (phone != null) {
+            citizen.setPhone(phone.trim());
+        }
 
-        /*
-         * Find logged-in citizen.
-         */
+        if (address != null) {
+            citizen.setAddress(address.trim());
+        }
 
-        Citizen citizen =
-                citizenRepository
-                        .findByUsername(username)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Citizen not found: "
-                                                + username
-                                )
-                        );
-
-
-        /*
-         * Update editable fields.
-         */
-
-        citizen.setFullName(
-                fullName
-        );
-
-        citizen.setEmail(
-                email
-        );
-
-        citizen.setPhone(
-                phone
-        );
-
-        citizen.setAddress(
-                address
-        );
-
-
-        /*
-         * Save changes.
-         */
-
-        citizenRepository.save(
-                citizen
-        );
-
-
-        /*
-         * Success message.
-         */
+        citizenRepository.save(citizen);
 
         redirectAttributes.addFlashAttribute(
-                "profileSuccess",
-                "Profile updated successfully!"
+                "successMessage",
+                "Profile updated successfully."
         );
-
-
-        /*
-         * Redirect after POST.
-         *
-         * Prevents duplicate submission
-         * when browser is refreshed.
-         */
 
         return "redirect:/citizen/profile";
     }
-}
 
+
+    // =========================================================
+    // HELPER METHOD
+    // =========================================================
+
+    private Citizen getLoggedInCitizen(
+            Authentication authentication) {
+
+        if (authentication == null
+                || authentication.getName() == null) {
+
+            throw new RuntimeException(
+                    "Citizen authentication not found."
+            );
+        }
+
+        String username = authentication.getName();
+
+        return citizenRepository
+                .findByUsername(username)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Citizen not found: " + username
+                        )
+                );
+    }
+}

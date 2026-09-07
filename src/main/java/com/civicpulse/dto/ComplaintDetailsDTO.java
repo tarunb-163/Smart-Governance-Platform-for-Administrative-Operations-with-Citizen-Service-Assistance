@@ -14,6 +14,15 @@ public class ComplaintDetailsDTO {
     private String status;
     private String department;
 
+    // Progress update
+    private String progressUpdate;
+
+    // Resolution details
+    private String resolution;
+
+    // Additional remarks
+    private String remarks;
+
     private LocalDateTime createdAt;
     private LocalDateTime assignedAt;
     private LocalDateTime updatedAt;
@@ -86,6 +95,30 @@ public class ComplaintDetailsDTO {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public String getProgressUpdate() {
+        return progressUpdate;
+    }
+
+    public void setProgressUpdate(String progressUpdate) {
+        this.progressUpdate = progressUpdate;
+    }
+
+    public String getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(String resolution) {
+        this.resolution = resolution;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 
     public LocalDateTime getCreatedAt() {
