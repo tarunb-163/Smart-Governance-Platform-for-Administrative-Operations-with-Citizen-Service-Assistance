@@ -1,6 +1,8 @@
 package com.civicpulse.controller;
 
+import com.civicpulse.model.Citizen;
 import com.civicpulse.model.Complaint;
+import com.civicpulse.service.CitizenService;
 import com.civicpulse.service.ComplaintService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,13 +11,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 public class AdminController {
 
     private final ComplaintService complaintService;
+    private final CitizenService citizenService;
 
-    public AdminController(ComplaintService complaintService) {
+    public AdminController(ComplaintService complaintService, CitizenService citizenService) {
         this.complaintService = complaintService;
+        this.citizenService = citizenService;
     }
 
     // ================= ADMIN DASHBOARD =================
@@ -92,8 +98,19 @@ public class AdminController {
     }
 
     @GetMapping("/admin/citizens")
-    public String citizens() {
+    public String citizens(Model model) {
+        List<Citizen> citizens = citizenService.getAllCitizens();
+        model.addAttribute("citizens", citizens);
+        model.addAttribute("totalCitizens", citizenService.getTotalCitizensCount());
+        model.addAttribute("activeCitizens", citizenService.getActiveCitizensCount());
+        model.addAttribute("inactiveCitizens", citizenService.getInactiveCitizensCount());
         return "admin/citizens";
+    }
+
+    @PostMapping("/admin/citizens/{id}/toggle-status")
+    public String toggleCitizenStatus(@PathVariable Long id) {
+        citizenService.toggleCitizenStatus(id);
+        return "redirect:/admin/citizens";
     }
 
     @GetMapping("/admin/reports")

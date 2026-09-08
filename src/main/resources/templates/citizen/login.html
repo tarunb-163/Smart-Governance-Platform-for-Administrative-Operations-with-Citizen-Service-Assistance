@@ -158,10 +158,10 @@
 
         <form id="loginForm" onsubmit="handleLogin(event)">
             <div class="mb-3">
-                <label class="form-label" for="loginEmail">Email Address or Citizen ID</label>
+                <label class="form-label" for="loginEmail">Email, Username, or Citizen ID</label>
                 <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                    <input type="text" id="loginEmail" class="form-control" placeholder="citizen@civicpulse.com" required autocomplete="username">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <input type="text" id="loginEmail" class="form-control" placeholder="citizen@civicpulse.com or CIT10045" required autocomplete="username">
                 </div>
             </div>
 
@@ -234,7 +234,7 @@ function handleLogin(event) {
     fetch('/api/citizen/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, password: password })
+        body: JSON.stringify({ identifier: email, email: email, username: email, password: password })
     })
     .then(async response => {
         const data = await response.json();

@@ -21,6 +21,9 @@ public class Citizen {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
+    @Column(unique = true)
+    private String username;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -35,6 +38,9 @@ public class Citizen {
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     private boolean active = true;
 
@@ -59,6 +65,9 @@ public class Citizen {
         }
         if (this.citizenId == null || this.citizenId.trim().isEmpty()) {
             this.citizenId = "CIT" + System.currentTimeMillis();
+        }
+        if (this.username == null && this.email != null && this.email.contains("@")) {
+            this.username = this.email.substring(0, this.email.indexOf('@')).toLowerCase();
         }
     }
 
@@ -134,5 +143,21 @@ public class Citizen {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }

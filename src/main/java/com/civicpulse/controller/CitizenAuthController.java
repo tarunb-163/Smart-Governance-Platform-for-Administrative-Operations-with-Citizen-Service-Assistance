@@ -73,6 +73,7 @@ public class CitizenAuthController {
     @ResponseBody
     public ResponseEntity<?> registerCitizen(@RequestBody Map<String, String> body, HttpServletRequest request) {
         String fullName = body.get("fullName");
+        String username = body.get("username");
         String email = body.get("email");
         String phone = body.get("phone");
         String password = body.get("password");
@@ -93,13 +94,16 @@ public class CitizenAuthController {
         }
 
         try {
-            Citizen citizen = citizenService.registerCitizen(fullName, email, phone, password, address);
+            Citizen citizen = citizenService.registerCitizen(fullName, username, email, phone, password, address);
 
             // Establish authenticated session
             HttpSession session = request.getSession(true);
             session.setAttribute("CITIZEN_EMAIL", citizen.getEmail());
             session.setAttribute("CITIZEN_NAME", citizen.getFullName());
             session.setAttribute("CITIZEN_ID", citizen.getCitizenId());
+            if (citizen.getUsername() != null) {
+                session.setAttribute("CITIZEN_USERNAME", citizen.getUsername());
+            }
 
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     citizen.getEmail(), null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_CITIZEN"))
@@ -110,6 +114,7 @@ public class CitizenAuthController {
                     "success", true,
                     "message", "Account registered successfully!",
                     "citizenId", citizen.getCitizenId(),
+                    "username", citizen.getUsername() != null ? citizen.getUsername() : "",
                     "redirectUrl", "/citizen/dashboard"
             ));
         } catch (IllegalArgumentException e) {
@@ -123,21 +128,20 @@ public class CitizenAuthController {
     @PostMapping("/api/citizen/auth/login")
     @ResponseBody
     public ResponseEntity<?> loginCitizen(@RequestBody Map<String, String> body, HttpServletRequest request) {
-        String identifier = body.get("username");
+        String identifier = body.get("identifier");
+        if (identifier == null || identifier.trim().isEmpty()) {
+            identifier = body.get("username");
+        }
         if (identifier == null || identifier.trim().isEmpty()) {
             identifier = body.get("email");
         }
         String password = body.get("password");
 
         if (identifier == null || identifier.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Email/Username and Password are required."));
+            return ResponseEntity.badRequest().body(Map.of("error", "Email/Username/Citizen ID and Password are required."));
         }
 
-        String searchId = identifier.trim().toLowerCase();
-        Optional<Citizen> citizenOpt = citizenService.findByEmail(searchId);
-        if (citizenOpt.isEmpty()) {
-            citizenOpt = citizenService.findByCitizenId(identifier.trim());
-        }
+        Optional<Citizen> citizenOpt = citizenService.findByIdentifier(identifier);
 
         if (citizenOpt.isEmpty() || !citizenService.verifyPassword(citizenOpt.get(), password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -150,10 +154,16 @@ public class CitizenAuthController {
                     .body(Map.of("error", "Your account is deactivated. Please contact support."));
         }
 
+        // Record activity timestamp
+        citizenService.recordLogin(citizen);
+
         HttpSession session = request.getSession(true);
         session.setAttribute("CITIZEN_EMAIL", citizen.getEmail());
         session.setAttribute("CITIZEN_NAME", citizen.getFullName());
         session.setAttribute("CITIZEN_ID", citizen.getCitizenId());
+        if (citizen.getUsername() != null) {
+            session.setAttribute("CITIZEN_USERNAME", citizen.getUsername());
+        }
 
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 citizen.getEmail(), null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_CITIZEN"))
@@ -182,9 +192,11 @@ public class CitizenAuthController {
         return ResponseEntity.ok(Map.of(
                 "citizenId", citizen.getCitizenId(),
                 "fullName", citizen.getFullName(),
+                "username", citizen.getUsername() != null ? citizen.getUsername() : "",
                 "email", citizen.getEmail(),
                 "phone", citizen.getPhone() != null ? citizen.getPhone() : "",
-                "address", citizen.getAddress() != null ? citizen.getAddress() : ""
+                "address", citizen.getAddress() != null ? citizen.getAddress() : "",
+                "lastLogin", citizen.getLastLogin() != null ? citizen.getLastLogin().toString() : ""
         ));
     }
 

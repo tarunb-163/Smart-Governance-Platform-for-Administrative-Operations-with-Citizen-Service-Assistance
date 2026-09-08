@@ -7,6 +7,8 @@ import com.civicpulse.service.CitizenService;
 import com.civicpulse.service.ComplaintService;
 import com.civicpulse.service.NotificationService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +34,28 @@ public class CitizenController {
     }
 
     private String getAuthenticatedEmail(HttpSession session) {
-        return (String) session.getAttribute("CITIZEN_EMAIL");
+        String email = (String) session.getAttribute("CITIZEN_EMAIL");
+        if (email != null && !email.trim().isEmpty()) {
+            return email;
+        }
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            String principal = auth.getName();
+            Optional<Citizen> opt = citizenService.findByIdentifier(principal);
+            if (opt.isPresent()) {
+                Citizen c = opt.get();
+                session.setAttribute("CITIZEN_EMAIL", c.getEmail());
+                session.setAttribute("CITIZEN_NAME", c.getFullName());
+                session.setAttribute("CITIZEN_ID", c.getCitizenId());
+                if (c.getUsername() != null) {
+                    session.setAttribute("CITIZEN_USERNAME", c.getUsername());
+                }
+                return c.getEmail();
+            }
+        }
+
+        return null;
     }
 
     @GetMapping("/citizen/dashboard")

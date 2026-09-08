@@ -140,11 +140,20 @@
         <form id="registerForm" onsubmit="handleRegister(event)">
             <div class="row g-3">
                 <!-- Full Name -->
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <label class="form-label" for="fullName">Full Name <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
                         <input type="text" id="fullName" class="form-control" placeholder="e.g. Ramesh Sharma" required>
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div class="col-md-6">
+                    <label class="form-label" for="username">Username <small class="text-muted fw-normal">(Optional)</small></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-at"></i></span>
+                        <input type="text" id="username" class="form-control" placeholder="e.g. ramesh (default: email prefix)">
                     </div>
                 </div>
 
@@ -217,6 +226,7 @@
 function handleRegister(event) {
     event.preventDefault();
     const fullName = document.getElementById("fullName").value.trim();
+    const username = document.getElementById("username") ? document.getElementById("username").value.trim() : "";
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const password = document.getElementById("password").value;
@@ -246,6 +256,7 @@ function handleRegister(event) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             fullName: fullName,
+            username: username,
             email: email,
             phone: phone,
             password: password,

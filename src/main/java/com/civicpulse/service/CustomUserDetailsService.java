@@ -27,8 +27,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (username == null || username.trim().isEmpty()) {
+            throw new UsernameNotFoundException("Username/Identifier cannot be empty");
+        }
+        String cleanIdentifier = username.trim();
+
         // 1. Try Officer lookup
-        Optional<Officer> officerOpt = officerRepository.findByUsername(username);
+        Optional<Officer> officerOpt = officerRepository.findByUsername(cleanIdentifier);
         if (officerOpt.isPresent()) {
             Officer officer = officerOpt.get();
             return new User(
@@ -42,10 +47,13 @@ public class CustomUserDetailsService implements UserDetailsService {
             );
         }
 
-        // 2. Try Citizen lookup by email or citizenId
-        Optional<Citizen> citizenOpt = citizenRepository.findByEmail(username);
+        // 2. Try Citizen lookup by Email, Citizen ID, or Username (case-insensitive)
+        Optional<Citizen> citizenOpt = citizenRepository.findByEmailIgnoreCase(cleanIdentifier);
         if (citizenOpt.isEmpty()) {
-            citizenOpt = citizenRepository.findByCitizenId(username);
+            citizenOpt = citizenRepository.findByCitizenIdIgnoreCase(cleanIdentifier);
+        }
+        if (citizenOpt.isEmpty()) {
+            citizenOpt = citizenRepository.findByUsernameIgnoreCase(cleanIdentifier);
         }
 
         if (citizenOpt.isPresent()) {

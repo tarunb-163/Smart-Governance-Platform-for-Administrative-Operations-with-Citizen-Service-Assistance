@@ -88,19 +88,21 @@ public class DataInitializer {
             }
 
             // 2. Create Default Citizen
-            Citizen citizen = citizenRepository.findByEmail("citizen@civicpulse.com").orElse(null);
+            Citizen citizen = citizenRepository.findByEmailIgnoreCase("citizen@civicpulse.com").orElse(null);
             if (citizen == null) {
                 citizen = new Citizen();
                 citizen.setCitizenId("CIT10045");
                 citizen.setFullName("Tarun B");
+                citizen.setUsername("tarun");
                 citizen.setEmail("citizen@civicpulse.com");
                 citizen.setPhone("+91 9876543210");
                 citizen.setPassword(passwordEncoder.encode("password123"));
                 citizen.setAddress("Pragati Nagar, Sector 4, Andhra Pradesh");
                 citizen.setCreatedAt(LocalDateTime.now().minusMonths(1));
+                citizen.setLastLogin(LocalDateTime.now().minusHours(2));
                 citizen.setActive(true);
                 citizen = citizenRepository.save(citizen);
-                System.out.println(">>> Seeded default citizen: citizen@civicpulse.com (password: password123)");
+                System.out.println(">>> Seeded default citizen: citizen@civicpulse.com / tarun (password: password123)");
             }
 
             // 3. Pre-populate Demo Complaints with Dynamic Relative Dates
