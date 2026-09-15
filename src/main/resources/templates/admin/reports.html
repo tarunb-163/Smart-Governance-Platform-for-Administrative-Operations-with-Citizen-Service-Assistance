@@ -1,15 +1,705 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Reports | CivicPulse</title>
-    <style>
-        *{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif}body{margin:0;background:#f5f7fb;color:#172033}.sidebar{position:fixed;width:250px;height:100vh;background:#172554;color:#fff;padding:24px 16px}.logo{font-size:25px;font-weight:700;padding:8px 12px 30px}.logo span{color:#60a5fa}.menu-title{font-size:11px;text-transform:uppercase;color:#93c5fd;padding:15px 14px 8px}.menu a{display:block;color:#dbeafe;text-decoration:none;padding:13px 14px;margin:4px 0;border-radius:9px}.menu a:hover,.menu a.active{background:#2563eb;color:#fff}.main{margin-left:250px}.topbar{height:72px;background:#fff;border-bottom:1px solid #e5e7eb;padding:0 32px;display:flex;justify-content:space-between;align-items:center}.content{padding:30px 32px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:25px 0}.card,.panel{background:#fff;border:1px solid #e8edf4;border-radius:13px;padding:22px;box-shadow:0 3px 12px rgba(15,23,42,.04)}.card span{color:#64748b;font-size:13px}.num{font-size:30px;font-weight:700;margin-top:14px}.row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #eef2f7}.badge{padding:5px 10px;border-radius:15px;background:#eff6ff;color:#1d4ed8;font-weight:600;font-size:12px}@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.sidebar{width:70px}.main{margin-left:70px}.cards{grid-template-columns:1fr}}
-    </style></head>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Reports | CivicPulse Admin</title>
+
+    <!-- Common Admin Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/admin-modern.css}">
+
+    <!-- Reports Page CSS -->
+    <link rel="stylesheet"
+          th:href="@{/css/reports.css}">
+
+</head>
+
+
 <body>
-<aside class="sidebar"><div class="logo">Civic<span>Pulse</span></div><div class="menu"><div class="menu-title">Main Menu</div>
-    <a href="/admin/dashboard">⌂ Dashboard</a><a href="/admin/complaints">▣ Complaints</a><a href="/admin/officers">♙ Officers</a><a href="/admin/citizens">♟ Citizens</a>
-    <div class="menu-title">Management</div><a href="/admin/reports" class="active">▤ Reports</a><a href="/admin/settings">⚙ Settings</a><a href="/admin/profile">◉ Profile</a></div></aside>
-<main class="main"><header class="topbar"><strong>Reports</strong><span>Administrator</span></header><section class="content">
-    <h1>Complaint Reports</h1><p>Current complaint statistics from the database.</p>
-    <div class="cards"><div class="card"><span>Total Complaints</span><div class="num" th:text="${totalComplaints}">0</div></div><div class="card"><span>Pending</span><div class="num" th:text="${pendingComplaints}">0</div></div><div class="card"><span>Under Review</span><div class="num" th:text="${underReviewComplaints}">0</div></div><div class="card"><span>Resolved</span><div class="num" th:text="${resolvedComplaints}">0</div></div></div>
-    <div class="panel"><h2>Status Summary</h2><div class="row"><span>Pending Complaints</span><span class="badge" th:text="${pendingComplaints}">0</span></div><div class="row"><span>Under Review Complaints</span><span class="badge" th:text="${underReviewComplaints}">0</span></div><div class="row"><span>Resolved Complaints</span><span class="badge" th:text="${resolvedComplaints}">0</span></div></div>
-</section></main></body></html>
+
+
+<div class="layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- LOGO -->
+        <div class="logo">
+
+            <div class="logo-icon">
+                CP
+            </div>
+
+            <div class="logo-text">
+                Civic<span>Pulse</span>
+            </div>
+
+        </div>
+
+
+        <!-- MENU -->
+        <nav class="menu">
+
+
+            <div class="menu-title">
+                Main Menu
+            </div>
+
+
+            <!-- DASHBOARD -->
+            <a href="/admin/dashboard">
+
+                <span class="menu-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <!-- COMPLAINTS -->
+            <a href="/admin/complaints">
+
+                <span class="menu-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Complaints
+                </span>
+
+            </a>
+
+
+            <!-- OFFICERS -->
+            <a href="/admin/officers">
+
+                <span class="menu-icon">
+                    ♙
+                </span>
+
+                <span>
+                    Officers
+                </span>
+
+            </a>
+
+
+            <!-- CITIZENS -->
+            <a href="/admin/citizens">
+
+                <span class="menu-icon">
+                    ♟
+                </span>
+
+                <span>
+                    Citizens
+                </span>
+
+            </a>
+
+
+            <div class="menu-title">
+                Management
+            </div>
+
+
+            <!-- REPORTS -->
+            <a href="/admin/reports"
+               class="active">
+
+                <span class="menu-icon">
+                    ▤
+                </span>
+
+                <span>
+                    Reports
+                </span>
+
+            </a>
+
+
+            <!-- SETTINGS -->
+            <a href="/admin/settings">
+
+                <span class="menu-icon">
+                    ⚙
+                </span>
+
+                <span>
+                    Settings
+                </span>
+
+            </a>
+
+
+            <!-- PROFILE -->
+            <a href="/admin/profile">
+
+                <span class="menu-icon">
+                    ◉
+                </span>
+
+                <span>
+                    Profile
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+        <!-- LOGOUT -->
+        <div class="logout">
+
+            <a href="/logout">
+
+                <span class="menu-icon">
+                    ↪
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="main">
+
+
+        <!-- =================================================
+             TOPBAR
+             ================================================= -->
+
+        <header class="topbar">
+
+
+            <div class="page-title">
+
+                <h2>
+                    Reports
+                </h2>
+
+                <p>
+                    CivicPulse complaint analytics
+                </p>
+
+            </div>
+
+
+            <div class="top-right">
+
+
+                <!-- NOTIFICATION -->
+                <div class="notification">
+
+                    🔔
+
+                    <div class="notification-dot"></div>
+
+                </div>
+
+
+                <!-- ADMIN PROFILE -->
+                <div class="profile">
+
+                    <div class="avatar">
+                        A
+                    </div>
+
+
+                    <div class="profile-info">
+
+                        <strong>
+                            Administrator
+                        </strong>
+
+                        <span>
+                            System Admin
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             CONTENT
+             ================================================= -->
+
+        <section class="content reports-content">
+
+
+            <!-- =================================================
+                 PAGE HEADER
+                 ================================================= -->
+
+            <div class="page-header">
+
+
+                <div>
+
+                    <h1>
+                        Complaint Reports
+                    </h1>
+
+                    <p>
+                        Current complaint statistics from the database.
+                    </p>
+
+                </div>
+
+
+                <!-- REPORT ACTIONS -->
+                <div class="report-actions">
+
+
+                    <a href="/admin/reports/download/csv"
+                       class="btn primary-btn">
+
+                        ↓
+                        Download CSV
+
+                    </a>
+
+
+                    <button type="button"
+                            class="btn secondary-btn"
+                            onclick="window.print()">
+
+                        🖨
+                        Print / Save PDF
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STATISTICS
+                 ================================================= -->
+
+            <div class="cards">
+
+
+                <!-- TOTAL COMPLAINTS -->
+                <div class="card">
+
+                    <div class="card-top">
+
+                        <span class="card-title">
+                            Total Complaints
+                        </span>
+
+
+                        <div class="card-icon blue">
+                            ▣
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-number"
+                         th:text="${totalComplaints}">
+
+                        0
+
+                    </div>
+
+
+                    <div class="card-footer">
+                        All complaints
+                    </div>
+
+                </div>
+
+
+
+                <!-- PENDING -->
+                <div class="card">
+
+                    <div class="card-top">
+
+                        <span class="card-title">
+                            Pending
+                        </span>
+
+
+                        <div class="card-icon orange">
+                            ⏱
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-number"
+                         th:text="${pendingComplaints}">
+
+                        0
+
+                    </div>
+
+
+                    <div class="card-footer">
+                        Awaiting action
+                    </div>
+
+                </div>
+
+
+
+                <!-- UNDER REVIEW -->
+                <div class="card">
+
+                    <div class="card-top">
+
+                        <span class="card-title">
+                            Under Review
+                        </span>
+
+
+                        <div class="card-icon purple">
+                            ⚙
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-number"
+                         th:text="${underReviewComplaints}">
+
+                        0
+
+                    </div>
+
+
+                    <div class="card-footer">
+                        Currently being handled
+                    </div>
+
+                </div>
+
+
+
+                <!-- RESOLVED -->
+                <div class="card">
+
+                    <div class="card-top">
+
+                        <span class="card-title">
+                            Resolved
+                        </span>
+
+
+                        <div class="card-icon green">
+                            ✓
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-number"
+                         th:text="${resolvedComplaints}">
+
+                        0
+
+                    </div>
+
+
+                    <div class="card-footer">
+                        Successfully resolved
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STATUS SUMMARY
+                 ================================================= -->
+
+            <div class="panel">
+
+
+                <!-- PANEL HEADER -->
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <h2>
+                            Status Summary
+                        </h2>
+
+                        <p class="panel-subtitle">
+                            Overview of complaint resolution status.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- PENDING -->
+                <div class="report-row">
+
+
+                    <div class="report-row-info">
+
+
+                        <div class="report-row-icon pending-icon">
+                            ⏱
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Pending Complaints
+                            </strong>
+
+                            <span>
+                                Complaints waiting for administrative action
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <span class="badge pending-badge"
+                          th:text="${pendingComplaints}">
+
+                        0
+
+                    </span>
+
+
+                </div>
+
+
+
+                <!-- UNDER REVIEW -->
+                <div class="report-row">
+
+
+                    <div class="report-row-info">
+
+
+                        <div class="report-row-icon review-icon">
+                            ⚙
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Under Review Complaints
+                            </strong>
+
+                            <span>
+                                Complaints currently being handled
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <span class="badge review-badge"
+                          th:text="${underReviewComplaints}">
+
+                        0
+
+                    </span>
+
+
+                </div>
+
+
+
+                <!-- RESOLVED -->
+                <div class="report-row">
+
+
+                    <div class="report-row-info">
+
+
+                        <div class="report-row-icon resolved-icon">
+                            ✓
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Resolved Complaints
+                            </strong>
+
+                            <span>
+                                Complaints successfully resolved
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <span class="badge resolved-badge"
+                          th:text="${resolvedComplaints}">
+
+                        0
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 REPORT INFORMATION
+                 ================================================= -->
+
+            <div class="panel report-info-panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Report Information
+                        </h2>
+
+                        <p class="panel-subtitle">
+                            Use the available actions to export or print the current report.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-info-grid">
+
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            Data Source
+                        </span>
+
+                        <strong>
+                            CivicPulse Database
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            Report Type
+                        </span>
+
+                        <strong>
+                            Complaint Statistics
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            Export Format
+                        </span>
+
+                        <strong>
+                            CSV
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            Print Format
+                        </span>
+
+                        <strong>
+                            PDF / Printer
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

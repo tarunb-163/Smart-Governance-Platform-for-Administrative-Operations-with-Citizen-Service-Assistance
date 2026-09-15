@@ -1,695 +1,815 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Complaints | CivicPulse Admin</title>
 
-    <style>
+    <link rel="stylesheet"
+          th:href="@{/css/admin-modern.css}">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: #f4f6f9;
-            color: #1f2937;
-        }
-
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* ================= SIDEBAR ================= */
-
-        .sidebar {
-            width: 250px;
-            background: #172554;
-            color: white;
-            padding: 25px 16px;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-        }
-
-        .logo {
-            font-size: 26px;
-            font-weight: bold;
-            margin-bottom: 40px;
-            padding-left: 15px;
-        }
-
-        .logo span {
-            color: #3b82f6;
-        }
-
-        .menu a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 15px;
-            margin: 5px 0;
-            border-radius: 8px;
-            transition: 0.2s;
-        }
-
-        .menu a:hover,
-        .menu a.active {
-            background: #2563eb;
-        }
-
-        /* ================= MAIN ================= */
-
-        .main {
-            flex: 1;
-            margin-left: 250px;
-        }
-
-        /* ================= TOP BAR ================= */
-
-        .topbar {
-            background: white;
-            padding: 25px 35px;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .topbar h1 {
-            font-size: 28px;
-        }
-
-        .admin-name {
-            font-weight: bold;
-        }
-
-        /* ================= CONTENT ================= */
-
-        .content {
-            padding: 35px;
-        }
-
-        /* ================= STATS ================= */
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: white;
-            padding: 22px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.10);
-        }
-
-        .card h3 {
-            color: #64748b;
-            font-size: 15px;
-            margin-bottom: 10px;
-        }
-
-        .card p {
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        /* ================= TABLE CONTAINER ================= */
-
-        .table-container {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            overflow-x: auto;
-        }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .table-header h2 {
-            font-size: 22px;
-        }
-
-        /* ================= FILTER ================= */
-
-        .filter {
-            padding: 10px 14px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            background: white;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .filter:focus {
-            outline: none;
-            border-color: #2563eb;
-        }
-
-        /* ================= TABLE ================= */
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        th {
-            background: #f8fafc;
-            color: #475569;
-            font-size: 14px;
-        }
-
-        td {
-            font-size: 14px;
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        /* ================= STATUS ================= */
-
-        .status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .progress {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .resolved {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        /* ================= VIEW BUTTON ================= */
-
-        .btn {
-            display: inline-block;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-
-        .btn:hover {
-            background: #1d4ed8;
-        }
-
-        /* ================= EMPTY DATA ================= */
-
-        .empty {
-            text-align: center;
-            padding: 40px;
-            color: #64748b;
-        }
-
-        /* ================= RESPONSIVE ================= */
-
-        @media (max-width: 1100px) {
-
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-        }
-
-        @media (max-width: 700px) {
-
-            .sidebar {
-                width: 200px;
-            }
-
-            .main {
-                margin-left: 200px;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
-            .stats {
-                grid-template-columns: 1fr;
-            }
-
-            .topbar {
-                padding: 20px;
-            }
-
-            .table-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-        }
-
-    </style>
+    <link rel="stylesheet"
+          th:href="@{/css/complaints.css}">
 
 </head>
 
 
 <body>
 
-
 <div class="layout">
 
 
-    <!-- ================= SIDEBAR ================= -->
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
 
     <aside class="sidebar">
 
+        <!-- LOGO -->
+
         <div class="logo">
-            Civic<span>Pulse</span>
+
+            <div class="logo-icon">
+                CP
+            </div>
+
+            <div class="logo-text">
+                <strong>Civic<span>Pulse</span></strong>
+                <small>Smart Governance</small>
+            </div>
+
+        </div>
+
+
+        <!-- MAIN MENU -->
+
+        <div class="menu-title">
+            MAIN MENU
         </div>
 
 
         <nav class="menu">
 
             <a href="/admin/dashboard">
-                Dashboard
+
+                <span class="menu-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
             </a>
 
-            <a href="/admin/complaints" class="active">
-                Complaints
+
+            <a href="/admin/complaints"
+               class="active">
+
+                <span class="menu-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Complaints
+                </span>
+
             </a>
+
 
             <a href="/admin/officers">
-                Officers
+
+                <span class="menu-icon">
+                    ♟
+                </span>
+
+                <span>
+                    Officers
+                </span>
+
             </a>
+
 
             <a href="/admin/citizens">
-                Citizens
-            </a>
 
-            <a href="/admin/reports">
-                Reports
-            </a>
+                <span class="menu-icon">
+                    ♟
+                </span>
 
-            <a href="/admin/profile">
-                Profile
-            </a>
+                <span>
+                    Citizens
+                </span>
 
-            <a href="/admin/settings">
-                Settings
             </a>
 
         </nav>
+
+
+        <!-- MANAGEMENT -->
+
+        <div class="menu-title">
+            MANAGEMENT
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="/admin/reports">
+
+                <span class="menu-icon">
+                    ▤
+                </span>
+
+                <span>
+                    Reports
+                </span>
+
+            </a>
+
+
+            <a href="/admin/settings">
+
+                <span class="menu-icon">
+                    ⚙
+                </span>
+
+                <span>
+                    Settings
+                </span>
+
+            </a>
+
+
+            <a href="/admin/profile">
+
+                <span class="menu-icon">
+                    ◉
+                </span>
+
+                <span>
+                    Profile
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- SIDEBAR USER -->
+
+        <div class="sidebar-user">
+
+            <div class="sidebar-avatar">
+                A
+            </div>
+
+            <div>
+
+                <strong>
+                    Administrator
+                </strong>
+
+                <small>
+                    System Admin
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <a href="/logout"
+           class="logout">
+
+            <span>
+                ↪
+            </span>
+
+            Logout
+
+        </a>
 
     </aside>
 
 
 
-    <!-- ================= MAIN ================= -->
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
 
     <main class="main">
 
 
-        <!-- ================= TOP BAR ================= -->
+        <!-- =================================================
+             TOP BAR
+             ================================================= -->
 
         <header class="topbar">
 
-            <h1>
-                Complaints Management
-            </h1>
 
-            <div class="admin-name">
-                Administrator
+            <div class="page-title">
+
+                <h2>
+                    Complaints Management
+                </h2>
+
+                <p>
+                    Review and manage citizen complaints
+                </p>
+
+            </div>
+
+
+            <div class="top-right">
+
+
+                <div class="notification">
+
+                    🔔
+
+                    <span class="notification-dot">
+                    </span>
+
+                </div>
+
+
+                <div class="profile">
+
+                    <div class="avatar">
+                        A
+                    </div>
+
+                    <div class="profile-info">
+
+                        <strong>
+                            Administrator
+                        </strong>
+
+                        <span>
+                            System Admin
+                        </span>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </header>
 
 
 
-        <!-- ================= CONTENT ================= -->
+        <!-- =================================================
+             CONTENT
+             ================================================= -->
 
         <section class="content">
 
 
-            <!-- ================= STATISTICS ================= -->
+            <!-- PAGE HEADER -->
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>
+                        Complaints
+                    </h1>
+
+                    <p>
+                        Monitor, review and manage citizen complaints.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STATISTICS
+                 ================================================= -->
 
             <div class="stats">
 
 
                 <!-- TOTAL -->
 
-                <div class="card">
+                <div class="card stat-card">
 
-                    <h3>
-                        Total Complaints
+                    <div class="card-top">
+
+                        <span class="card-title">
+                            Total Complaints
+                        </span>
+
+                        <div class="card-icon blue">
+                            ▣
+                        </div>
+
+                    </div>
+
+
+                    <h3 th:text="${totalComplaints}">
+                        0
                     </h3>
 
-                    <p th:text="${complaints.size()}">
-                        0
+
+                    <p>
+                        All registered complaints
                     </p>
 
                 </div>
+
 
 
                 <!-- PENDING -->
 
-                <div class="card">
+                <div class="card stat-card">
 
-                    <h3>
-                        Pending
+                    <div class="card-top">
+
+                        <span class="card-title">
+                            Pending
+                        </span>
+
+                        <div class="card-icon orange">
+                            ◷
+                        </div>
+
+                    </div>
+
+
+                    <h3 th:text="${pendingComplaints}">
+                        0
                     </h3>
 
-                    <p
-                            th:text="${#lists.size(complaints.?[status == 'Pending'])}">
-                        0
+
+                    <p>
+                        Awaiting action
                     </p>
 
                 </div>
+
 
 
                 <!-- IN PROGRESS -->
 
-                <div class="card">
+                <div class="card stat-card">
 
-                    <h3>
-                        In Progress
+                    <div class="card-top">
+
+                        <span class="card-title">
+                            In Progress
+                        </span>
+
+                        <div class="card-icon blue">
+                            ⚙
+                        </div>
+
+                    </div>
+
+
+                    <h3 th:text="${underReviewComplaints}">
+                        0
                     </h3>
 
-                    <p
-                            th:text="${#lists.size(complaints.?[status == 'In Progress'])}">
-                        0
+
+                    <p>
+                        Currently being handled
                     </p>
 
                 </div>
+
 
 
                 <!-- RESOLVED -->
 
-                <div class="card">
+                <div class="card stat-card">
 
-                    <h3>
-                        Resolved
+                    <div class="card-top">
+
+                        <span class="card-title">
+                            Resolved
+                        </span>
+
+                        <div class="card-icon green">
+                            ✓
+                        </div>
+
+                    </div>
+
+
+                    <h3 th:text="${resolvedComplaints}">
+                        0
                     </h3>
 
-                    <p
-                            th:text="${#lists.size(complaints.?[status == 'Resolved'])}">
-                        0
+
+                    <p>
+                        Successfully resolved
                     </p>
 
                 </div>
-
 
             </div>
 
 
 
-            <!-- ================= COMPLAINT TABLE ================= -->
+            <!-- =================================================
+                 COMPLAINT TABLE
+                 ================================================= -->
 
             <div class="table-container">
 
 
+                <!-- TABLE HEADER -->
+
                 <div class="table-header">
 
-                    <h2>
-                        All Complaints
-                    </h2>
+                    <div>
+
+                        <h2>
+                            All Complaints
+                        </h2>
+
+                        <p>
+                            View and manage complaints submitted by citizens.
+                        </p>
+
+                    </div>
 
 
-                    <select
-                            class="filter"
-                            id="statusFilter">
+                    <!-- STATUS FILTER -->
 
-                        <option value="All">
-                            All Status
-                        </option>
+                    <div class="filter-wrapper">
 
-                        <option value="Pending">
-                            Pending
-                        </option>
+                        <label for="statusFilter">
+                            Filter by Status
+                        </label>
 
-                        <option value="In Progress">
-                            In Progress
-                        </option>
+                        <select id="statusFilter"
+                                class="filter">
 
-                        <option value="Resolved">
-                            Resolved
-                        </option>
+                            <option value="ALL">
+                                All Status
+                            </option>
 
-                    </select>
+                            <option value="Pending">
+                                Pending
+                            </option>
+
+                            <option value="Under Review">
+                                Under Review
+                            </option>
+
+                            <option value="In Progress">
+                                In Progress
+                            </option>
+
+                            <option value="Resolved">
+                                Resolved
+                            </option>
+
+                        </select>
+
+                    </div>
 
                 </div>
 
 
 
-                <table>
+                <!-- =================================================
+                     TABLE
+                     ================================================= -->
+
+                <div class="table-responsive">
+
+                    <table>
+
+                        <thead>
+
+                        <tr>
+
+                            <th>
+                                ID
+                            </th>
+
+                            <th>
+                                Citizen
+                            </th>
+
+                            <th>
+                                Category
+                            </th>
+
+                            <th>
+                                Location
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                        </thead>
 
 
-                    <!-- TABLE HEADER -->
 
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            ID
-                        </th>
-
-                        <th>
-                            Citizen
-                        </th>
-
-                        <th>
-                            Category
-                        </th>
-
-                        <th>
-                            Location
-                        </th>
-
-                        <th>
-                            Description
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Action
-                        </th>
-
-                    </tr>
-
-                    </thead>
+                        <tbody id="complaintsTable">
 
 
+                        <!-- =================================================
+                             COMPLAINT ROW
+                             ================================================= -->
 
-                    <!-- TABLE BODY -->
-
-                    <tbody id="complaintsTable">
-
-
-                    <!-- ================= DATABASE DATA ================= -->
-
-                    <tr
-                            th:each="complaint : ${complaints}"
+                        <tr th:each="complaint : ${complaints}"
                             th:attr="data-status=${complaint.status}">
 
 
-                        <!-- ID -->
+                            <!-- ID -->
 
-                        <td
-                                th:text="${complaint.id}">
+                            <td>
 
-                            1
+                                <span class="complaint-id"
+                                      th:text="${complaint.id}">
+                                    1
+                                </span>
 
-                        </td>
-
-
-                        <!-- CITIZEN -->
-
-                        <td
-                                th:text="${complaint.citizenName}">
-
-                            Citizen Name
-
-                        </td>
-
-
-                        <!-- CATEGORY -->
-
-                        <td
-                                th:text="${complaint.category}">
-
-                            Category
-
-                        </td>
-
-
-                        <!-- LOCATION -->
-
-                        <td
-                                th:text="${complaint.location}">
-
-                            Location
-
-                        </td>
-
-
-                        <!-- DESCRIPTION -->
-
-                        <td
-                                th:text="${complaint.description}">
-
-                            Description
-
-                        </td>
-
-
-                        <!-- STATUS -->
-
-                        <td>
-
-                            <span
-                                    class="status"
-                                    th:classappend="${complaint.status == 'Pending'} ? ' pending' :
-                                                (${complaint.status == 'In Progress'} ? ' progress' : ' resolved')"
-                                    th:text="${complaint.status}">
-
-                                Pending
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- VIEW -->
-
-                        <td>
-
-                            <a
-                                    class="btn"
-                                    th:href="@{/admin/complaints/{id}(id=${complaint.id})}">
-
-                                View
-
-                            </a>
-
-                        </td>
-
-
-                    </tr>
+                            </td>
 
 
 
-                    <!-- ================= NO DATA ================= -->
+                            <!-- CITIZEN -->
 
-                    <tr
-                            th:if="${#lists.isEmpty(complaints)}">
+                            <td>
 
-                        <td
-                                colspan="7"
+                                <div class="citizen-cell">
+
+                                    <strong
+                                            th:text="${complaint.citizenName}">
+                                        Citizen
+                                    </strong>
+
+                                    <small>
+                                        Citizen
+                                    </small>
+
+                                </div>
+
+                            </td>
+
+
+
+                            <!-- CATEGORY -->
+
+                            <td>
+
+                                <span
+                                        th:text="${complaint.category}">
+                                    Road Damage
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- LOCATION -->
+
+                            <td>
+
+                                <span
+                                        th:text="${complaint.location}">
+                                    Location
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- DESCRIPTION -->
+
+                            <td>
+
+                                <div class="description-cell"
+                                     th:text="${complaint.description}">
+
+                                    Complaint description
+
+                                </div>
+
+                            </td>
+
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                <span class="status"
+                                      th:text="${complaint.status}"
+                                      th:attr="data-status-value=${complaint.status}">
+
+                                    Pending
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- =================================================
+                                 VIEW
+                                 ================================================= -->
+
+                            <td>
+
+                                <a class="view-btn"
+                                   th:href="@{/admin/complaints/{id}(id=${complaint.id})}">
+
+                                    View
+
+                                </a>
+
+                            </td>
+
+
+                        </tr>
+
+
+
+                        <!-- =================================================
+                             NO COMPLAINTS
+                             ================================================= -->
+
+                        <tr th:if="${#lists.isEmpty(complaints)}">
+
+                            <td colspan="7"
                                 class="empty">
 
-                            No complaints found.
+                                <div class="empty-state">
 
-                        </td>
+                                    <div class="empty-icon">
+                                        📋
+                                    </div>
 
-                    </tr>
+                                    <h3>
+                                        No Complaints Found
+                                    </h3>
+
+                                    <p>
+                                        There are currently no complaints available.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
 
 
-                    </tbody>
+                        </tbody>
 
+                    </table>
 
-                </table>
-
+                </div>
 
             </div>
 
 
         </section>
 
-
     </main>
-
 
 </div>
 
 
 
-<!-- ================= STATUS FILTER ================= -->
+<!-- =========================================================
+     FILTER JAVASCRIPT
+     ========================================================= -->
 
 <script>
 
-    const filter = document.getElementById("statusFilter");
-
-    const rows = document.querySelectorAll(
-        "#complaintsTable tr[data-status]"
-    );
+    document.addEventListener("DOMContentLoaded", function () {
 
 
-    filter.addEventListener("change", function () {
-
-        const selected = this.value;
-
-
-        rows.forEach(function (row) {
-
-            const status = row.getAttribute("data-status");
+        const filter =
+            document.getElementById("statusFilter");
 
 
-            if (selected === "All" || status === selected) {
+        const rows =
+            document.querySelectorAll(
+                "#complaintsTable tr[data-status]"
+            );
 
-                row.style.display = "";
 
-            } else {
+        if (!filter) {
+            return;
+        }
 
-                row.style.display = "none";
 
-            }
+        filter.addEventListener("change", function () {
+
+
+            const selected =
+                this.value.trim().toLowerCase();
+
+
+            rows.forEach(function (row) {
+
+
+                const rowStatus =
+                    (row.getAttribute("data-status") || "")
+                        .trim()
+                        .toLowerCase();
+
+
+                if (
+                    selected === "all" ||
+                    selected === rowStatus
+                ) {
+
+                    row.style.display = "";
+
+                } else {
+
+                    row.style.display = "none";
+
+                }
+
+            });
 
         });
+
+
+
+        /* STATUS COLORS */
+
+        document
+            .querySelectorAll(".status")
+            .forEach(function (badge) {
+
+
+                const status =
+                    (badge.getAttribute("data-status-value") || "")
+                        .trim()
+                        .toLowerCase();
+
+
+                badge.classList.remove(
+                    "pending",
+                    "progress",
+                    "review",
+                    "resolved"
+                );
+
+
+                if (status === "pending") {
+
+                    badge.classList.add("pending");
+
+                }
+
+                else if (
+                    status === "in progress"
+                ) {
+
+                    badge.classList.add("progress");
+
+                }
+
+                else if (
+                    status === "under review"
+                ) {
+
+                    badge.classList.add("review");
+
+                }
+
+                else if (
+                    status === "resolved"
+                ) {
+
+                    badge.classList.add("resolved");
+
+                }
+
+            });
 
     });
 

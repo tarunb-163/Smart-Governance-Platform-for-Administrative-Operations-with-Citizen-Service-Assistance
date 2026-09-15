@@ -1,15 +1,15 @@
 /* =========================================================
-   CIVICPULSE - COMPLAINTS PAGE
+   CIVICPULSE - OFFICERS PAGE
    ========================================================= */
 
-.complaints-content {
+.officers-content {
     padding: 30px;
 }
 
 /* Header */
 
-.complaints-content .page-header,
-.complaints-header {
+.officers-content .page-header,
+.officers-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -17,75 +17,78 @@
     margin-bottom: 24px;
 }
 
-.complaints-content h1 {
+.officers-content h1 {
     margin: 0;
     color: #172033;
     font-size: 25px;
     font-weight: 700;
 }
 
-.complaints-content .subtitle {
+.officers-content .subtitle {
     margin-top: 6px;
     color: #64748b;
     font-size: 13px;
 }
 
 /* =========================================================
-   STATISTICS
+   STAT CARDS
    ========================================================= */
 
-.complaint-stats,
-.complaints-stats,
-.stats-container {
+.officer-stats,
+.officers-stats,
+.officer-stat-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
     margin-bottom: 24px;
 }
 
-.complaint-stat-card,
-.complaints-stat-card {
+.officer-stat-card,
+.officers-stat-card {
     padding: 20px;
+
     background: #ffffff;
     border: 1px solid #e8edf5;
     border-radius: 15px;
+
     box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+
     transition: 0.2s ease;
 }
 
-.complaint-stat-card:hover,
-.complaints-stat-card:hover {
+.officer-stat-card:hover,
+.officers-stat-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
 }
 
-.complaint-stat-card .label,
-.complaints-stat-card .label {
+.officer-stat-card .label,
+.officers-stat-card .label {
     color: #64748b;
     font-size: 12px;
     font-weight: 600;
 }
 
-.complaint-stat-card .value,
-.complaints-stat-card .value {
+.officer-stat-card .value,
+.officers-stat-card .value {
     margin-top: 8px;
+
     color: #172033;
     font-size: 28px;
     font-weight: 750;
 }
 
 /* =========================================================
-   FILTER / SEARCH
+   TOOLBAR
    ========================================================= */
 
-.complaints-toolbar {
+.officers-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 15px;
 
     padding: 18px;
-
     margin-bottom: 18px;
 
     background: #ffffff;
@@ -95,7 +98,7 @@
     box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
 }
 
-.complaints-search {
+.officers-search {
     width: 300px;
     height: 40px;
 
@@ -104,38 +107,56 @@
 
     padding: 0 12px;
 
+    background: #f8fafc;
     border: 1px solid #dbe2ec;
     border-radius: 9px;
-
-    background: #f8fafc;
 }
 
-.complaints-search input {
+.officers-search input {
     width: 100%;
+
     border: 0;
     outline: 0;
+
     background: transparent;
 
     color: #334155;
     font-size: 13px;
 }
 
-.complaints-filter {
-    display: flex;
+.add-officer-btn {
+    min-height: 40px;
+
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 0 15px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: 0.2s;
 }
 
-.complaints-filter select {
-    width: auto;
-    min-width: 150px;
+.add-officer-btn:hover {
+    background: #1d4ed8;
 }
 
 /* =========================================================
-   TABLE CARD
+   OFFICER TABLE CARD
    ========================================================= */
 
-.complaints-table-card {
+.officers-table-card {
     overflow: hidden;
 
     background: #ffffff;
@@ -146,7 +167,7 @@
     box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
 }
 
-.complaints-table-header {
+.officers-table-header {
     padding: 20px;
 
     display: flex;
@@ -156,7 +177,7 @@
     border-bottom: 1px solid #eef2f7;
 }
 
-.complaints-table-header h2 {
+.officers-table-header h2 {
     margin: 0;
 
     color: #172033;
@@ -164,7 +185,7 @@
     font-weight: 700;
 }
 
-.complaints-table-header p {
+.officers-table-header p {
     margin: 5px 0 0;
 
     color: #94a3b8;
@@ -175,18 +196,18 @@
    TABLE
    ========================================================= */
 
-.complaints-table-wrapper {
+.officers-table-wrapper {
     overflow-x: auto;
 }
 
-.complaints-table {
+.officers-table {
     width: 100%;
-    min-width: 900px;
+    min-width: 850px;
 
     border-collapse: collapse;
 }
 
-.complaints-table th {
+.officers-table th {
     padding: 13px 16px;
 
     background: #f8fafc;
@@ -203,7 +224,7 @@
     border-bottom: 1px solid #e8edf5;
 }
 
-.complaints-table td {
+.officers-table td {
     padding: 14px 16px;
 
     color: #334155;
@@ -215,196 +236,221 @@
     vertical-align: middle;
 }
 
-.complaints-table tbody tr {
+.officers-table tbody tr {
     transition: 0.15s ease;
 }
 
-.complaints-table tbody tr:hover {
+.officers-table tbody tr:hover {
     background: #fafcff;
 }
 
-.complaints-table tbody tr:last-child td {
+.officers-table tbody tr:last-child td {
     border-bottom: 0;
 }
 
 /* =========================================================
-   COMPLAINT INFO
+   OFFICER PROFILE
    ========================================================= */
 
-.complaint-title {
-    max-width: 280px;
-
-    color: #172033;
-    font-weight: 650;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.officer-info {
+    display: flex;
+    align-items: center;
+    gap: 11px;
 }
 
-.complaint-id {
+.officer-avatar {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+    color: #2563eb;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.officer-name {
+    color: #172033;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.officer-username {
+    margin-top: 3px;
+
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.employee-id {
     color: #64748b;
     font-size: 11px;
     font-weight: 600;
 }
 
-.complaint-description {
-    max-width: 260px;
+/* =========================================================
+   DEPARTMENT
+   ========================================================= */
 
-    color: #64748b;
+.department-badge {
+    display: inline-flex;
+    align-items: center;
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    background: #f1f5f9;
+    color: #475569;
+
+    font-size: 10px;
+    font-weight: 650;
 }
 
 /* =========================================================
    STATUS
    ========================================================= */
 
-.complaints-table .status-badge {
+.officer-status {
     display: inline-flex;
     align-items: center;
+    gap: 5px;
 
-    padding: 5px 10px;
+    padding: 5px 9px;
 
     border-radius: 999px;
 
     font-size: 10px;
     font-weight: 700;
-
-    white-space: nowrap;
 }
 
-.complaints-table .status-pending {
-    background: #fef3c7;
-    color: #a16207;
-}
-
-.complaints-table .status-under-review {
-    background: #ede9fe;
-    color: #6d28d9;
-}
-
-.complaints-table .status-in-progress {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
-.complaints-table .status-resolved {
+.officer-status.active {
     background: #dcfce7;
     color: #15803d;
 }
 
-.complaints-table .status-rejected {
+.officer-status.inactive {
     background: #fee2e2;
     color: #b91c1c;
 }
 
-/* =========================================================
-   PRIORITY
-   ========================================================= */
+.officer-status::before {
+    content: "";
 
-.priority-critical {
-    background: #fee2e2;
-    color: #b91c1c;
-}
+    width: 5px;
+    height: 5px;
 
-.priority-high {
-    background: #ffedd5;
-    color: #c2410c;
-}
+    border-radius: 50%;
 
-.priority-medium {
-    background: #fef3c7;
-    color: #a16207;
-}
-
-.priority-low {
-    background: #dcfce7;
-    color: #15803d;
+    background: currentColor;
 }
 
 /* =========================================================
-   ASSIGN OFFICER
+   ACTION BUTTONS
    ========================================================= */
 
-.assign-form {
+.officer-actions {
     display: flex;
     align-items: center;
     gap: 7px;
 }
 
-.assign-form select {
-    width: 145px;
-    min-height: 34px;
+.officer-action {
+    min-height: 32px;
 
-    padding: 6px 9px;
-
-    font-size: 11px;
-}
-
-.assign-form button {
-    min-height: 34px;
-    padding: 0 10px;
-
-    border: 0;
-    border-radius: 7px;
-
-    background: #2563eb;
-    color: #ffffff;
-
-    cursor: pointer;
-
-    font-size: 11px;
-    font-weight: 600;
-
-    transition: 0.2s;
-}
-
-.assign-form button:hover {
-    background: #1d4ed8;
-}
-
-/* =========================================================
-   ACTION BUTTON
-   ========================================================= */
-
-.view-complaint-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    min-height: 34px;
+    padding: 0 10px;
 
-    padding: 0 11px;
+    border-radius: 7px;
 
-    border-radius: 8px;
-
-    background: #eff6ff;
-    color: #2563eb;
-
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 650;
+
+    cursor: pointer;
 
     transition: 0.2s;
 }
 
-.view-complaint-btn:hover {
+.officer-action.edit {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.officer-action.edit:hover {
     background: #dbeafe;
+}
+
+.officer-action.delete {
+    background: #fef2f2;
+    color: #dc2626;
+
+    border: 0;
+}
+
+.officer-action.delete:hover {
+    background: #fee2e2;
+}
+
+/* =========================================================
+   ADD / EDIT FORM
+   ========================================================= */
+
+.officer-form-card {
+    margin-bottom: 20px;
+
+    padding: 22px;
+
+    background: #ffffff;
+
+    border: 1px solid #e8edf5;
+    border-radius: 15px;
+
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.officer-form-card h2 {
+    margin: 0 0 18px;
+
+    color: #172033;
+    font-size: 16px;
+}
+
+.officer-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.officer-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 18px;
 }
 
 /* =========================================================
    EMPTY STATE
    ========================================================= */
 
-.complaints-empty {
+.officers-empty {
     padding: 55px 20px;
 
     text-align: center;
 }
 
-.complaints-empty .empty-icon {
+.officers-empty .empty-icon {
     width: 50px;
     height: 50px;
 
@@ -421,14 +467,14 @@
     font-size: 22px;
 }
 
-.complaints-empty h3 {
+.officers-empty h3 {
     margin: 0 0 6px;
 
     color: #475569;
     font-size: 15px;
 }
 
-.complaints-empty p {
+.officers-empty p {
     margin: 0;
 
     color: #94a3b8;
@@ -441,93 +487,45 @@
 
 @media (max-width: 1100px) {
 
-    .complaint-stats,
-    .complaints-stats,
-    .stats-container {
+    .officer-stats,
+    .officers-stats,
+    .officer-stat-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .complaints-toolbar {
+    .officers-toolbar {
         align-items: stretch;
         flex-direction: column;
     }
 
-    .complaints-search {
+    .officers-search {
         width: 100%;
+    }
+
+    .add-officer-btn {
+        width: fit-content;
     }
 }
 
 @media (max-width: 700px) {
 
-    .complaints-content {
+    .officers-content {
         padding: 20px;
     }
 
-    .complaint-stats,
-    .complaints-stats,
-    .stats-container {
+    .officer-stats,
+    .officers-stats,
+    .officer-stat-grid {
         grid-template-columns: 1fr;
     }
 
-    .complaints-content .page-header,
-    .complaints-header {
+    .officers-content .page-header,
+    .officers-header {
         align-items: flex-start;
         flex-direction: column;
     }
 
-    .complaints-filter {
-        width: 100%;
+    .officer-form-grid {
+        grid-template-columns: 1fr;
     }
-
-    .complaints-filter select {
-        width: 100%;
-    }
-}
-
-/* =========================================================
-   COMPLAINT VIEW BUTTON
-   ========================================================= */
-
-.action-cell {
-    text-align: right;
-    white-space: nowrap;
-}
-
-.view-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-width: 64px;
-    height: 40px;
-
-    padding: 0 18px;
-
-    background: #2563eb;
-    color: #ffffff !important;
-
-    border: none;
-    border-radius: 10px;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    text-decoration: none !important;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
-}
-
-.view-btn:hover {
-    background: #1d4ed8;
-    color: #ffffff !important;
-
-    transform: translateY(-1px);
-
-    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
-}
-
-.view-btn:active {
-    transform: translateY(0);
 }

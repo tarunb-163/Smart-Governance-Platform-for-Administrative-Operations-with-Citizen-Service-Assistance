@@ -1,286 +1,442 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Officers | CivicPulse Admin</title>
 
+    <link rel="stylesheet"
+          th:href="@{/css/admin-modern.css}">
+
     <style>
 
-        * {
+        /* =====================================================
+           OFFICER PAGE
+           ===================================================== */
+
+        .officer-page {
+            padding: 28px 32px 40px;
+        }
+
+        .officer-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .officer-page-header h1 {
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: #f4f6f9;
-            color: #1f2937;
-        }
-
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* ================= SIDEBAR ================= */
-
-        .sidebar {
-            width: 250px;
-            background: #172554;
-            color: white;
-            padding: 25px 16px;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-        }
-
-        .logo {
             font-size: 26px;
-            font-weight: bold;
-            margin-bottom: 40px;
-            padding-left: 15px;
+            color: #172033;
         }
 
-        .logo span {
-            color: #3b82f6;
-        }
-
-        .menu a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 15px;
-            margin: 5px 0;
-            border-radius: 8px;
-            transition: 0.2s;
-        }
-
-        .menu a:hover,
-        .menu a.active {
-            background: #2563eb;
-        }
-
-        /* ================= MAIN ================= */
-
-        .main {
-            flex: 1;
-            margin-left: 250px;
-        }
-
-        .topbar {
-            background: white;
-            padding: 25px 35px;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .topbar h1 {
-            font-size: 28px;
-        }
-
-        .admin-name {
-            font-weight: bold;
-        }
-
-        .content {
-            padding: 35px;
-        }
-
-        /* ================= HEADER ================= */
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .page-header p {
+        .officer-page-header p {
+            margin: 7px 0 0;
             color: #64748b;
-            margin-top: 6px;
             font-size: 14px;
         }
 
-        .add-btn {
+        .officer-add-btn {
+            border: none;
             background: #2563eb;
             color: white;
-            text-decoration: none;
             padding: 11px 18px;
-            border-radius: 7px;
+            border-radius: 9px;
             font-weight: 600;
-            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
         }
 
-        .add-btn:hover {
+        .officer-add-btn:hover {
             background: #1d4ed8;
         }
 
-        /* ================= STATS ================= */
 
-        .stats {
+        /* =====================================================
+           ALERTS
+           ===================================================== */
+
+        .officer-alert {
+            padding: 13px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .officer-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .officer-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+
+        /* =====================================================
+           STAT CARDS
+           ===================================================== */
+
+        .officer-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 18px;
+            margin-bottom: 24px;
         }
 
-        .card {
+        .officer-stat-card {
             background: white;
-            padding: 22px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e6ebf2;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 5px 18px rgba(15, 23, 42, .05);
         }
 
-        .card h3 {
+        .officer-stat-label {
             color: #64748b;
-            font-size: 14px;
-            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        .card p {
-            font-size: 28px;
-            font-weight: bold;
+        .officer-stat-number {
+            margin-top: 8px;
+            font-size: 29px;
+            font-weight: 700;
+            color: #172033;
         }
 
-        /* ================= TABLE ================= */
+        .officer-stat-sub {
+            margin-top: 5px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
 
-        .table-container {
+
+        /* =====================================================
+           TABLE CARD
+           ===================================================== */
+
+        .officer-table-card {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            overflow-x: auto;
+            border: 1px solid #e6ebf2;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, .05);
+            overflow: hidden;
         }
 
-        .table-header {
+        .officer-table-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #edf0f5;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            gap: 15px;
         }
 
-        .table-header h2 {
-            font-size: 21px;
+        .officer-table-header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #172033;
         }
 
-        .search-box {
-            padding: 10px 14px;
-            width: 230px;
-            border: 1px solid #d1d5db;
-            border-radius: 7px;
+        .officer-search {
+            width: 250px;
+            padding: 10px 13px;
+            border: 1px solid #dbe2ea;
+            border-radius: 8px;
             outline: none;
         }
 
-        .search-box:focus {
+        .officer-search:focus {
             border-color: #2563eb;
         }
 
-        table {
+        .officer-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .officer-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        th,
-        td {
-            padding: 15px;
+        .officer-table th {
+            padding: 13px 18px;
             text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        th {
             background: #f8fafc;
-            color: #475569;
-            font-size: 14px;
-        }
-
-        td {
-            font-size: 14px;
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        /* ================= STATUS ================= */
-
-        .status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
+            color: #64748b;
             font-size: 12px;
-            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: .04em;
         }
 
-        .active {
+        .officer-table td {
+            padding: 15px 18px;
+            border-top: 1px solid #edf0f5;
+            color: #334155;
+            font-size: 13px;
+        }
+
+        .officer-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+
+        /* =====================================================
+           STATUS
+           ===================================================== */
+
+        .officer-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .officer-status-active {
             background: #dcfce7;
             color: #166534;
         }
 
-        .inactive {
+        .officer-status-inactive {
             background: #fee2e2;
             color: #991b1b;
         }
 
-        /* ================= ACTION ================= */
 
-        .action-btn {
+        /* =====================================================
+           ACTION BUTTONS
+           ===================================================== */
+
+        .officer-actions {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .officer-action {
             border: none;
+            border-radius: 7px;
             padding: 7px 11px;
-            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
-            color: white;
-            margin-right: 5px;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .view-btn {
-            background: #2563eb;
+        .officer-edit {
+            background: #eff6ff;
+            color: #2563eb;
         }
 
-        .edit-btn {
-            background: #64748b;
+        .officer-edit:hover {
+            background: #dbeafe;
         }
 
-        .delete-btn {
-            background: #dc2626;
+        .officer-delete {
+            background: #fef2f2;
+            color: #dc2626;
         }
 
-        .action-btn:hover {
-            opacity: 0.85;
+        .officer-delete:hover {
+            background: #fee2e2;
         }
 
-        /* ================= EMPTY ================= */
 
-        .empty {
+        /* =====================================================
+           EMPTY
+           ===================================================== */
+
+        .officer-empty {
             text-align: center;
-            padding: 40px;
+            padding: 45px 20px;
             color: #64748b;
         }
 
-        /* ================= RESPONSIVE ================= */
+        .officer-empty-icon {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+
+        /* =====================================================
+           MODAL
+           ===================================================== */
+
+        .officer-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .55);
+            z-index: 5000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .officer-modal.show {
+            display: flex;
+        }
+
+        .officer-modal-box {
+            width: min(850px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, .25);
+        }
+
+        .officer-modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #edf0f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .officer-modal-header h2 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .officer-close {
+            border: none;
+            background: #f1f5f9;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .officer-form {
+            padding: 24px;
+        }
+
+        .officer-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 17px;
+        }
+
+        .officer-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .officer-form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .officer-form-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .officer-form-group input,
+        .officer-form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #dbe2ea;
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .officer-form-group input:focus,
+        .officer-form-group select:focus {
+            border-color: #2563eb;
+        }
+
+        .officer-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .officer-check input {
+            width: auto;
+        }
+
+        .officer-form-footer {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .officer-cancel {
+            border: none;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 10px 17px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .officer-save {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
 
         @media (max-width: 900px) {
 
-            .stats {
+            .officer-stats {
                 grid-template-columns: 1fr;
             }
 
-            .sidebar {
-                width: 200px;
+            .officer-page-header {
+                align-items: flex-start;
+                flex-direction: column;
             }
 
-            .main {
-                margin-left: 200px;
+            .officer-table-header {
+                align-items: flex-start;
+                flex-direction: column;
             }
 
+            .officer-search {
+                width: 100%;
+            }
+
+            .officer-form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .officer-form-group.full {
+                grid-column: auto;
+            }
         }
 
     </style>
@@ -291,163 +447,300 @@
 <body>
 
 
+<!-- =========================================================
+     MAIN LAYOUT
+     ========================================================= -->
+
 <div class="layout">
 
 
-    <!-- ================= SIDEBAR ================= -->
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
 
     <aside class="sidebar">
 
         <div class="logo">
-            Civic<span>Pulse</span>
+            <div class="logo-icon">
+                CP
+            </div>
+
+            <div class="logo-text">
+                Civic<span>Pulse</span>
+            </div>
         </div>
 
 
         <nav class="menu">
 
+            <div class="menu-title">
+                Main Menu
+            </div>
+
+
             <a href="/admin/dashboard">
-                Dashboard
+                <span class="menu-icon">⌂</span>
+                <span>Dashboard</span>
             </a>
+
 
             <a href="/admin/complaints">
-                Complaints
+                <span class="menu-icon">▣</span>
+                <span>Complaints</span>
             </a>
 
-            <a href="/admin/officers" class="active">
-                Officers
+
+            <a href="/admin/officers"
+               class="active">
+
+                <span class="menu-icon">♙</span>
+                <span>Officers</span>
+
             </a>
+
 
             <a href="/admin/citizens">
-                Citizens
+
+                <span class="menu-icon">♟</span>
+                <span>Citizens</span>
+
             </a>
+
+
+            <div class="menu-title">
+                Management
+            </div>
+
 
             <a href="/admin/reports">
-                Reports
+
+                <span class="menu-icon">▤</span>
+                <span>Reports</span>
+
             </a>
 
-            <a href="/admin/profile">
-                Profile
-            </a>
 
             <a href="/admin/settings">
-                Settings
+
+                <span class="menu-icon">⚙</span>
+                <span>Settings</span>
+
+            </a>
+
+
+            <a href="/admin/profile">
+
+                <span class="menu-icon">◉</span>
+                <span>Profile</span>
+
             </a>
 
         </nav>
 
+
+        <div class="logout">
+
+            <a href="/logout">
+
+                <span class="menu-icon">
+                    ↪
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+        </div>
+
     </aside>
 
 
-
-    <!-- ================= MAIN ================= -->
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
 
     <main class="main">
 
 
-        <!-- TOP BAR -->
+        <!-- TOPBAR -->
 
         <header class="topbar">
 
-            <h1>
-                Officer Management
-            </h1>
+            <div class="page-title">
 
-            <div class="admin-name">
-                Administrator
+                <h2>
+                    Officer Management
+                </h2>
+
+                <p>
+                    Manage government officers and their accounts
+                </p>
+
+            </div>
+
+
+            <div class="top-right">
+
+                <div class="notification">
+                    🔔
+                </div>
+
+                <div class="profile">
+
+                    <div class="avatar">
+                        A
+                    </div>
+
+                    <div class="profile-info">
+
+                        <strong>
+                            Administrator
+                        </strong>
+
+                        <span>
+                            System Admin
+                        </span>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </header>
 
 
+        <!-- =====================================================
+             CONTENT
+             ===================================================== -->
 
-        <!-- CONTENT -->
-
-        <section class="content">
+        <section class="content officer-page">
 
 
             <!-- PAGE HEADER -->
 
-            <div class="page-header">
+            <div class="officer-page-header">
 
                 <div>
 
-                    <h2>
+                    <h1>
                         Officers
-                    </h2>
+                    </h1>
 
                     <p>
-                        Manage government officers and their accounts.
+                        Add, edit and manage government officers.
                     </p>
 
                 </div>
 
 
-                <a
-                        href="#"
-                        class="add-btn">
+                <button
+                        type="button"
+                        class="officer-add-btn"
+                        onclick="openOfficerModal()">
 
-                    + Add Officer
+                    <span>+</span>
 
-                </a>
+                    Add Officer
+
+                </button>
 
             </div>
 
 
+            <!-- =================================================
+                 ALERTS
+                 ================================================= -->
 
-            <!-- ================= STATS ================= -->
+            <div
+                    th:if="${success}"
+                    class="officer-alert officer-success"
+                    th:text="${success}">
+                Success
+            </div>
 
-            <div class="stats">
+
+            <div
+                    th:if="${error}"
+                    class="officer-alert officer-error"
+                    th:text="${error}">
+                Error
+            </div>
 
 
-                <div class="card">
+            <!-- =================================================
+                 STATS
+                 ================================================= -->
 
-                    <h3>
-                        Total Officers
-                    </h3>
+            <div class="officer-stats">
 
-                    <p>
+
+                <div class="officer-stat-card">
+
+                    <div class="officer-stat-label">
+                        TOTAL OFFICERS
+                    </div>
+
+                    <div class="officer-stat-number"
+                         th:text="${totalOfficers}">
                         0
-                    </p>
+                    </div>
+
+                    <div class="officer-stat-sub">
+                        Registered officers
+                    </div>
 
                 </div>
 
 
-                <div class="card">
+                <div class="officer-stat-card">
 
-                    <h3>
-                        Active Officers
-                    </h3>
+                    <div class="officer-stat-label">
+                        ACTIVE OFFICERS
+                    </div>
 
-                    <p>
+                    <div class="officer-stat-number"
+                         th:text="${activeOfficers}">
                         0
-                    </p>
+                    </div>
+
+                    <div class="officer-stat-sub">
+                        Currently active
+                    </div>
 
                 </div>
 
 
-                <div class="card">
+                <div class="officer-stat-card">
 
-                    <h3>
-                        Inactive Officers
-                    </h3>
+                    <div class="officer-stat-label">
+                        INACTIVE OFFICERS
+                    </div>
 
-                    <p>
+                    <div class="officer-stat-number"
+                         th:text="${inactiveOfficers}">
                         0
-                    </p>
+                    </div>
+
+                    <div class="officer-stat-sub">
+                        Currently inactive
+                    </div>
 
                 </div>
-
 
             </div>
 
 
+            <!-- =================================================
+                 TABLE
+                 ================================================= -->
 
-            <!-- ================= TABLE ================= -->
-
-            <div class="table-container">
+            <div class="officer-table-card">
 
 
-                <div class="table-header">
+                <div class="officer-table-header">
 
                     <h2>
                         All Officers
@@ -456,123 +749,209 @@
 
                     <input
                             type="text"
-                            id="searchInput"
-                            class="search-box"
+                            id="officerSearch"
+                            class="officer-search"
                             placeholder="Search officers...">
 
                 </div>
 
 
+                <div class="officer-table-wrapper">
 
-                <table>
-
-
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            ID
-                        </th>
-
-                        <th>
-                            Officer Name
-                        </th>
-
-                        <th>
-                            Department
-                        </th>
-
-                        <th>
-                            Email
-                        </th>
-
-                        <th>
-                            Phone
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Actions
-                        </th>
-
-                    </tr>
-
-                    </thead>
+                    <table class="officer-table">
 
 
+                        <thead>
 
-                    <tbody id="officerTable">
+                        <tr>
 
+                            <th>
+                                ID
+                            </th>
 
-                    <!-- Temporary demo row -->
+                            <th>
+                                Officer
+                            </th>
 
-                    <tr>
+                            <th>
+                                Employee ID
+                            </th>
 
-                        <td>
-                            1
-                        </td>
+                            <th>
+                                Department
+                            </th>
 
-                        <td>
-                            Demo Officer
-                        </td>
+                            <th>
+                                Email
+                            </th>
 
-                        <td>
-                            Municipal Department
-                        </td>
+                            <th>
+                                Phone
+                            </th>
 
-                        <td>
-                            officer@civicpulse.com
-                        </td>
+                            <th>
+                                Status
+                            </th>
 
-                        <td>
-                            9876543210
-                        </td>
+                            <th>
+                                Actions
+                            </th>
 
-                        <td>
+                        </tr>
 
-                            <span class="status active">
-                                Active
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button
-                                    class="action-btn view-btn">
-
-                                View
-
-                            </button>
-
-                            <button
-                                    class="action-btn edit-btn">
-
-                                Edit
-
-                            </button>
-
-                            <button
-                                    class="action-btn delete-btn">
-
-                                Delete
-
-                            </button>
-
-                        </td>
-
-                    </tr>
+                        </thead>
 
 
-                    </tbody>
+                        <tbody id="officerTableBody">
 
 
-                </table>
+                        <!-- DATABASE OFFICERS -->
 
+                        <tr th:each="officer : ${officers}">
+
+
+                            <td th:text="${officer.id}">
+                                1
+                            </td>
+
+
+                            <td>
+
+                                <strong
+                                        th:text="${officer.fullName}">
+                                    Officer Name
+                                </strong>
+
+                                <br>
+
+                                <small
+                                        th:text="${officer.username}">
+                                    username
+                                </small>
+
+                            </td>
+
+
+                            <td th:text="${officer.employeeId}">
+                                EMP001
+                            </td>
+
+
+                            <td th:text="${officer.department}">
+                                Department
+                            </td>
+
+
+                            <td th:text="${officer.email}">
+                                officer@email.com
+                            </td>
+
+
+                            <td th:text="${officer.phone}">
+                                -
+                            </td>
+
+
+                            <td>
+
+
+                                <span
+                                        th:if="${officer.active}"
+                                        class="officer-status officer-status-active">
+
+                                    Active
+
+                                </span>
+
+
+                                <span
+                                        th:unless="${officer.active}"
+                                        class="officer-status officer-status-inactive">
+
+                                    Inactive
+
+                                </span>
+
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="officer-actions">
+
+
+                                    <!-- EDIT -->
+
+                                    <a
+                                            class="officer-action officer-edit"
+                                            th:href="@{/admin/officers/edit/{id}(id=${officer.id})}">
+
+                                        Edit
+
+                                    </a>
+
+
+                                    <!-- DELETE -->
+
+                                    <form
+                                            method="post"
+                                            th:action="@{/admin/officers/{id}/delete(id=${officer.id})}"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Are you sure you want to delete this officer?');">
+
+                                        <button
+                                                type="submit"
+                                                class="officer-action officer-delete">
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+
+
+                                </div>
+
+                            </td>
+
+
+                        </tr>
+
+
+                        <!-- EMPTY -->
+
+                        <tr
+                                th:if="${#lists.isEmpty(officers)}">
+
+                            <td
+                                    colspan="8"
+                                    class="officer-empty">
+
+                                <div class="officer-empty-icon">
+                                    ♙
+                                </div>
+
+                                <strong>
+                                    No officers found
+                                </strong>
+
+                                <br>
+
+                                <span>
+                                    Click "Add Officer" to create an officer account.
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
@@ -582,45 +961,375 @@
 
     </main>
 
+</div>
+
+
+<!-- =========================================================
+     ADD OFFICER MODAL
+     ========================================================= -->
+
+<div
+        id="officerModal"
+        class="officer-modal">
+
+
+    <div class="officer-modal-box">
+
+
+        <div class="officer-modal-header">
+
+            <h2>
+                Add New Officer
+            </h2>
+
+            <button
+                    type="button"
+                    class="officer-close"
+                    onclick="closeOfficerModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <form
+                class="officer-form"
+                method="post"
+                action="/admin/officers/save">
+
+
+            <div class="officer-form-grid">
+
+
+                <!-- USERNAME -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Username *
+                    </label>
+
+                    <input
+                            type="text"
+                            name="username"
+                            required
+                            placeholder="officer1">
+
+                </div>
+
+
+                <!-- FULL NAME -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Full Name *
+                    </label>
+
+                    <input
+                            type="text"
+                            name="fullName"
+                            required
+                            placeholder="Officer Full Name">
+
+                </div>
+
+
+                <!-- EMPLOYEE ID -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Employee ID
+                    </label>
+
+                    <input
+                            type="text"
+                            name="employeeId"
+                            placeholder="EMP001">
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input
+                            type="email"
+                            name="email"
+                            placeholder="officer@civicpulse.com">
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Phone
+                    </label>
+
+                    <input
+                            type="text"
+                            name="phone"
+                            placeholder="9876543210">
+
+                </div>
+
+
+                <!-- DEPARTMENT -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Department
+                    </label>
+
+                    <input
+                            type="text"
+                            name="department"
+                            placeholder="Electricity Department">
+
+                </div>
+
+
+                <!-- DESIGNATION -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Designation
+                    </label>
+
+                    <input
+                            type="text"
+                            name="designation"
+                            placeholder="Junior Officer">
+
+                </div>
+
+
+                <!-- JURISDICTION -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Jurisdiction
+                    </label>
+
+                    <input
+                            type="text"
+                            name="jurisdiction"
+                            placeholder="Sector 66">
+
+                </div>
+
+
+                <!-- OFFICE LOCATION -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Office Location
+                    </label>
+
+                    <input
+                            type="text"
+                            name="officeLocation"
+                            placeholder="Municipal Office">
+
+                </div>
+
+
+                <!-- ROLE -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Role
+                    </label>
+
+                    <select name="role">
+
+                        <option value="OFFICER">
+                            OFFICER
+                        </option>
+
+                        <option value="SUPERVISOR">
+                            SUPERVISOR
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="officer-form-group">
+
+                    <label>
+                        Password *
+                    </label>
+
+                    <input
+                            type="password"
+                            name="password"
+                            required
+                            placeholder="Enter password">
+
+                </div>
+
+
+                <!-- ACTIVE -->
+
+                <div class="officer-form-group full">
+
+                    <label class="officer-check">
+
+                        <input
+                                type="checkbox"
+                                name="active"
+                                value="true"
+                                checked>
+
+                        <span>
+                            Make officer active
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="officer-form-footer">
+
+
+                <button
+                        type="button"
+                        class="officer-cancel"
+                        onclick="closeOfficerModal()">
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                        type="submit"
+                        class="officer-save">
+
+                    Add Officer
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+    </div>
 
 </div>
 
 
-
-<!-- ================= SEARCH ================= -->
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
 
 <script>
 
-    const searchInput =
-        document.getElementById("searchInput");
+    function openOfficerModal() {
 
-    searchInput.addEventListener("keyup", function () {
+        const modal =
+            document.getElementById("officerModal");
 
-        const searchValue =
-            this.value.toLowerCase();
-
-        const rows =
-            document.querySelectorAll("#officerTable tr");
+        modal.classList.add("show");
+    }
 
 
-        rows.forEach(function (row) {
+    function closeOfficerModal() {
 
-            const text =
-                row.textContent.toLowerCase();
+        const modal =
+            document.getElementById("officerModal");
 
-            if (text.includes(searchValue)) {
+        modal.classList.remove("show");
+    }
 
-                row.style.display = "";
 
-            } else {
+    window.addEventListener(
+        "click",
+        function(event) {
 
-                row.style.display = "none";
+            const modal =
+                document.getElementById("officerModal");
+
+            if (event.target === modal) {
+
+                closeOfficerModal();
 
             }
 
-        });
+        }
+    );
 
-    });
+
+    // =========================================================
+    // SEARCH
+    // =========================================================
+
+    const searchInput =
+        document.getElementById("officerSearch");
+
+
+    searchInput.addEventListener(
+        "keyup",
+        function() {
+
+            const value =
+                this.value.toLowerCase().trim();
+
+
+            const rows =
+                document.querySelectorAll(
+                    "#officerTableBody tr"
+                );
+
+
+            rows.forEach(
+                function(row) {
+
+                    const text =
+                        row.textContent.toLowerCase();
+
+
+                    if (text.includes(value)) {
+
+                        row.style.display = "";
+
+                    } else {
+
+                        row.style.display = "none";
+
+                    }
+
+                }
+            );
+
+        }
+    );
 
 </script>
 

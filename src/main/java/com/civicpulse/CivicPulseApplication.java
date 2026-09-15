@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-public class CivicPulseApplication implements WebMvcConfigurer {
+public class    CivicPulseApplication implements WebMvcConfigurer {
 
     public static void main(String[] args) {
         SpringApplication.run(CivicPulseApplication.class, args);

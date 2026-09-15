@@ -1,0 +1,539 @@
+/* =========================================================
+   CIVICPULSE - SETTINGS PAGE
+   ========================================================= */
+
+.settings-page {
+    padding: 30px;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.settings-page .page-header {
+    margin-bottom: 24px;
+}
+
+.settings-page .page-header h1 {
+    margin: 0;
+
+    color: #172033;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.settings-page .page-header p {
+    margin: 6px 0 0;
+
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* =========================================================
+   SETTINGS LAYOUT
+   ========================================================= */
+
+.settings-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+/* =========================================================
+   SETTINGS NAVIGATION
+   ========================================================= */
+
+.settings-nav {
+    padding: 10px;
+
+    background: #ffffff;
+
+    border: 1px solid #e8edf5;
+    border-radius: 14px;
+
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.settings-nav a {
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 0 12px;
+
+    border-radius: 9px;
+
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.settings-nav a:hover {
+    background: #f8fafc;
+    color: #334155;
+}
+
+.settings-nav a.active {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+/* =========================================================
+   SETTINGS CARD
+   ========================================================= */
+
+.settings-card {
+    padding: 24px;
+
+    margin-bottom: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e8edf5;
+    border-radius: 15px;
+
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.settings-card:last-child {
+    margin-bottom: 0;
+}
+
+.settings-card-header {
+    padding-bottom: 17px;
+    margin-bottom: 20px;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.settings-card-header h2 {
+    margin: 0;
+
+    color: #172033;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.settings-card-header p {
+    margin: 5px 0 0;
+
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.settings-form .form-group {
+    margin: 0;
+}
+
+.settings-form label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.settings-form input,
+.settings-form select,
+.settings-form textarea {
+    width: 100%;
+
+    min-height: 40px;
+
+    padding: 9px 12px;
+
+    border: 1px solid #dbe2ec;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    outline: none;
+
+    font-size: 12px;
+
+    transition: 0.2s;
+}
+
+.settings-form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.settings-form input:focus,
+.settings-form select:focus,
+.settings-form textarea:focus {
+    border-color: #60a5fa;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+/* =========================================================
+   TWO COLUMN FORM
+   ========================================================= */
+
+.settings-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* =========================================================
+   TOGGLE SETTINGS
+   ========================================================= */
+
+.setting-row {
+    min-height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.setting-row:last-child {
+    border-bottom: 0;
+}
+
+.setting-info {
+    flex: 1;
+}
+
+.setting-info strong {
+    display: block;
+
+    color: #334155;
+
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.setting-info span {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+/* Toggle */
+
+.setting-toggle {
+    position: relative;
+
+    width: 42px;
+    height: 23px;
+
+    flex-shrink: 0;
+}
+
+.setting-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.setting-toggle-slider {
+    position: absolute;
+
+    inset: 0;
+
+    cursor: pointer;
+
+    background: #cbd5e1;
+
+    border-radius: 999px;
+
+    transition: 0.25s;
+}
+
+.setting-toggle-slider::before {
+    content: "";
+
+    position: absolute;
+
+    width: 17px;
+    height: 17px;
+
+    left: 3px;
+    top: 3px;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+
+    transition: 0.25s;
+}
+
+.setting-toggle input:checked + .setting-toggle-slider {
+    background: #2563eb;
+}
+
+.setting-toggle input:checked + .setting-toggle-slider::before {
+    transform: translateX(19px);
+}
+
+/* =========================================================
+   INFORMATION BOX
+   ========================================================= */
+
+.settings-info-box {
+    padding: 14px 16px;
+
+    background: #eff6ff;
+
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+
+    color: #1e40af;
+}
+
+.settings-info-box strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 12px;
+}
+
+.settings-info-box p {
+    margin: 0;
+
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   WARNING BOX
+   ========================================================= */
+
+.settings-warning {
+    padding: 14px 16px;
+
+    background: #fffbeb;
+
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+
+    color: #92400e;
+}
+
+.settings-warning strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 12px;
+}
+
+.settings-warning p {
+    margin: 0;
+
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   DANGER ZONE
+   ========================================================= */
+
+.settings-danger {
+    padding: 20px;
+
+    background: #fffafa;
+
+    border: 1px solid #fecaca;
+    border-radius: 13px;
+}
+
+.settings-danger h3 {
+    margin: 0 0 6px;
+
+    color: #b91c1c;
+
+    font-size: 14px;
+}
+
+.settings-danger p {
+    margin: 0 0 15px;
+
+    color: #7f1d1d;
+
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.settings-danger button {
+    min-height: 36px;
+
+    padding: 0 13px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: #dc2626;
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-size: 11px;
+    font-weight: 650;
+}
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+
+    padding-top: 5px;
+}
+
+.settings-save-btn {
+    min-height: 40px;
+
+    padding: 0 17px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    font-weight: 650;
+
+    transition: 0.2s;
+}
+
+.settings-save-btn:hover {
+    background: #1d4ed8;
+}
+
+.settings-cancel-btn {
+    min-height: 40px;
+
+    padding: 0 15px;
+
+    border: 1px solid #dbe2ec;
+    border-radius: 9px;
+
+    background: #ffffff;
+    color: #475569;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.settings-cancel-btn:hover {
+    background: #f8fafc;
+}
+
+/* =========================================================
+   ALERTS
+   ========================================================= */
+
+.settings-page .alert {
+    padding: 12px 14px;
+
+    margin-bottom: 18px;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+}
+
+.settings-page .alert-success {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.settings-page .alert-danger,
+.settings-page .alert-error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .settings-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-nav {
+        display: flex;
+        overflow-x: auto;
+        gap: 5px;
+    }
+
+    .settings-nav a {
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .settings-page {
+        padding: 20px;
+    }
+
+    .settings-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-card {
+        padding: 18px;
+    }
+
+    .settings-actions {
+        justify-content: stretch;
+    }
+
+    .settings-save-btn,
+    .settings-cancel-btn {
+        flex: 1;
+    }
+}

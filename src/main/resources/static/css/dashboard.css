@@ -1,3 +1,13 @@
+/* Admin dashboard compatibility override */
+.main {
+    margin-left: 250px !important;
+}
+
+.dashboard-wrapper {
+    margin: 0 !important;
+}
+
+
 /* =========================================================
    CIVICPULSE OFFICER DASHBOARD
    dashboard.css
@@ -17,13 +27,6 @@
 /* =========================================================
    MAIN CONTENT
 ========================================================= */
-
-.main-content {
-    margin-left: 270px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-
 
 /* =========================================================
    TOP NAVBAR
