@@ -1,1097 +1,270 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Complaint Details | CivicPulse Admin</title>
 
-
     <style>
 
-        /* =====================================================
-           RESET
-        ===================================================== */
-
         * {
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
             margin: 0;
             padding: 0;
-            min-height: 100%;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
 
         body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: #f5f7fb;
-            color: #172033;
+            background: #f4f6f9;
+            color: #1f2937;
         }
 
-        a {
-            text-decoration: none;
-        }
-
-        button,
-        input,
-        select,
-        textarea {
-            font-family: inherit;
-        }
-
-
-        /* =====================================================
-           MAIN WRAPPER
-        ===================================================== */
-
-        .cp-details-wrapper {
-            min-height: 100vh;
+        .layout {
             display: flex;
-            background: #f5f7fb;
+            min-height: 100vh;
         }
 
+        /* ================= SIDEBAR ================= */
 
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
-
-        .cp-details-sidebar {
+        .sidebar {
             width: 250px;
-            min-width: 250px;
-            min-height: 100vh;
-
+            background: #172554;
+            color: white;
+            padding: 25px 16px;
             position: fixed;
-            left: 0;
             top: 0;
             bottom: 0;
-
-            background: linear-gradient(
-                    180deg,
-                    #172554 0%,
-                    #0f172a 100%
-            );
-
-            color: white;
-
-            padding: 24px 15px;
-
-            display: flex;
-            flex-direction: column;
-
-            box-shadow:
-                    4px 0 20px rgba(15, 23, 42, 0.12);
-
-            z-index: 100;
+            left: 0;
         }
 
-
-        /* =====================================================
-           LOGO
-        ===================================================== */
-
-        .cp-details-brand {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            padding: 0 8px 28px;
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            padding-left: 15px;
         }
 
-        .cp-details-brand-icon {
-            width: 40px;
-            height: 40px;
-
-            border-radius: 11px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: #2563eb;
-            color: white;
-
-            font-weight: 800;
-            font-size: 15px;
+        .logo span {
+            color: #3b82f6;
         }
 
-        .cp-details-brand-name {
-            font-size: 18px;
-            font-weight: 700;
-            line-height: 1.1;
-        }
-
-        .cp-details-brand-name span {
-            color: #60a5fa;
-        }
-
-        .cp-details-brand-subtitle {
-            display: block;
-            margin-top: 4px;
-
-            font-size: 10px;
-            color: #94a3b8;
-
-            letter-spacing: .3px;
-        }
-
-
-        /* =====================================================
-           SECTION TITLE
-        ===================================================== */
-
-        .cp-details-menu-title {
-            padding: 0 12px;
-            margin: 6px 0 9px;
-
-            font-size: 10px;
-            font-weight: 700;
-
-            letter-spacing: 1px;
-
-            color: #64748b;
-        }
-
-
-        /* =====================================================
-           NAV
-        ===================================================== */
-
-        .cp-details-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .cp-details-nav a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            min-height: 43px;
-
-            padding: 0 13px;
-
-            border-radius: 9px;
-
-            color: #cbd5e1;
-
-            font-size: 13px;
-            font-weight: 500;
-
-            transition: .2s;
-        }
-
-        .cp-details-nav a:hover {
-            background: rgba(255,255,255,.08);
-            color: white;
-        }
-
-        .cp-details-nav a.active {
-            background: #2563eb;
-            color: white;
-            font-weight: 600;
-        }
-
-        .cp-details-nav-icon {
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-
-        /* =====================================================
-           SIDEBAR BOTTOM
-        ===================================================== */
-
-        .cp-details-sidebar-bottom {
-            margin-top: auto;
-            padding-top: 20px;
-
-            border-top: 1px solid rgba(255,255,255,.08);
-        }
-
-        .cp-details-admin-mini {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-
-            padding: 8px 10px 15px;
-        }
-
-        .cp-details-avatar {
-            width: 34px;
-            height: 34px;
-
-            border-radius: 50%;
-
-            background: #2563eb;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            color: white;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .cp-details-admin-mini strong {
+        .menu a {
             display: block;
             color: white;
-            font-size: 12px;
-        }
-
-        .cp-details-admin-mini small {
-            display: block;
-            margin-top: 2px;
-            color: #94a3b8;
-            font-size: 10px;
-        }
-
-
-        /* =====================================================
-           MAIN AREA
-        ===================================================== */
-
-        .cp-details-main {
-            margin-left: 250px;
-            width: calc(100% - 250px);
-            min-height: 100vh;
-        }
-
-
-        /* =====================================================
-           TOPBAR
-        ===================================================== */
-
-        .cp-details-topbar {
-            height: 72px;
-
-            background: white;
-
-            border-bottom: 1px solid #e7ebf2;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 0 30px;
-
-            position: sticky;
-            top: 0;
-
-            z-index: 50;
-        }
-
-        .cp-details-topbar-left h1 {
-            margin: 0;
-
-            font-size: 20px;
-            font-weight: 700;
-
-            color: #172033;
-        }
-
-        .cp-details-topbar-left p {
-            margin: 4px 0 0;
-
-            color: #64748b;
-            font-size: 12px;
-        }
-
-        .cp-details-top-admin {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-
-            color: #334155;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .cp-details-top-admin-avatar {
-            width: 36px;
-            height: 36px;
-
-            border-radius: 50%;
-
-            background: #e8f0ff;
-            color: #2563eb;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-weight: 700;
-        }
-
-
-        /* =====================================================
-           CONTENT
-        ===================================================== */
-
-        .cp-details-content {
-            padding: 30px;
-            max-width: 1400px;
-        }
-
-
-        /* =====================================================
-           BACK BUTTON
-        ===================================================== */
-
-        .cp-details-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-
-            margin-bottom: 20px;
-
-            color: #2563eb;
-
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .cp-details-back:hover {
-            color: #1d4ed8;
-        }
-
-
-        /* =====================================================
-           ALERTS
-        ===================================================== */
-
-        .cp-details-alert {
-            padding: 13px 16px;
-
-            border-radius: 10px;
-
-            margin-bottom: 18px;
-
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .cp-details-success {
-            background: #ecfdf5;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-        }
-
-        .cp-details-error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-        }
-
-
-        /* =====================================================
-           MAIN CARD
-        ===================================================== */
-
-        .cp-details-card {
-            background: white;
-
-            border: 1px solid #e7ebf2;
-
-            border-radius: 16px;
-
-            box-shadow:
-                    0 5px 20px rgba(15,23,42,.06);
-
-            overflow: hidden;
-        }
-
-
-        /* =====================================================
-           CARD HEADER
-        ===================================================== */
-
-        .cp-details-card-header {
-            padding: 25px 28px;
-
-            border-bottom: 1px solid #edf0f5;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            gap: 20px;
-        }
-
-        .cp-details-card-title {
-            margin: 0;
-
-            font-size: 20px;
-            font-weight: 700;
-
-            color: #172033;
-        }
-
-        .cp-details-card-number {
-            margin-top: 5px;
-
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        .cp-details-id-badge {
-            padding: 8px 13px;
-
-            border-radius: 8px;
-
-            background: #eff6ff;
-            color: #2563eb;
-
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-
-        /* =====================================================
-           INFORMATION GRID
-        ===================================================== */
-
-        .cp-details-info-grid {
-            padding: 26px 28px;
-
-            display: grid;
-
-            grid-template-columns:
-                    repeat(3, minmax(0, 1fr));
-
-            gap: 15px;
-        }
-
-        .cp-details-info-box {
-            background: #f8fafc;
-
-            border: 1px solid #edf0f5;
-
-            border-radius: 11px;
-
+            text-decoration: none;
             padding: 15px;
+            margin: 5px 0;
+            border-radius: 8px;
         }
 
-        .cp-details-info-label {
-            display: block;
-
-            margin-bottom: 7px;
-
-            color: #64748b;
-
-            font-size: 10px;
-            font-weight: 700;
-
-            text-transform: uppercase;
-
-            letter-spacing: .6px;
-        }
-
-        .cp-details-info-value {
-            margin: 0;
-
-            color: #172033;
-
-            font-size: 13px;
-            font-weight: 600;
-
-            word-break: break-word;
-        }
-
-
-        /* =====================================================
-           CURRENT STATUS BADGE
-        ===================================================== */
-
-        .cp-details-status {
-            display: inline-flex;
-
-            padding: 6px 10px;
-
-            border-radius: 20px;
-
-            background: #fff7ed;
-            color: #c2410c;
-
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-
-        /* =====================================================
-           NORMAL PRIORITY BADGE
-        ===================================================== */
-
-        .cp-details-priority {
-            display: inline-flex;
-
-            padding: 6px 10px;
-
-            border-radius: 20px;
-
-            background: #fef2f2;
-            color: #dc2626;
-
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-
-        /* =====================================================
-           AI PRIORITY SECTION
-        ===================================================== */
-
-        .cp-details-ai-box {
-            margin: 0 28px 28px;
-
-            padding: 22px;
-
-            border: 1px solid #bfdbfe;
-
-            border-radius: 14px;
-
-            background:
-                    linear-gradient(
-                            135deg,
-                            #f8fbff 0%,
-                            #eff6ff 100%
-                    );
-        }
-
-        .cp-details-ai-header {
-            display: flex;
-
-            align-items: flex-start;
-
-            justify-content: space-between;
-
-            gap: 20px;
-        }
-
-        .cp-details-ai-title {
-            margin: 0;
-
-            font-size: 16px;
-
-            font-weight: 700;
-
-            color: #172033;
-        }
-
-        .cp-details-ai-subtitle {
-            margin: 5px 0 0;
-
-            color: #64748b;
-
-            font-size: 12px;
-
-            line-height: 1.5;
-        }
-
-        .cp-details-ai-badge {
-            display: inline-flex;
-
-            align-items: center;
-
-            padding: 7px 11px;
-
-            border-radius: 20px;
-
-            background: #dbeafe;
-
-            color: #2563eb;
-
-            font-size: 10px;
-
-            font-weight: 800;
-
-            letter-spacing: .5px;
-
-            white-space: nowrap;
-        }
-
-
-        /* AI GRID */
-
-        .cp-details-ai-grid {
-            display: grid;
-
-            grid-template-columns:
-                    180px
-                    180px
-                    minmax(0, 1fr);
-
-            gap: 14px;
-
-            margin-top: 18px;
-        }
-
-
-        /* AI ITEM */
-
-        .cp-details-ai-item {
-            padding: 16px;
-
-            background: white;
-
-            border: 1px solid #dbeafe;
-
-            border-radius: 11px;
-
-            min-height: 78px;
-        }
-
-        .cp-details-ai-label {
-            display: block;
-
-            margin-bottom: 8px;
-
-            color: #64748b;
-
-            font-size: 10px;
-
-            font-weight: 700;
-
-            text-transform: uppercase;
-
-            letter-spacing: .5px;
-        }
-
-        .cp-details-ai-value {
-            display: block;
-
-            color: #172033;
-
-            font-size: 15px;
-
-            font-weight: 800;
-        }
-
-
-        /* AI PRIORITY VALUE */
-
-        .cp-details-ai-critical {
-            color: #dc2626;
-        }
-
-        .cp-details-ai-high {
-            color: #ea580c;
-        }
-
-        .cp-details-ai-medium {
-            color: #d97706;
-        }
-
-        .cp-details-ai-low {
-            color: #16a34a;
-        }
-
-
-        /* AI REASON */
-
-        .cp-details-ai-reason {
-            line-height: 1.55;
-
-            font-size: 12px;
-        }
-
-
-        /* =====================================================
-           DESCRIPTION
-        ===================================================== */
-
-        .cp-details-section {
-            padding: 0 28px 26px;
-        }
-
-        .cp-details-section-title {
-            margin: 0 0 12px;
-
-            font-size: 15px;
-
-            font-weight: 700;
-
-            color: #172033;
-        }
-
-        .cp-details-description {
-            padding: 17px;
-
-            background: #f8fafc;
-
-            border: 1px solid #edf0f5;
-
-            border-radius: 11px;
-
-            color: #475569;
-
-            font-size: 13px;
-
-            line-height: 1.7;
-
-            white-space: pre-wrap;
-
-            min-height: 70px;
-        }
-
-
-        /* =====================================================
-           DETAILED STATUS BOX
-        ===================================================== */
-
-        .cp-details-detailed-status {
-            margin: 0 28px 28px;
-
-            padding: 22px;
-
-            background: white;
-
-            border: 1px solid #e2e8f0;
-
-            border-radius: 14px;
-
-            box-shadow:
-                    0 2px 8px rgba(15,23,42,.03);
-        }
-
-
-        /* HEADER */
-
-        .cp-details-detailed-status-header {
-            display: flex;
-
-            align-items: flex-start;
-
-            justify-content: space-between;
-
-            gap: 20px;
-        }
-
-        .cp-details-detailed-status-title {
-            margin: 0;
-
-            font-size: 16px;
-
-            font-weight: 700;
-
-            color: #172033;
-        }
-
-        .cp-details-detailed-status-subtitle {
-            margin: 5px 0 0;
-
-            color: #64748b;
-
-            font-size: 12px;
-
-            line-height: 1.5;
-        }
-
-
-        /* STATUS BADGE */
-
-        .cp-details-current-status-badge {
-            display: inline-flex;
-
-            align-items: center;
-
-            padding: 7px 12px;
-
-            border-radius: 20px;
-
-            background: #eff6ff;
-
-            color: #2563eb;
-
-            font-size: 11px;
-
-            font-weight: 700;
-
-            white-space: nowrap;
-        }
-
-
-        /* DETAIL GRID */
-
-        .cp-details-status-grid {
-            display: grid;
-
-            grid-template-columns:
-                    180px
-                    minmax(0, 1fr)
-                    minmax(0, 1fr);
-
-            gap: 14px;
-
-            margin-top: 18px;
-        }
-
-
-        /* STATUS ITEM */
-
-        .cp-details-status-item {
-            padding: 16px;
-
-            background: #f8fafc;
-
-            border: 1px solid #edf0f5;
-
-            border-radius: 11px;
-
-            min-height: 95px;
-        }
-
-        .cp-details-status-label {
-            display: block;
-
-            margin-bottom: 8px;
-
-            color: #64748b;
-
-            font-size: 10px;
-
-            font-weight: 700;
-
-            text-transform: uppercase;
-
-            letter-spacing: .5px;
-        }
-
-        .cp-details-status-value {
-            display: block;
-
-            color: #172033;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            line-height: 1.55;
-        }
-
-
-        /* =====================================================
-           ACTION AREA
-        ===================================================== */
-
-        .cp-details-actions {
-            padding: 26px 28px;
-
-            border-top: 1px solid #edf0f5;
-
-            background: #fbfcfe;
-        }
-
-
-        /* STATUS FORM */
-
-        .cp-details-status-form {
-            display: flex;
-
-            align-items: end;
-
-            gap: 12px;
-
-            max-width: 650px;
-        }
-
-        .cp-details-form-group {
-            flex: 1;
-        }
-
-        .cp-details-form-label {
-            display: block;
-
-            margin-bottom: 7px;
-
-            font-size: 11px;
-
-            font-weight: 700;
-
-            color: #475569;
-        }
-
-        .cp-details-select {
-            width: 100%;
-
-            height: 43px;
-
-            padding: 0 12px;
-
-            border: 1px solid #dbe2ea;
-
-            border-radius: 9px;
-
-            background: white;
-
-            color: #172033;
-
-            outline: none;
-
-            font-size: 13px;
-        }
-
-        .cp-details-select:focus {
-            border-color: #2563eb;
-
-            box-shadow:
-                    0 0 0 3px rgba(37,99,235,.10);
-        }
-
-        .cp-details-update-btn {
-            height: 43px;
-
-            padding: 0 19px;
-
-            border: 0;
-
-            border-radius: 9px;
-
+        .menu a:hover,
+        .menu a.active {
             background: #2563eb;
-
-            color: white;
-
-            font-size: 12px;
-
-            font-weight: 700;
-
-            cursor: pointer;
-
-            transition: .2s;
         }
 
-        .cp-details-update-btn:hover {
-            background: #1d4ed8;
+        /* ================= MAIN ================= */
 
-            transform: translateY(-1px);
+        .main {
+            flex: 1;
+            margin-left: 250px;
         }
 
-
-        /* =====================================================
-           NOT FOUND
-        ===================================================== */
-
-        .cp-details-not-found {
+        .topbar {
             background: white;
+            padding: 25px 35px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-            border: 1px solid #e7ebf2;
+        .topbar h1 {
+            font-size: 26px;
+        }
 
-            border-radius: 16px;
+        .admin-name {
+            font-weight: bold;
+        }
 
-            padding: 60px 30px;
+        .content {
+            padding: 35px;
+        }
 
+        /* ================= BACK BUTTON ================= */
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* ================= DETAILS CARD ================= */
+
+        .details-card {
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .details-header h2 {
+            font-size: 22px;
+        }
+
+        .complaint-id {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* ================= INFO GRID ================= */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+            margin-bottom: 28px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 9px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-box label {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .info-box p {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* ================= DESCRIPTION ================= */
+
+        .description {
+            margin-bottom: 30px;
+        }
+
+        .description h3 {
+            margin-bottom: 12px;
+            font-size: 17px;
+        }
+
+        .description-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 20px;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        /* ================= STATUS UPDATE ================= */
+
+        .status-section {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 25px;
+        }
+
+        .status-section h3 {
+            margin-bottom: 15px;
+        }
+
+        .status-form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .status-select {
+            padding: 11px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            background: white;
+            min-width: 200px;
+            font-size: 14px;
+        }
+
+        .update-btn {
+            padding: 11px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .update-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* ================= ERROR ================= */
+
+        .not-found {
+            background: white;
+            padding: 50px;
             text-align: center;
-
-            box-shadow:
-                    0 5px 20px rgba(15,23,42,.05);
+            border-radius: 12px;
         }
 
-        .cp-details-not-found h2 {
-            margin: 0 0 8px;
-
-            color: #172033;
+        .not-found h2 {
+            margin-bottom: 10px;
         }
 
-        .cp-details-not-found p {
-            margin: 0 0 20px;
-
+        .not-found p {
             color: #64748b;
         }
 
+        @media (max-width: 800px) {
 
-        /* =====================================================
-           RESPONSIVE
-        ===================================================== */
-
-        @media (max-width: 1050px) {
-
-            .cp-details-info-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .sidebar {
+                width: 200px;
             }
 
-            .cp-details-ai-grid {
-                grid-template-columns: 1fr 1fr;
+            .main {
+                margin-left: 200px;
             }
 
-            .cp-details-ai-reason {
-                grid-column: 1 / -1;
-            }
-
-            .cp-details-status-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .cp-details-status-item:first-child {
-                grid-column: 1 / -1;
-            }
-        }
-
-
-        @media (max-width: 760px) {
-
-            .cp-details-sidebar {
-                width: 210px;
-                min-width: 210px;
-            }
-
-            .cp-details-main {
-                margin-left: 210px;
-                width: calc(100% - 210px);
-            }
-
-            .cp-details-info-grid {
+            .info-grid {
                 grid-template-columns: 1fr;
             }
 
-            .cp-details-ai-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cp-details-ai-reason {
-                grid-column: auto;
-            }
-
-            .cp-details-status-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cp-details-status-item:first-child {
-                grid-column: auto;
-            }
-
-            .cp-details-status-form {
+            .status-form {
                 flex-direction: column;
                 align-items: stretch;
             }
 
-            .cp-details-topbar {
-                padding: 0 18px;
+            .status-select {
+                width: 100%;
             }
 
-            .cp-details-content {
-                padding: 20px 15px;
-            }
-
-            .cp-details-ai-box,
-            .cp-details-detailed-status {
-                margin-left: 18px;
-                margin-right: 18px;
-            }
-
-            .cp-details-info-grid,
-            .cp-details-section,
-            .cp-details-actions {
-                padding-left: 18px;
-                padding-right: 18px;
-            }
         }
 
     </style>
@@ -1102,223 +275,83 @@
 <body>
 
 
-<div class="cp-details-wrapper">
+<div class="layout">
 
 
-    <!-- =====================================================
-         SIDEBAR
-    ===================================================== -->
+    <!-- ================= SIDEBAR ================= -->
 
-    <aside class="cp-details-sidebar">
+    <aside class="sidebar">
 
-
-        <!-- LOGO -->
-
-        <div class="cp-details-brand">
-
-            <div class="cp-details-brand-icon">
-                CP
-            </div>
-
-            <div>
-
-                <div class="cp-details-brand-name">
-                    Civic<span>Pulse</span>
-                </div>
-
-                <small class="cp-details-brand-subtitle">
-                    Smart Governance
-                </small>
-
-            </div>
-
+        <div class="logo">
+            Civic<span>Pulse</span>
         </div>
 
 
-        <!-- MAIN MENU -->
-
-        <div class="cp-details-menu-title">
-            MAIN MENU
-        </div>
-
-
-        <nav class="cp-details-nav">
+        <nav class="menu">
 
             <a href="/admin/dashboard">
-
-                <span class="cp-details-nav-icon">
-                    ⌂
-                </span>
-
                 Dashboard
-
             </a>
 
-
-            <a href="/admin/complaints"
-               class="active">
-
-                <span class="cp-details-nav-icon">
-                    ▣
-                </span>
-
+            <a href="/admin/complaints" class="active">
                 Complaints
-
             </a>
-
 
             <a href="/admin/officers">
-
-                <span class="cp-details-nav-icon">
-                    ♙
-                </span>
-
                 Officers
-
             </a>
-
 
             <a href="/admin/citizens">
-
-                <span class="cp-details-nav-icon">
-                    ♟
-                </span>
-
                 Citizens
-
             </a>
-
-        </nav>
-
-
-        <!-- MANAGEMENT -->
-
-        <div class="cp-details-menu-title"
-             style="margin-top:22px;">
-
-            MANAGEMENT
-
-        </div>
-
-
-        <nav class="cp-details-nav">
 
             <a href="/admin/reports">
-
-                <span class="cp-details-nav-icon">
-                    ▤
-                </span>
-
                 Reports
-
             </a>
-
-
-            <a href="/admin/settings">
-
-                <span class="cp-details-nav-icon">
-                    ⚙
-                </span>
-
-                Settings
-
-            </a>
-
 
             <a href="/admin/profile">
-
-                <span class="cp-details-nav-icon">
-                    ◉
-                </span>
-
                 Profile
+            </a>
 
+            <a href="/admin/settings">
+                Settings
             </a>
 
         </nav>
-
-
-        <!-- SIDEBAR BOTTOM -->
-
-        <div class="cp-details-sidebar-bottom">
-
-            <div class="cp-details-admin-mini">
-
-                <div class="cp-details-avatar">
-                    A
-                </div>
-
-                <div>
-
-                    <strong>
-                        Administrator
-                    </strong>
-
-                    <small>
-                        System Admin
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
 
     </aside>
 
 
 
-    <!-- =====================================================
-         MAIN
-    ===================================================== -->
+    <!-- ================= MAIN ================= -->
 
-    <main class="cp-details-main">
+    <main class="main">
 
 
-        <!-- =================================================
-             TOP BAR
-        ================================================= -->
+        <!-- TOP BAR -->
 
-        <header class="cp-details-topbar">
+        <header class="topbar">
 
-            <div class="cp-details-topbar-left">
+            <h1>
+                Complaint Details
+            </h1>
 
-                <h1>
-                    Complaint Details
-                </h1>
-
-                <p>
-                    View and manage complaint information
-                </p>
-
-            </div>
-
-
-            <div class="cp-details-top-admin">
-
-                <div class="cp-details-top-admin-avatar">
-                    A
-                </div>
-
+            <div class="admin-name">
                 Administrator
-
             </div>
 
         </header>
 
 
 
-        <!-- =================================================
-             CONTENT
-        ================================================= -->
+        <!-- CONTENT -->
 
-        <section class="cp-details-content">
+        <section class="content">
 
 
-            <!-- BACK -->
-
-            <a href="/admin/complaints"
-               class="cp-details-back">
+            <a
+                    href="/admin/complaints"
+                    class="back-btn">
 
                 ← Back to Complaints
 
@@ -1326,74 +359,30 @@
 
 
 
-            <!-- =================================================
-                 SUCCESS MESSAGE
-            ================================================= -->
+            <!-- ================= COMPLAINT ================= -->
 
-            <div th:if="${success}"
-                 class="cp-details-alert cp-details-success"
-                 th:text="${success}">
-
-                Complaint updated successfully.
-
-            </div>
+            <div
+                    class="details-card"
+                    th:if="${complaint != null}">
 
 
-
-            <!-- =================================================
-                 ERROR MESSAGE
-            ================================================= -->
-
-            <div th:if="${error}"
-                 class="cp-details-alert cp-details-error"
-                 th:text="${error}">
-
-                Something went wrong.
-
-            </div>
-
-
-
-            <!-- =================================================
-                 COMPLAINT CARD
-            ================================================= -->
-
-            <div th:if="${complaint != null}"
-                 class="cp-details-card">
-
-
-                <!-- =================================================
-                     CARD HEADER
-                ================================================= -->
-
-                <div class="cp-details-card-header">
+                <div class="details-header">
 
                     <div>
 
-                        <h2 class="cp-details-card-title">
+                        <h2>
                             Complaint Information
                         </h2>
 
-                        <div class="cp-details-card-number">
+                        <div class="complaint-id">
 
-                            Complaint Number:
-
-                            <strong th:text="${complaint.complaintNumber}">
-                                CP-0001
+                            Complaint ID:
+                            <strong
+                                    th:text="${complaint.id}">
+                                1
                             </strong>
 
                         </div>
-
-                    </div>
-
-
-                    <div class="cp-details-id-badge">
-
-                        ID #
-
-                        <span th:text="${complaint.id}">
-                            1
-                        </span>
 
                     </div>
 
@@ -1401,196 +390,65 @@
 
 
 
-                <!-- =================================================
-                     INFORMATION GRID
-                ================================================= -->
+                <!-- ================= INFORMATION ================= -->
 
-                <div class="cp-details-info-grid">
+                <div class="info-grid">
 
 
-                    <!-- CITIZEN -->
+                    <div class="info-box">
 
-                    <div class="cp-details-info-box">
-
-                        <span class="cp-details-info-label">
+                        <label>
                             Citizen Name
-                        </span>
+                        </label>
 
-                        <p class="cp-details-info-value"
-                           th:text="${complaint.citizenName}">
-
+                        <p
+                                th:text="${complaint.citizenName}">
                             Citizen Name
-
                         </p>
 
                     </div>
 
 
 
-                    <!-- EMAIL -->
+                    <div class="info-box">
 
-                    <div class="cp-details-info-box">
-
-                        <span class="cp-details-info-label">
-                            Citizen Email
-                        </span>
-
-                        <p class="cp-details-info-value"
-                           th:text="${complaint.citizenEmail}">
-
-                            citizen@email.com
-
-                        </p>
-
-                    </div>
-
-
-
-                    <!-- CATEGORY -->
-
-                    <div class="cp-details-info-box">
-
-                        <span class="cp-details-info-label">
+                        <label>
                             Category
-                        </span>
+                        </label>
 
-                        <p class="cp-details-info-value"
-                           th:text="${complaint.category}">
-
+                        <p
+                                th:text="${complaint.category}">
                             Category
-
                         </p>
 
                     </div>
 
 
 
-                    <!-- DEPARTMENT -->
+                    <div class="info-box">
 
-                    <div class="cp-details-info-box">
-
-                        <span class="cp-details-info-label">
-                            Department
-                        </span>
-
-                        <p class="cp-details-info-value"
-                           th:text="${complaint.department}">
-
-                            Department
-
-                        </p>
-
-                    </div>
-
-
-
-                    <!-- LOCATION -->
-
-                    <div class="cp-details-info-box">
-
-                        <span class="cp-details-info-label">
+                        <label>
                             Location
-                        </span>
+                        </label>
 
-                        <p class="cp-details-info-value"
-                           th:text="${complaint.location}">
-
+                        <p
+                                th:text="${complaint.location}">
                             Location
-
                         </p>
 
                     </div>
 
 
 
-                    <!-- NORMAL PRIORITY -->
+                    <div class="info-box">
 
-                    <div class="cp-details-info-box">
-
-                        <span class="cp-details-info-label">
-                            System Priority
-                        </span>
-
-                        <p class="cp-details-info-value">
-
-                            <span class="cp-details-priority"
-                                  th:text="${complaint.priority}">
-
-                                Normal
-
-                            </span>
-
-                        </p>
-
-                    </div>
-
-
-
-                    <!-- CURRENT STATUS -->
-
-                    <div class="cp-details-info-box">
-
-                        <span class="cp-details-info-label">
+                        <label>
                             Current Status
-                        </span>
+                        </label>
 
-                        <p class="cp-details-info-value">
-
-                            <span class="cp-details-status"
-                                  th:text="${complaint.status}">
-
-                                Pending
-
-                            </span>
-
-                        </p>
-
-                    </div>
-
-
-
-                    <!-- ASSIGNED OFFICER -->
-
-                    <div class="cp-details-info-box">
-
-                        <span class="cp-details-info-label">
-                            Assigned Officer
-                        </span>
-
-
-                        <p th:if="${complaint.assignedOfficer != null}"
-                           class="cp-details-info-value"
-                           th:text="${complaint.assignedOfficer.username}">
-
-                            Officer
-
-                        </p>
-
-
-                        <p th:if="${complaint.assignedOfficer == null}"
-                           class="cp-details-info-value">
-
-                            Not Assigned
-
-                        </p>
-
-                    </div>
-
-
-
-                    <!-- CREATED DATE -->
-
-                    <div class="cp-details-info-box">
-
-                        <span class="cp-details-info-label">
-                            Created At
-                        </span>
-
-                        <p class="cp-details-info-value"
-                           th:text="${complaint.createdAt}">
-
-                            Date
-
+                        <p
+                                th:text="${complaint.status}">
+                            Pending
                         </p>
 
                     </div>
@@ -1600,125 +458,17 @@
 
 
 
-                <!-- =================================================
-                     AI PRIORITY ASSESSMENT
-                ================================================= -->
+                <!-- ================= DESCRIPTION ================= -->
 
-                <section class="cp-details-ai-box">
+                <div class="description">
 
-
-                    <div class="cp-details-ai-header">
-
-                        <div>
-
-                            <h3 class="cp-details-ai-title">
-                                AI Complaint Priority Assessment
-                            </h3>
-
-                            <p class="cp-details-ai-subtitle">
-                                Intelligent assessment based on complaint
-                                title, description, category and location.
-                            </p>
-
-                        </div>
-
-
-                        <span class="cp-details-ai-badge">
-                            AI ANALYSIS
-                        </span>
-
-                    </div>
-
-
-
-                    <div class="cp-details-ai-grid">
-
-
-                        <!-- AI PRIORITY -->
-
-                        <div class="cp-details-ai-item">
-
-                            <span class="cp-details-ai-label">
-                                AI Priority
-                            </span>
-
-                            <strong
-                                    class="cp-details-ai-value"
-                                    th:classappend="${aiPriority == 'CRITICAL'} ? ' cp-details-ai-critical' :
-                                                   (${aiPriority == 'HIGH'} ? ' cp-details-ai-high' :
-                                                   (${aiPriority == 'MEDIUM'} ? ' cp-details-ai-medium' :
-                                                   ' cp-details-ai-low'))"
-                                    th:text="${aiPriority}">
-
-                                HIGH
-
-                            </strong>
-
-                        </div>
-
-
-
-                        <!-- CONFIDENCE -->
-
-                        <div class="cp-details-ai-item">
-
-                            <span class="cp-details-ai-label">
-                                Confidence
-                            </span>
-
-                            <strong class="cp-details-ai-value">
-
-                                <span th:text="${aiConfidence}">
-                                    92
-                                </span>%
-
-                            </strong>
-
-                        </div>
-
-
-
-                        <!-- REASON -->
-
-                        <div class="cp-details-ai-item">
-
-                            <span class="cp-details-ai-label">
-                                Assessment Reason
-                            </span>
-
-                            <strong
-                                    class="cp-details-ai-value cp-details-ai-reason"
-                                    th:text="${aiPriorityReason}">
-
-                                Risk indicators detected in the
-                                complaint information.
-
-                            </strong>
-
-                        </div>
-
-
-                    </div>
-
-                </section>
-
-
-
-                <!-- =================================================
-                     COMPLAINT DESCRIPTION
-                ================================================= -->
-
-                <div class="cp-details-section">
-
-                    <h3 class="cp-details-section-title">
-
+                    <h3>
                         Complaint Description
-
                     </h3>
 
-
-                    <div class="cp-details-description"
-                         th:text="${complaint.description}">
+                    <div
+                            class="description-box"
+                            th:text="${complaint.description}">
 
                         Complaint description will appear here.
 
@@ -1728,189 +478,58 @@
 
 
 
-                <!-- =================================================
-                     DETAILED STATUS
-                ================================================= -->
+                <!-- ================= STATUS UPDATE ================= -->
 
-                <section class="cp-details-detailed-status">
+                <div class="status-section">
 
-
-                    <div class="cp-details-detailed-status-header">
-
-                        <div>
-
-                            <h3 class="cp-details-detailed-status-title">
-                                Detailed Status
-                            </h3>
-
-                            <p class="cp-details-detailed-status-subtitle">
-                                Current processing stage, status meaning
-                                and recommended administrative action.
-                            </p>
-
-                        </div>
-
-
-                        <span class="cp-details-current-status-badge"
-                              th:text="${complaint.status}">
-
-                            Pending
-
-                        </span>
-
-                    </div>
-
-
-
-                    <div class="cp-details-status-grid">
-
-
-                        <!-- CURRENT STATUS -->
-
-                        <div class="cp-details-status-item">
-
-                            <span class="cp-details-status-label">
-                                Current Status
-                            </span>
-
-                            <strong class="cp-details-status-value"
-                                    th:text="${complaint.status}">
-
-                                Pending
-
-                            </strong>
-
-                        </div>
-
-
-
-                        <!-- STATUS MEANING -->
-
-                        <div class="cp-details-status-item">
-
-                            <span class="cp-details-status-label">
-                                What This Means
-                            </span>
-
-                            <strong class="cp-details-status-value"
-                                    th:text="${statusDetail}">
-
-                                The complaint is currently waiting
-                                for processing.
-
-                            </strong>
-
-                        </div>
-
-
-
-                        <!-- NEXT ACTION -->
-
-                        <div class="cp-details-status-item">
-
-                            <span class="cp-details-status-label">
-                                Recommended Next Action
-                            </span>
-
-                            <strong class="cp-details-status-value"
-                                    th:text="${statusAction}">
-
-                                Review the complaint and assign
-                                appropriate action.
-
-                            </strong>
-
-                        </div>
-
-
-                    </div>
-
-                </section>
-
-
-
-                <!-- =================================================
-                     UPDATE STATUS
-                ================================================= -->
-
-                <div class="cp-details-actions">
-
-
-                    <h3 class="cp-details-section-title">
-
+                    <h3>
                         Update Complaint Status
-
                     </h3>
 
 
-                    <form class="cp-details-status-form"
-                          method="post"
-                          th:action="@{/admin/complaints/{id}/status(id=${complaint.id})}">
+                    <form
+                            class="status-form"
+                            th:action="@{/admin/complaints/{id}/status(id=${complaint.id})}"
+                            method="post">
 
 
-                        <div class="cp-details-form-group">
+                        <select
+                                name="status"
+                                class="status-select">
 
-                            <label class="cp-details-form-label"
-                                   for="complaintStatus">
+                            <option
+                                    value="Pending"
+                                    th:selected="${complaint.status == 'Pending'}">
 
-                                Complaint Status
+                                Pending
 
-                            </label>
-
-
-                            <select id="complaintStatus"
-                                    name="status"
-                                    class="cp-details-select"
-                                    required>
+                            </option>
 
 
-                                <option value="Pending"
-                                        th:selected="${complaint.status == 'Pending'}">
+                            <option
+                                    value="In Progress"
+                                    th:selected="${complaint.status == 'In Progress'}">
 
-                                    Pending
+                                In Progress
 
-                                </option>
-
-
-                                <option value="Under Review"
-                                        th:selected="${complaint.status == 'Under Review'}">
-
-                                    Under Review
-
-                                </option>
+                            </option>
 
 
-                                <option value="In Progress"
-                                        th:selected="${complaint.status == 'In Progress'}">
+                            <option
+                                    value="Resolved"
+                                    th:selected="${complaint.status == 'Resolved'}">
 
-                                    In Progress
+                                Resolved
 
-                                </option>
+                            </option>
 
-
-                                <option value="Resolved"
-                                        th:selected="${complaint.status == 'Resolved'}">
-
-                                    Resolved
-
-                                </option>
+                        </select>
 
 
-                                <option value="Rejected"
-                                        th:selected="${complaint.status == 'Rejected'}">
 
-                                    Rejected
-
-                                </option>
-
-
-                            </select>
-
-                        </div>
-
-
-                        <button type="submit"
-                                class="cp-details-update-btn">
+                        <button
+                                type="submit"
+                                class="update-btn">
 
                             Update Status
 
@@ -1926,12 +545,11 @@
 
 
 
-            <!-- =================================================
-                 COMPLAINT NOT FOUND
-            ================================================= -->
+            <!-- ================= NOT FOUND ================= -->
 
-            <div th:if="${complaint == null}"
-                 class="cp-details-not-found">
+            <div
+                    class="not-found"
+                    th:if="${complaint == null}">
 
                 <h2>
                     Complaint Not Found
@@ -1941,25 +559,14 @@
                     The requested complaint does not exist.
                 </p>
 
-                <a href="/admin/complaints"
-                   class="cp-details-update-btn"
-                   style="
-                       display:inline-flex;
-                       align-items:center;
-                       justify-content:center;
-                       text-decoration:none;
-                   ">
-
-                    Back to Complaints
-
-                </a>
-
             </div>
 
 
         </section>
 
+
     </main>
+
 
 </div>
 

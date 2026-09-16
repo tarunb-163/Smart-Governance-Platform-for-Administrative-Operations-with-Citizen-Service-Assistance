@@ -7,7 +7,6 @@ import com.civicpulse.repository.CitizenRepository;
 import com.civicpulse.repository.ComplaintRepository;
 import com.civicpulse.repository.NotificationRepository;
 import com.jayway.jsonpath.JsonPath;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +48,6 @@ class ComplaintLifecycleIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
     }
 
-    @AfterEach
-    void tearDown() {
-        complaintRepository.findAll().stream()
-                .filter(c -> c.getCitizenEmail() != null && c.getCitizenEmail().startsWith("citizen_lifecycle_"))
-                .forEach(complaintRepository::delete);
-    }
-
     @Test
     @WithMockUser(username = "officer1", roles = {"OFFICER"})
     void testFullComplaintLifecycleAndDuplicateDetection() throws Exception {
@@ -66,18 +58,16 @@ class ComplaintLifecycleIntegrationTest {
         citizenSession.setAttribute("CITIZEN_EMAIL", citizenEmail);
         citizenSession.setAttribute("CITIZEN_NAME", "Rahul Verma");
 
-        String testLocation = "Main Bus Stop " + System.currentTimeMillis() + ", MG Road";
-
         // 1. Submit Complaint (Road Damage)
         String submitJson = """
             {
                 "title": "Large pothole hazard",
                 "description": "Deep dangerous pothole near main bus stop causing traffic jams and bike accidents",
                 "category": "Road Damage",
-                "location": "%s",
+                "location": "Main Bus Stop, MG Road",
                 "citizenContact": "9876543210"
             }
-            """.formatted(testLocation);
+            """;
 
         MvcResult submitResult = mockMvc.perform(post("/api/complaints")
                         .session(citizenSession)
@@ -99,10 +89,10 @@ class ComplaintLifecycleIntegrationTest {
                 "title": "Road damage pothole",
                 "description": "Deep dangerous pothole near main bus stop causing traffic problems",
                 "category": "Road Damage",
-                "location": "%s",
+                "location": "Main Bus Stop, MG Road",
                 "citizenContact": "9123456780"
             }
-            """.formatted(testLocation);
+            """;
 
         mockMvc.perform(post("/api/complaints")
                         .session(citizenSession)
@@ -118,11 +108,11 @@ class ComplaintLifecycleIntegrationTest {
                 "title": "Road damage pothole",
                 "description": "Deep dangerous pothole near main bus stop causing traffic problems",
                 "category": "Road Damage",
-                "location": "%s",
+                "location": "Main Bus Stop, MG Road",
                 "citizenContact": "9123456780",
                 "forceSubmit": true
             }
-            """.formatted(testLocation);
+            """;
 
         mockMvc.perform(post("/api/complaints")
                         .session(citizenSession)
