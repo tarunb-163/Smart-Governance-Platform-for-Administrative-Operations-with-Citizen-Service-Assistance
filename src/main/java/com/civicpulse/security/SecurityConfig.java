@@ -253,10 +253,14 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/",
+                                "/portal",
                                 "/officer/login",
                                 "/citizen/login",
                                 "/citizen/signup",
                                 "/citizen/register",
+                                "/citizen/logout",
+                                "/api/citizen/auth/**",
+                                "/api/complaints/**",
                                 "/login",
                                 "/css/**",
                                 "/js/**",
@@ -283,7 +287,7 @@ public class SecurityConfig {
                         // CITIZEN ONLY
                         // -----------------------------------------
 
-                        .requestMatchers("/citizen/**")
+                        .requestMatchers("/citizen/**", "/api/citizen/**")
                         .hasRole("CITIZEN")
 
                         // -----------------------------------------

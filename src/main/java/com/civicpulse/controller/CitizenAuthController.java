@@ -109,6 +109,7 @@ public class CitizenAuthController {
                     citizen.getEmail(), null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_CITIZEN"))
             );
             SecurityContextHolder.getContext().setAuthentication(auth);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                     "success", true,
@@ -169,6 +170,7 @@ public class CitizenAuthController {
                 citizen.getEmail(), null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_CITIZEN"))
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
