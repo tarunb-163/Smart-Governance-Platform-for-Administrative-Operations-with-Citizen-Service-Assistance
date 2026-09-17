@@ -39,6 +39,16 @@ public class ComplaintAttachment {
     public ComplaintAttachment() {
     }
 
+    public ComplaintAttachment(Complaint complaint, String fileName, String storedFileName, String fileType, Long fileSize, String filePath) {
+        this.complaint = complaint;
+        this.fileName = fileName;
+        this.storedFileName = storedFileName;
+        this.fileType = fileType;
+        this.fileSize = fileSize;
+        this.filePath = filePath;
+        this.uploadedAt = LocalDateTime.now();
+    }
+
     @PrePersist
     protected void onCreate() {
         if (this.uploadedAt == null) {

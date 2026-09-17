@@ -15,8 +15,12 @@ public class CivicPulseApplication implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String uploadDir = java.nio.file.Paths.get("uploads").toAbsolutePath().normalize().toUri().toString();
+        if (!uploadDir.endsWith("/")) {
+            uploadDir += "/";
+        }
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations(uploadDir, "file:uploads/", "file:./uploads/");
     }
 }
 

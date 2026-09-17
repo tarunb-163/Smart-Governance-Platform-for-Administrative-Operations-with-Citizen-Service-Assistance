@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Field Officer Login | CivicPulse Municipal Operations</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: #090e17;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 15px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(2, 132, 199, 0.12) 0%, transparent 40%);
+        }
+        .officer-login-container {
+            width: 100%;
+            max-width: 1060px;
+            background: #0f172a;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 24px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 35px rgba(16, 185, 129, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .officer-branding-col {
+            flex: 1 1 420px;
+            background: linear-gradient(145deg, #064e3b 0%, #0f172a 100%);
+            padding: 44px 38px;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .officer-branding-col::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6);
+        }
+        .officer-form-col {
+            flex: 1 1 540px;
+            padding: 44px 40px;
+            background: #0f172a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+        .branding-title {
+            font-size: 2.1rem;
+            font-weight: 700;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #ffffff 0%, #a7f3d0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 14px;
+        }
+        .branding-desc {
+            color: #94a3b8;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+        .dept-card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .dept-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+        .dept-item i {
+            font-size: 18px;
+            color: #34d399;
+        }
+        .branding-footer {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        .form-header {
+            margin-bottom: 20px;
+        }
+        .form-header h2 {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+        .form-header p {
+            color: #94a3b8;
+            font-size: 0.88rem;
+            margin: 0;
+        }
+
+        /* DEPARTMENT QUICK-SWITCH TABS */
+        .dept-selector-box {
+            margin-bottom: 22px;
+        }
+        .dept-selector-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dept-pills-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .dept-pill-btn {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-size: 0.82rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .dept-pill-btn:hover {
+            border-color: #34d399;
+            color: #ffffff;
+            background: #253347;
+        }
+        .dept-pill-btn.active {
+            background: rgba(16, 185, 129, 0.18);
+            border-color: #10b981;
+            color: #34d399;
+            font-weight: 600;
+        }
+        .dept-pill-btn i {
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.84rem;
+            font-weight: 500;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            color: #64748b;
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .custom-input {
+            width: 100%;
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 12px 14px 12px 42px;
+            color: #f8fafc;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+        .custom-input:focus {
+            border-color: #10b981;
+            background: #1e293b;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+            color: #ffffff;
+        }
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 16px;
+        }
+        .password-toggle-btn:hover {
+            color: #cbd5e1;
+        }
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            color: white;
+            padding: 13px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.98rem;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+            transform: translateY(-1px);
+        }
+        .nav-switchers {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+        .nav-switchers a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .nav-switchers a:hover {
+            color: #34d399;
+        }
+        .alert-box {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-danger-custom {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+        }
+        .alert-success-custom {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #6ee7b7;
+        }
+    </style>
+</head>
+<body>
+
+<div class="officer-login-container">
+
+    <!-- LEFT BRANDING -->
+    <div class="officer-branding-col">
+        <div>
+            <div class="brand-badge">
+                <i class="bi bi-shield-check"></i> FIELD OFFICER CONSOLE
+            </div>
+
+            <h1 class="branding-title">
+                CivicPulse<br>Officer Portal
+            </h1>
+
+            <p class="branding-desc">
+                Operational workspace for municipal field officers. Inspect department queues, conduct site verifications, update investigation progress, and submit official resolution reports.
+            </p>
+
+            <div class="dept-card-list">
+                <div class="dept-item">
+                    <i class="bi bi-signpost-2-fill"></i>
+                    <div>
+                        <strong>Roads & Public Works</strong><br>
+                        <small class="text-secondary">Potholes, asphalt repair, street surfacing</small>
+                    </div>
+                </div>
+                <div class="dept-item">
+                    <i class="bi bi-droplet-half"></i>
+                    <div>
+                        <strong>Water Supply & Works</strong><br>
+                        <small class="text-secondary">Pipeline leaks, supply timing, water safety</small>
+                    </div>
+                </div>
+                <div class="dept-item">
+                    <i class="bi bi-trash3-fill"></i>
+                    <div>
+                        <strong>Sanitation & Waste</strong><br>
+                        <small class="text-secondary">Garbage clearance, bin pickup, public hygiene</small>
+                    </div>
+                </div>
+                <div class="dept-item">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <div>
+                        <strong>Electricity & Lighting</strong><br>
+                        <small class="text-secondary">Street lamp repairs, phase faults, cables</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="branding-footer">
+            <span>CivicPulse Smart Governance Platform &bull; Operations Grid</span>
+        </div>
+    </div>
+
+    <!-- RIGHT LOGIN FORM -->
+    <div class="officer-form-col">
+
+        <div class="form-header">
+            <h2 id="deptTitleHeader">Officer Sign In</h2>
+            <p id="deptSubtitleHeader">Select your department or sign in with your officer credentials.</p>
+        </div>
+
+        <!-- ERROR MESSAGE -->
+        <div th:if="${loginErrorMessage != null}" class="alert-box alert-danger-custom">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${loginErrorMessage}">Invalid officer credentials.</span>
+        </div>
+
+        <!-- LOGOUT MESSAGE -->
+        <div th:if="${logoutMessage != null}" class="alert-box alert-success-custom">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${logoutMessage}">You have signed out successfully.</span>
+        </div>
+
+        <!-- DEPARTMENT QUICK TABS -->
+        <div class="dept-selector-box">
+            <div class="dept-selector-label">
+                <span>Select Department Part:</span>
+                <span class="text-secondary" style="font-size: 0.72rem;">Click to Auto-fill Demo</span>
+            </div>
+            <div class="dept-pills-row">
+                <button type="button" class="dept-pill-btn" id="pill-roads" onclick="selectDepartment('roads', 'officer1', 'password123', 'Roads & Public Works Officer')">
+                    <i class="bi bi-signpost-2 text-warning"></i>
+                    <span>Roads / Works</span>
+                </button>
+                <button type="button" class="dept-pill-btn" id="pill-water" onclick="selectDepartment('water', 'officer_water', 'password123', 'Water Supply Officer')">
+                    <i class="bi bi-droplet-half text-info"></i>
+                    <span>Water Supply</span>
+                </button>
+                <button type="button" class="dept-pill-btn" id="pill-sanitation" onclick="selectDepartment('sanitation', 'officer_sanitation', 'password123', 'Sanitation Officer')">
+                    <i class="bi bi-trash3 text-success"></i>
+                    <span>Sanitation</span>
+                </button>
+                <button type="button" class="dept-pill-btn" id="pill-electricity" onclick="selectDepartment('electricity', 'officer_electricity', 'password123', 'Electricity Officer')">
+                    <i class="bi bi-lightning-charge text-warning"></i>
+                    <span>Electricity</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form method="post" action="/login" id="officerLoginForm">
+            <input type="hidden" name="loginType" value="officer">
+            <input type="hidden" name="dept" id="selectedDeptInput" th:value="${selectedDept != null ? selectedDept : 'all'}">
+
+            <!-- USERNAME -->
+            <div class="form-group">
+                <label for="username" class="form-label">Officer Username / Employee ID</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-person-badge-fill input-icon"></i>
+                    <input type="text" id="username" name="username" class="custom-input" placeholder="e.g. officer1" autocomplete="username" required>
+                </div>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-lock-fill input-icon"></i>
+                    <input type="password" id="password" name="password" class="custom-input" placeholder="Enter officer password" autocomplete="current-password" required>
+                    <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility">
+                        <i class="bi bi-eye" id="passwordEyeIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span id="submitBtnText">Sign In to Officer Console</span>
+                <i class="bi bi-arrow-right"></i>
+            </button>
+        </form>
+
+        <!-- SWITCHER NAVIGATION -->
+        <div class="nav-switchers">
+            <a href="/admin/login">
+                <i class="bi bi-speedometer2"></i> Admin Portal Login
+            </a>
+            <a href="/citizen/login">
+                <i class="bi bi-person-heart"></i> Citizen Login
+            </a>
+            <a href="/">
+                <i class="bi bi-house-door"></i> Main Portal
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    const initialDept = /*[[${selectedDept}]]*/ 'all';
+
+    function selectDepartment(deptKey, defaultUser, defaultPass, displayTitle) {
+        document.getElementById('selectedDeptInput').value = deptKey;
+        document.getElementById('username').value = defaultUser;
+        document.getElementById('password').value = defaultPass;
+
+        // update active pill styling
+        document.querySelectorAll('.dept-pill-btn').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.getElementById('pill-' + deptKey);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+
+        if (displayTitle) {
+            document.getElementById('deptTitleHeader').textContent = displayTitle + ' Sign In';
+            document.getElementById('deptSubtitleHeader').textContent = 'Authenticating for ' + displayTitle + ' operations.';
+            document.getElementById('submitBtnText').textContent = 'Sign In as ' + displayTitle;
+        }
+    }
+
+    function togglePasswordVisibility() {
+        const passInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('passwordEyeIcon');
+        if (passInput.type === 'password') {
+            passInput.type = 'text';
+            eyeIcon.classList.remove('bi-eye');
+            eyeIcon.classList.add('bi-eye-slash');
+        } else {
+            passInput.type = 'password';
+            eyeIcon.classList.remove('bi-eye-slash');
+            eyeIcon.classList.add('bi-eye');
+        }
+    }
+
+    // Auto-select on page load if dept passed in URL
+    document.addEventListener('DOMContentLoaded', function() {
+        if (initialDept === 'roads') {
+            selectDepartment('roads', 'officer1', 'password123', 'Roads & Works Officer');
+        } else if (initialDept === 'water') {
+            selectDepartment('water', 'officer_water', 'password123', 'Water Supply Officer');
+        } else if (initialDept === 'sanitation') {
+            selectDepartment('sanitation', 'officer_sanitation', 'password123', 'Sanitation Officer');
+        } else if (initialDept === 'electricity') {
+            selectDepartment('electricity', 'officer_electricity', 'password123', 'Electricity Officer');
+        } else {
+            // Default to Roads officer credentials
+            selectDepartment('roads', 'officer1', 'password123', 'Field Officer');
+        }
+    });
+</script>
+
+</body>
+</html>

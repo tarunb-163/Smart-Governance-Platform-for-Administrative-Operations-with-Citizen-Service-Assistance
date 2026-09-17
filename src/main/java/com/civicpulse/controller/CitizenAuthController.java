@@ -34,15 +34,23 @@ public class CitizenAuthController {
     @GetMapping("/citizen/login")
     public String citizenLoginPage(HttpSession session, Model model,
                                    @RequestParam(value = "logout", required = false) String logout,
-                                   @RequestParam(value = "registered", required = false) String registered) {
+                                   @RequestParam(value = "registered", required = false) String registered,
+                                   @RequestParam(value = "error", required = false) String error) {
         if (session.getAttribute("CITIZEN_EMAIL") != null) {
             return "redirect:/citizen/dashboard";
+        }
+        if (error != null) {
+            if ("unauthorized".equalsIgnoreCase(error)) {
+                model.addAttribute("loginErrorMessage", "Access Denied: Officer and Admin accounts must sign in through their respective portals.");
+            } else {
+                model.addAttribute("loginErrorMessage", "Invalid citizen credentials. Please verify your Email/Username/ID and password.");
+            }
         }
         if (logout != null) {
             model.addAttribute("logoutMessage", "You have been logged out successfully.");
         }
         if (registered != null) {
-            model.addAttribute("successMessage", "Account created successfully! Please log in.");
+            model.addAttribute("successMessage", "Account created successfully! Please sign in with your credentials.");
         }
         return "citizen/login";
     }

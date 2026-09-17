@@ -4,6 +4,7 @@ import com.civicpulse.model.Complaint;
 import com.civicpulse.model.Officer;
 import com.civicpulse.repository.ComplaintRepository;
 import com.civicpulse.repository.OfficerRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,5 +72,30 @@ public class OfficerService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public void changePassword(String username, String currentPassword, String newPassword, String confirmPassword, PasswordEncoder passwordEncoder) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Invalid officer session.");
+        }
+        Officer officer = officerRepository.findByUsername(username.trim())
+                .orElseThrow(() -> new IllegalArgumentException("Officer account not found."));
+
+        if (currentPassword == null || currentPassword.isEmpty() || !passwordEncoder.matches(currentPassword, officer.getPassword())) {
+            throw new IllegalArgumentException("Current password does not match our records.");
+        }
+        if (newPassword == null || newPassword.length() < 6) {
+            throw new IllegalArgumentException("New password must be at least 6 characters in length.");
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("New password and confirm password do not match.");
+        }
+        if (passwordEncoder.matches(newPassword, officer.getPassword())) {
+            throw new IllegalArgumentException("New password cannot be identical to the current password.");
+        }
+
+        officer.setPassword(passwordEncoder.encode(newPassword));
+        officerRepository.save(officer);
     }
 }

@@ -17,34 +17,34 @@
 
 
 /* =========================================================
-   TEMPORARY PROFILE DATA
+   TEMPORARY PROFILE DATA (DEFAULTS)
 ========================================================= */
 
 const defaultOfficerProfile = {
 
-    fullName: "",
+    fullName: "Officer One",
 
-    employeeId: "",
+    employeeId: "EMP001",
 
-    email: "",
+    email: "officer1@civicpulse.com",
 
-    phone: "",
+    phone: "+91 9876543210",
 
-    designation: "",
+    designation: "Senior Field Officer",
 
-    department: "",
+    department: "Roads / Public Works Department",
 
-    assignedArea: "",
+    assignedArea: "Central Ward & Sector 4",
 
-    officeLocation: "",
+    officeLocation: "Municipal PWD Headquarters, Zone 1",
 
-    address: "",
+    address: "Room 204, PWD Administrative Block, Civic Center, Andhra Pradesh",
 
-    role: "Officer",
+    role: "OFFICER",
 
-    jurisdiction: "",
+    jurisdiction: "Municipal North & Central Zones",
 
-    joinedDate: ""
+    joinedDate: "2026-03-16"
 
 };
 
@@ -88,40 +88,122 @@ function initializeProfile() {
 
 
 /* =========================================================
+   READ INITIAL PROFILE FROM DOM
+========================================================= */
+
+function readProfileFromDOM() {
+
+    const dom = {};
+
+    const fields = [
+        "fullName",
+        "employeeId",
+        "email",
+        "phone",
+        "designation",
+        "department",
+        "assignedArea",
+        "officeLocation",
+        "address"
+    ];
+
+    fields.forEach(function (fieldId) {
+        const val = getInputValue(fieldId);
+        if (val && val.trim() !== "") {
+            dom[fieldId] = val.trim();
+        }
+    });
+
+    const roleEl = document.getElementById("officialRole");
+    if (roleEl && roleEl.textContent.trim() && roleEl.textContent.trim() !== "—") {
+        dom.role = roleEl.textContent.trim();
+    }
+
+    const jurisEl = document.getElementById("officialJurisdiction");
+    if (jurisEl && jurisEl.textContent.trim() && jurisEl.textContent.trim() !== "—") {
+        dom.jurisdiction = jurisEl.textContent.trim();
+    }
+
+    return dom;
+
+}
+
+
+/* =========================================================
    LOAD PROFILE
 ========================================================= */
 
-function loadProfile() {
+async function loadProfile() {
+
+    const domProfile =
+        readProfileFromDOM();
 
     const storedProfile =
         getStoredProfile();
 
-
-    if (storedProfile) {
-
-        currentOfficerProfile = {
-            ...defaultOfficerProfile,
-            ...storedProfile
-        };
-
-    } else {
-
-        /*
-         * No fake personal information is added.
-         * Empty fields remain empty until the backend
-         * provides the actual officer information.
-         */
-
-        currentOfficerProfile = {
-            ...defaultOfficerProfile
-        };
-
-    }
-
+    currentOfficerProfile = {
+        ...defaultOfficerProfile,
+        ...domProfile,
+        ...(storedProfile || {})
+    };
 
     populateProfile(
         currentOfficerProfile
     );
+
+    /*
+     * Fetch profile asynchronously from backend API
+     */
+    try {
+
+        const response =
+            await fetch("/api/officer/profile");
+
+        if (response.ok) {
+
+            const apiData =
+                await response.json();
+
+            if (apiData && typeof apiData === "object") {
+
+                const validApi = {};
+
+                for (const [k, v] of Object.entries(apiData)) {
+
+                    if (v !== null && v !== undefined && String(v).trim() !== "") {
+
+                        validApi[k] = v;
+
+                    }
+
+                }
+
+                currentOfficerProfile = {
+                    ...defaultOfficerProfile,
+                    ...currentOfficerProfile,
+                    ...validApi
+                };
+
+                populateProfile(
+                    currentOfficerProfile
+                );
+
+                saveProfileToStorage(
+                    currentOfficerProfile
+                );
+
+            }
+
+        }
+
+    } catch (err) {
+
+        console.log(
+            "Using default / DOM officer profile:",
+            err
+        );
+
+    }
 
 }
 
@@ -174,6 +256,11 @@ function populateProfile(
     profile
 ) {
 
+    const safeProfile = {
+        ...defaultOfficerProfile,
+        ...(profile || {})
+    };
+
 
     /* =====================================================
        FORM FIELDS
@@ -181,55 +268,55 @@ function populateProfile(
 
     setInputValue(
         "fullName",
-        profile.fullName
+        safeProfile.fullName || defaultOfficerProfile.fullName
     );
 
 
     setInputValue(
         "employeeId",
-        profile.employeeId
+        safeProfile.employeeId || defaultOfficerProfile.employeeId
     );
 
 
     setInputValue(
         "email",
-        profile.email
+        safeProfile.email || defaultOfficerProfile.email
     );
 
 
     setInputValue(
         "phone",
-        profile.phone
+        safeProfile.phone || defaultOfficerProfile.phone
     );
 
 
     setInputValue(
         "designation",
-        profile.designation
+        safeProfile.designation || defaultOfficerProfile.designation
     );
 
 
     setInputValue(
         "department",
-        profile.department
+        safeProfile.department || defaultOfficerProfile.department
     );
 
 
     setInputValue(
         "assignedArea",
-        profile.assignedArea
+        safeProfile.assignedArea || defaultOfficerProfile.assignedArea
     );
 
 
     setInputValue(
         "officeLocation",
-        profile.officeLocation
+        safeProfile.officeLocation || defaultOfficerProfile.officeLocation
     );
 
 
     setInputValue(
         "address",
-        profile.address
+        safeProfile.address || defaultOfficerProfile.address
     );
 
 
@@ -238,8 +325,8 @@ function populateProfile(
     ====================================================== */
 
     const displayName =
-        profile.fullName ||
-        "Officer";
+        safeProfile.fullName ||
+        defaultOfficerProfile.fullName;
 
 
     setText(
@@ -250,39 +337,40 @@ function populateProfile(
 
     setText(
         "profileRole",
-        profile.role ||
-        "Officer"
+        safeProfile.designation ||
+        safeProfile.role ||
+        defaultOfficerProfile.designation
     );
 
 
     setText(
         "profileOfficerId",
-        profile.employeeId ||
-        "—"
+        safeProfile.employeeId ||
+        defaultOfficerProfile.employeeId
     );
 
 
     setText(
         "profileDepartment",
-        profile.department ||
-        "—"
+        safeProfile.department ||
+        defaultOfficerProfile.department
     );
 
 
     setText(
         "profileArea",
-        profile.assignedArea ||
-        "—"
+        safeProfile.assignedArea ||
+        defaultOfficerProfile.assignedArea
     );
 
 
     setText(
         "profileJoinedDate",
-        profile.joinedDate
+        safeProfile.joinedDate
             ? formatDate(
-                profile.joinedDate
+                safeProfile.joinedDate
             )
-            : "—"
+            : "16 Mar 2026"
     );
 
 
@@ -292,23 +380,23 @@ function populateProfile(
 
     setText(
         "officialRole",
-        profile.role ||
-        "—"
+        safeProfile.role ||
+        defaultOfficerProfile.role
     );
 
 
     setText(
         "officialDepartment",
-        profile.department ||
-        "—"
+        safeProfile.department ||
+        defaultOfficerProfile.department
     );
 
 
     setText(
         "officialJurisdiction",
-        profile.jurisdiction ||
-        profile.assignedArea ||
-        "—"
+        safeProfile.jurisdiction ||
+        safeProfile.assignedArea ||
+        defaultOfficerProfile.jurisdiction
     );
 
 
@@ -378,7 +466,7 @@ function initializeProfileForm() {
    PROFILE SUBMIT
 ========================================================= */
 
-function handleProfileSubmit(
+async function handleProfileSubmit(
     event
 ) {
 
@@ -397,6 +485,7 @@ function handleProfileSubmit(
 
 
     currentOfficerProfile = {
+        ...defaultOfficerProfile,
         ...currentOfficerProfile,
         ...updatedProfile
     };
@@ -410,6 +499,59 @@ function handleProfileSubmit(
     populateProfile(
         currentOfficerProfile
     );
+
+
+    /*
+     * Sync with Spring Boot API
+     */
+    try {
+
+        const response =
+            await fetch(
+                "/api/officer/profile",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(
+                        currentOfficerProfile
+                    )
+                }
+            );
+
+        if (response.ok) {
+
+            const result =
+                await response.json();
+
+            if (result && typeof result === "object") {
+
+                currentOfficerProfile = {
+                    ...currentOfficerProfile,
+                    ...result
+                };
+
+                saveProfileToStorage(
+                    currentOfficerProfile
+                );
+
+                populateProfile(
+                    currentOfficerProfile
+                );
+
+            }
+
+        }
+
+    } catch (err) {
+
+        console.warn(
+            "Backend sync skipped:",
+            err
+        );
+
+    }
 
 
     showProfileSuccess();
@@ -1215,3 +1357,91 @@ function escapeHtml(
         );
 
 }
+
+/* =========================================================
+   CHANGE PASSWORD MODAL HANDLER
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+    const changePasswordForm = document.getElementById("changePasswordForm");
+    const modalAlert = document.getElementById("modalPasswordAlert");
+    const submitBtn = document.getElementById("modalUpdatePasswordBtn");
+
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById("currentPassword").value.trim();
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (modalAlert) {
+                modalAlert.className = "alert d-none mb-3";
+                modalAlert.textContent = "";
+            }
+
+            if (!currentPassword) {
+                showModalAlert("Please enter your current password.", "danger");
+                return;
+            }
+            if (!newPassword || newPassword.length < 6) {
+                showModalAlert("New password must be at least 6 characters in length.", "danger");
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                showModalAlert("New password and confirm password do not match.", "danger");
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Updating...';
+            }
+
+            try {
+                const response = await fetch("/api/officer/change-password", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
+                        confirmPassword: confirmPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showModalAlert(data.message || "Password updated successfully!", "success");
+                    changePasswordForm.reset();
+                    setTimeout(() => {
+                        const modalEl = document.getElementById("changePasswordModal");
+                        if (modalEl && window.bootstrap) {
+                            const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                            modalInstance.hide();
+                        }
+                        window.location.reload();
+                    }, 1200);
+                } else {
+                    showModalAlert(data.message || "Failed to update password. Please check your credentials.", "danger");
+                }
+            } catch (err) {
+                console.error("Change password error:", err);
+                changePasswordForm.submit();
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-check-lg"></i> Update Password';
+                }
+            }
+        });
+    }
+
+    function showModalAlert(message, type) {
+        if (!modalAlert) return;
+        modalAlert.className = `alert alert-${type} mb-3`;
+        modalAlert.textContent = message;
+    }
+});

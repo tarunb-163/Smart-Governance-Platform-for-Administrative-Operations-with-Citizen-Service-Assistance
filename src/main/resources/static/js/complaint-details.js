@@ -271,6 +271,18 @@ function populateComplaintDetails(
     );
 
 
+    setText(
+        "citizenId",
+        complaint.citizenId
+    );
+
+
+    setText(
+        "citizenAddress",
+        complaint.citizenAddress || complaint.location
+    );
+
+
     /* =====================================================
        DATE
     ====================================================== */
@@ -337,6 +349,10 @@ function populateComplaintDetails(
     ====================================================== */
 
     renderTimeline(
+        complaint
+    );
+
+    renderAttachments(
         complaint
     );
 
@@ -697,6 +713,141 @@ function updateTimelineState(status) {
         }
     );
 
+}
+
+
+/* =========================================================
+   RENDER ATTACHMENTS / EVIDENCE
+========================================================= */
+
+function renderAttachments(complaint) {
+    const emptyContainer = document.getElementById("attachmentsEmpty");
+    const listContainer = document.getElementById("attachmentsList");
+
+    if (!emptyContainer || !listContainer) return;
+
+    // Collect attachments from complaint.attachments and complaint.imagePath
+    let attachments = [];
+    if (complaint && complaint.attachments && Array.isArray(complaint.attachments)) {
+        attachments = [...complaint.attachments];
+    }
+    if (complaint && complaint.imagePath && complaint.imagePath.trim() !== "") {
+        const path = complaint.imagePath.trim();
+        const exists = attachments.some(a =>
+            a.fileUrl === path || (a.fileUrl && a.fileUrl.endsWith(path)) || (a.filePath && a.filePath.endsWith(path))
+        );
+        if (!exists) {
+            const fileName = path.includes('/') ? path.substring(path.lastIndexOf('/') + 1) : path;
+            attachments.push({
+                fileName: fileName,
+                fileType: "image/jpeg",
+                fileUrl: path,
+                uploadedAt: complaint.createdAt
+            });
+        }
+    }
+
+    if (attachments.length === 0) {
+        emptyContainer.classList.remove("d-none");
+        listContainer.classList.add("d-none");
+        listContainer.innerHTML = "";
+        return;
+    }
+
+    emptyContainer.classList.add("d-none");
+    listContainer.classList.remove("d-none");
+    listContainer.innerHTML = "";
+
+    attachments.forEach(function (att) {
+        const fileUrl = att.fileUrl || att.filePath || (att.storedFileName ? "/uploads/" + att.storedFileName : "#");
+        const fileName = att.fileName || "Evidence Document";
+        const fileType = (att.fileType || "").toLowerCase();
+        const isImg = isImageAttachment(fileName, fileType);
+        const formattedDate = att.uploadedAt ? formatDate(att.uploadedAt) : (complaint.createdAt ? formatDate(complaint.createdAt) : "Attached");
+        const fileSizeText = att.fileSize ? formatFileSize(att.fileSize) : (isImg ? "Photo Evidence" : "Attachment");
+
+        const item = document.createElement("div");
+        item.className = "attachment-card-item";
+
+        if (isImg) {
+            item.innerHTML = `
+                <div class="attachment-image-wrapper" onclick="openEvidenceModal('${escapeHtml(fileUrl)}', '${escapeHtml(fileName)}')">
+                    <img src="${escapeHtml(fileUrl)}" alt="${escapeHtml(fileName)}" class="attachment-thumb-img" onerror="this.onerror=null; this.src='/images/placeholder-image.png';">
+                    <div class="attachment-thumb-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                    </div>
+                </div>
+                <div class="attachment-details">
+                    <strong class="attachment-title" title="${escapeHtml(fileName)}">${escapeHtml(fileName)}</strong>
+                    <div class="attachment-meta">
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle me-1">Photo Evidence</span>
+                        <span><i class="bi bi-clock me-1"></i>${escapeHtml(formattedDate)}</span>
+                        ${att.fileSize ? `<span class="ms-2"><i class="bi bi-hdd me-1"></i>${escapeHtml(fileSizeText)}</span>` : ''}
+                    </div>
+                </div>
+                <div class="attachment-actions">
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="openEvidenceModal('${escapeHtml(fileUrl)}', '${escapeHtml(fileName)}')">
+                        <i class="bi bi-eye me-1"></i> View Photo
+                    </button>
+                    <a href="${escapeHtml(fileUrl)}" target="_blank" download class="btn btn-sm btn-outline-secondary" title="Download Image">
+                        <i class="bi bi-download"></i>
+                    </a>
+                </div>
+            `;
+        } else {
+            item.innerHTML = `
+                <div class="attachment-icon file-doc">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <div class="attachment-details">
+                    <strong class="attachment-title" title="${escapeHtml(fileName)}">${escapeHtml(fileName)}</strong>
+                    <div class="attachment-meta">
+                        <span class="badge bg-secondary-subtle text-secondary me-1">Document</span>
+                        <span><i class="bi bi-clock me-1"></i>${escapeHtml(formattedDate)}</span>
+                    </div>
+                </div>
+                <div class="attachment-actions">
+                    <a href="${escapeHtml(fileUrl)}" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Open
+                    </a>
+                </div>
+            `;
+        }
+        listContainer.appendChild(item);
+    });
+}
+
+function isImageAttachment(fileName, fileType) {
+    if (fileType && fileType.startsWith("image/")) return true;
+    const lower = (fileName || "").toLowerCase();
+    return lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".png") || lower.endsWith(".webp") || lower.endsWith(".gif");
+}
+
+function formatFileSize(bytes) {
+    if (!bytes || isNaN(bytes)) return "";
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / 1048576).toFixed(1) + " MB";
+}
+
+function openEvidenceModal(imageUrl, caption) {
+    const modalImg = document.getElementById("modalEvidenceImg");
+    const modalCaption = document.getElementById("modalEvidenceCaption");
+    const downloadBtn = document.getElementById("modalEvidenceDownloadBtn");
+
+    if (modalImg) modalImg.src = imageUrl;
+    if (modalCaption) modalCaption.innerText = caption || "Complaint Evidence";
+    if (downloadBtn) {
+        downloadBtn.href = imageUrl;
+    }
+
+    const modalEl = document.getElementById('evidenceImageModal');
+    if (modalEl && window.bootstrap) {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    } else {
+        window.open(imageUrl, '_blank');
+    }
 }
 
 

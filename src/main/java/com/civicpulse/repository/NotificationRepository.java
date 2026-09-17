@@ -14,4 +14,10 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findTop20ByCitizenEmailOrderByCreatedAtDesc(String citizenEmail);
 
     long countByCitizenEmailAndIsReadFalse(String citizenEmail);
+
+    List<Notification> findByOfficerUsernameOrderByCreatedAtDesc(String officerUsername);
+
+    List<Notification> findTop20ByOfficerUsernameOrderByCreatedAtDesc(String officerUsername);
+
+    long countByOfficerUsernameAndIsReadFalse(String officerUsername);
 }

@@ -2,6 +2,7 @@ package com.civicpulse.controller;
 
 import com.civicpulse.dto.ComplaintResponse;
 import com.civicpulse.model.Complaint;
+import com.civicpulse.model.ComplaintAttachment;
 import com.civicpulse.model.TimelineEvent;
 import com.civicpulse.service.ComplaintService;
 import com.civicpulse.service.DuplicateDetectionService;
@@ -139,6 +140,8 @@ public class ComplaintApiController {
             response.setResolvedAt(complaint.getResolvedAt().format(TIMELINE_FORMATTER));
         }
 
+        response.setAttachments(complaintService.mapAttachments(complaint));
+
         return ResponseEntity.ok(response);
     }
 
@@ -268,6 +271,16 @@ public class ComplaintApiController {
 
             String imagePath = "/uploads/" + fileName;
             complaint.setImagePath(imagePath);
+
+            ComplaintAttachment attachment = new ComplaintAttachment();
+            attachment.setComplaint(complaint);
+            attachment.setFileName(originalFileName != null && !originalFileName.trim().isEmpty() ? originalFileName : fileName);
+            attachment.setStoredFileName(fileName);
+            attachment.setFileType(file.getContentType() != null ? file.getContentType() : "image/jpeg");
+            attachment.setFileSize(file.getSize());
+            attachment.setFilePath(imagePath);
+            attachment.setUploadedAt(LocalDateTime.now());
+            complaint.addAttachment(attachment);
 
             String formattedDate = LocalDateTime.now().format(TIMELINE_FORMATTER);
             complaint.getTimeline().add(new TimelineEvent(

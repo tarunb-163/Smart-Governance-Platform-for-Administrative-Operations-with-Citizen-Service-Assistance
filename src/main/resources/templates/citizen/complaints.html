@@ -269,6 +269,7 @@
                         <th>Category</th>
                         <th>Department</th>
                         <th>Location</th>
+                        <th>Evidence</th>
                         <th>Date Submitted</th>
                         <th>Status</th>
                         <th class="text-end">Action</th>
@@ -281,10 +282,25 @@
                         </td>
                         <td>
                             <strong th:text="${c.category}">Road Damage</strong>
-                            <div class="text-muted small" th:text="${c.title}">Damaged road near college</div>
+                            <div class="text-muted small text-truncate" style="max-width: 180px;" th:text="${c.title}">Damaged road near college</div>
                         </td>
                         <td class="text-secondary small" th:text="${c.department != null ? c.department : 'General Administration'}">Roads / Public Works</td>
-                        <td th:text="${c.submittedDate != null ? c.submittedDate : '--'}">--</td>
+                        <td>
+                            <span class="small text-truncate d-inline-block" style="max-width: 140px;" th:text="${c.location != null ? c.location : '--'}" th:title="${c.location}">--</span>
+                        </td>
+                        <td>
+                            <div th:if="${c.imagePath != null and !#strings.isEmpty(c.imagePath)}">
+                                <a href="javascript:void(0)"
+                                   th:onclick="previewCitizenEvidence([[${c.imagePath}]], [[${c.trackingId}]], [[${c.title}]])"
+                                   class="d-inline-flex align-items-center gap-1 text-decoration-none"
+                                   title="Click to view evidence photo">
+                                    <img th:src="${c.imagePath}" alt="Evidence" class="rounded border shadow-xs" style="width: 38px; height: 38px; object-fit: cover;">
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle small"><i class="bi bi-eye"></i> Photo</span>
+                                </a>
+                            </div>
+                            <span th:if="${c.imagePath == null or #strings.isEmpty(c.imagePath)}" class="text-muted small">—</span>
+                        </td>
+                        <td class="small text-muted" th:text="${c.submittedDate != null ? c.submittedDate : '--'}">--</td>
                         <td>
                             <span class="status-badge"
                                   th:classappend="${c.status == 'Resolved' ? 'bg-success text-white' :
@@ -297,6 +313,11 @@
                         </td>
                         <td class="text-end">
                             <div class="d-inline-flex gap-1 align-items-center">
+                                <button type="button" class="btn btn-sm btn-outline-info px-2"
+                                        th:onclick="openComplaintModal([[${c.trackingId}]])"
+                                        title="View Full Details & Evidence">
+                                    <i class="bi bi-info-circle me-1"></i> Details
+                                </button>
                                 <a th:href="@{/citizen/track(id=${c.trackingId})}" class="btn btn-sm btn-outline-primary px-2" title="Track Progress">
                                     <i class="bi bi-search me-1"></i> Track
                                 </a>
@@ -331,6 +352,125 @@
     </div>
 </main>
 
+<!-- EVIDENCE PREVIEW MODAL -->
+<div class="modal fade" id="citizenEvidenceModal" tabindex="-1" aria-labelledby="citizenEvidenceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light border-bottom py-3">
+                <div>
+                    <h6 class="modal-title fw-bold text-dark mb-0" id="citizenEvidenceModalLabel">
+                        <i class="bi bi-image text-primary me-2"></i> Supporting Evidence Photo
+                    </h6>
+                    <small class="text-muted font-monospace" id="citizenEvidenceComplaintId"></small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-3 bg-dark-subtle">
+                <img id="citizenEvidenceModalImg" src="" alt="Evidence Photo" class="img-fluid rounded shadow-sm" style="max-height: 75vh; object-fit: contain;">
+            </div>
+            <div class="modal-footer border-0 py-2 justify-content-between">
+                <span id="citizenEvidenceCaption" class="small text-muted"></span>
+                <div>
+                    <a id="citizenEvidenceOpenBtn" href="#" target="_blank" class="btn btn-sm btn-primary me-2">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Open Full Size
+                    </a>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- COMPLAINT DETAILS MODAL -->
+<div class="modal fade" id="citizenComplaintDetailsModal" tabindex="-1" aria-labelledby="citizenComplaintDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light border-bottom py-3">
+                <div>
+                    <h6 class="modal-title fw-bold text-dark mb-0" id="citizenComplaintDetailsModalLabel">
+                        <i class="bi bi-file-earmark-text-fill text-primary me-2"></i> Complaint Details
+                    </h6>
+                    <span id="modalComplaintIdBadge" class="badge bg-primary font-monospace mt-1"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="detailsModalLoading" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted small mt-2 mb-0">Loading complaint details...</p>
+                </div>
+                <div id="detailsModalContent" class="d-none">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 id="modalTitle" class="fw-bold mb-1 text-dark"></h5>
+                            <div class="text-muted small"><i class="bi bi-geo-alt me-1"></i><span id="modalLocation"></span></div>
+                        </div>
+                        <span id="modalStatusBadge" class="status-badge"></span>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-4">
+                            <div class="p-2 border rounded bg-light">
+                                <small class="text-muted d-block" style="font-size: 0.72rem;">CATEGORY</small>
+                                <strong id="modalCategory" class="small text-dark"></strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="p-2 border rounded bg-light">
+                                <small class="text-muted d-block" style="font-size: 0.72rem;">DEPARTMENT</small>
+                                <strong id="modalDepartment" class="small text-dark"></strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="p-2 border rounded bg-light">
+                                <small class="text-muted d-block" style="font-size: 0.72rem;">SUBMITTED DATE</small>
+                                <strong id="modalSubmittedDate" class="small text-dark"></strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="fw-bold small text-uppercase text-secondary mb-1">Description</h6>
+                        <div id="modalDescription" class="p-3 border rounded bg-white small text-secondary"></div>
+                    </div>
+
+                    <!-- EVIDENCE SECTION -->
+                    <div class="mb-3">
+                        <h6 class="fw-bold small text-uppercase text-secondary mb-2">
+                            <i class="bi bi-image me-1"></i> Uploaded Evidence
+                        </h6>
+                        <div id="modalEvidenceContainer" class="p-3 border rounded bg-light text-center d-none">
+                            <img id="modalEvidenceImage" src="" alt="Evidence Photo" class="img-fluid rounded border shadow-sm mb-2" style="max-height: 280px; object-fit: contain;">
+                            <div>
+                                <a id="modalEvidenceFullLink" href="#" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i> View Full Resolution
+                                </a>
+                            </div>
+                        </div>
+                        <div id="modalNoEvidenceText" class="p-3 border rounded bg-light text-muted small">
+                            No photo evidence attached to this complaint.
+                        </div>
+                    </div>
+
+                    <!-- OFFICER & RESOLUTION -->
+                    <div id="modalResolutionSection" class="mb-3 d-none">
+                        <h6 class="fw-bold small text-uppercase text-success mb-1">
+                            <i class="bi bi-check-circle-fill me-1"></i> Official Resolution
+                        </h6>
+                        <div id="modalResolutionText" class="p-3 border border-success-subtle bg-success-subtle rounded small text-dark"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 py-2 justify-content-between">
+                <a id="modalTrackBtn" href="#" class="btn btn-sm btn-primary">
+                    <i class="bi bi-search me-1"></i> Open Full Tracking Page
+                </a>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 function filterComplaintsTable() {
     const input = document.getElementById("searchInput").value.toLowerCase();
@@ -342,6 +482,86 @@ function filterComplaintsTable() {
         const text = rows[i].textContent.toLowerCase();
         rows[i].style.display = text.includes(input) ? "" : "none";
     }
+}
+
+function previewCitizenEvidence(imagePath, trackingId, title) {
+    document.getElementById("citizenEvidenceModalImg").src = imagePath;
+    document.getElementById("citizenEvidenceComplaintId").innerText = "Complaint: " + (trackingId || "");
+    document.getElementById("citizenEvidenceCaption").innerText = title || "Evidence Photo";
+    document.getElementById("citizenEvidenceOpenBtn").href = imagePath;
+
+    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('citizenEvidenceModal'));
+    modal.show();
+}
+
+function openComplaintModal(trackingId) {
+    const loading = document.getElementById("detailsModalLoading");
+    const content = document.getElementById("detailsModalContent");
+    document.getElementById("modalComplaintIdBadge").innerText = trackingId;
+    document.getElementById("modalTrackBtn").href = "/citizen/track?id=" + encodeURIComponent(trackingId);
+
+    loading.classList.remove("d-none");
+    content.classList.add("d-none");
+
+    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('citizenComplaintDetailsModal'));
+    modal.show();
+
+    fetch('/api/complaints/' + encodeURIComponent(trackingId))
+        .then(response => {
+            if (!response.ok) throw new Error("Could not load complaint details.");
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById("modalTitle").innerText = data.title || "Civic Grievance";
+            document.getElementById("modalLocation").innerText = data.location || "Not specified";
+            document.getElementById("modalCategory").innerText = data.category || "General";
+            document.getElementById("modalDepartment").innerText = data.department || "General Administration";
+            document.getElementById("modalSubmittedDate").innerText = data.submittedDate || data.createdAt || "--";
+            document.getElementById("modalDescription").innerText = data.description || "No description provided.";
+
+            const statusBadge = document.getElementById("modalStatusBadge");
+            statusBadge.innerText = data.status || "Pending";
+            const s = (data.status || "").toLowerCase();
+            statusBadge.className = "status-badge";
+            if (s === "resolved" || s === "closed") statusBadge.classList.add("bg-success", "text-white");
+            else if (s === "in progress") statusBadge.classList.add("bg-primary", "text-white");
+            else if (s.includes("assigned")) statusBadge.classList.add("bg-info", "text-dark");
+            else if (s === "reopened") statusBadge.classList.add("bg-danger", "text-white");
+            else statusBadge.classList.add("bg-warning", "text-dark");
+
+            // Evidence image
+            const imgPath = data.imagePath || (data.attachments && data.attachments.length > 0 ? data.attachments[0].fileUrl : null);
+            const evContainer = document.getElementById("modalEvidenceContainer");
+            const evImg = document.getElementById("modalEvidenceImage");
+            const evFullLink = document.getElementById("modalEvidenceFullLink");
+            const noEvText = document.getElementById("modalNoEvidenceText");
+
+            if (imgPath) {
+                evImg.src = imgPath;
+                evFullLink.href = imgPath;
+                evContainer.classList.remove("d-none");
+                noEvText.classList.add("d-none");
+            } else {
+                evContainer.classList.add("d-none");
+                noEvText.classList.remove("d-none");
+            }
+
+            // Resolution
+            const resSection = document.getElementById("modalResolutionSection");
+            const resText = document.getElementById("modalResolutionText");
+            if (data.resolution && data.resolution.trim() !== "") {
+                resText.innerText = data.resolution;
+                resSection.classList.remove("d-none");
+            } else {
+                resSection.classList.add("d-none");
+            }
+
+            loading.classList.add("d-none");
+            content.classList.remove("d-none");
+        })
+        .catch(err => {
+            loading.innerHTML = `<div class="alert alert-danger py-2 mb-0">${err.message}</div>`;
+        });
 }
 </script>
 

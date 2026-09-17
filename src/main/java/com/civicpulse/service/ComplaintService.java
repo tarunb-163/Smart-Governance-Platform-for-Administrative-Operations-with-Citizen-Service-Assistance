@@ -2,10 +2,12 @@ package com.civicpulse.service;
 
 import com.civicpulse.dto.AttachmentDTO;
 import com.civicpulse.dto.ComplaintDetailsDTO;
+import com.civicpulse.model.Citizen;
 import com.civicpulse.model.Complaint;
 import com.civicpulse.model.ComplaintAttachment;
 import com.civicpulse.model.Officer;
 import com.civicpulse.model.TimelineEvent;
+import com.civicpulse.repository.CitizenRepository;
 import com.civicpulse.repository.ComplaintRepository;
 import com.civicpulse.repository.OfficerRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class ComplaintService {
 
     private final ComplaintRepository complaintRepository;
     private final OfficerRepository officerRepository;
+    private final CitizenRepository citizenRepository;
     private final DepartmentRoutingService departmentRoutingService;
     private final NotificationService notificationService;
 
@@ -30,10 +33,12 @@ public class ComplaintService {
 
     public ComplaintService(ComplaintRepository complaintRepository,
                             OfficerRepository officerRepository,
+                            CitizenRepository citizenRepository,
                             DepartmentRoutingService departmentRoutingService,
                             NotificationService notificationService) {
         this.complaintRepository = complaintRepository;
         this.officerRepository = officerRepository;
+        this.citizenRepository = citizenRepository;
         this.departmentRoutingService = departmentRoutingService;
         this.notificationService = notificationService;
     }
@@ -100,6 +105,19 @@ public class ComplaintService {
         complaint.setCitizenName(citizenName != null ? citizenName.trim() : "Citizen");
         complaint.setCitizenEmail(citizenEmail != null ? citizenEmail.trim().toLowerCase() : "citizen@civicpulse.com");
         complaint.setCitizenContact(citizenContact != null ? citizenContact.trim() : "");
+        if ((complaint.getCitizenContact().isEmpty() || "Citizen".equalsIgnoreCase(complaint.getCitizenName())) && citizenRepository != null) {
+            citizenRepository.findByEmailIgnoreCase(complaint.getCitizenEmail()).ifPresent(cit -> {
+                if (complaint.getCitizenContact().isEmpty() && cit.getPhone() != null) {
+                    complaint.setCitizenContact(cit.getPhone());
+                }
+                if ("Citizen".equalsIgnoreCase(complaint.getCitizenName()) && cit.getFullName() != null) {
+                    complaint.setCitizenName(cit.getFullName());
+                }
+                if (complaint.getCitizenId() == null || complaint.getCitizenId().isEmpty()) {
+                    complaint.setCitizenId(cit.getCitizenId());
+                }
+            });
+        }
         complaint.setDepartment(department);
         complaint.setPriority("Medium");
         complaint.setCreatedAt(now);
@@ -546,19 +564,84 @@ public class ComplaintService {
         dto.setUpdatedAt(complaint.getUpdatedAt());
         dto.setResolvedAt(complaint.getResolvedAt());
 
-        if (complaint.getAttachments() != null && !complaint.getAttachments().isEmpty()) {
-            List<AttachmentDTO> attachmentDTOs = complaint.getAttachments().stream()
-                    .map(this::mapAttachmentToDTO)
-                    .collect(Collectors.toList());
-            dto.setAttachments(attachmentDTOs);
-        } else {
-            dto.setAttachments(Collections.emptyList());
+        // Map Citizen Information with fallback enrichment from CitizenRepository
+        String citizenName = complaint.getCitizenName();
+        String citizenContact = complaint.getCitizenContact();
+        String citizenEmail = complaint.getCitizenEmail();
+        String citizenId = complaint.getCitizenId();
+        String citizenAddress = null;
+
+        Citizen citizen = null;
+        if (citizenRepository != null) {
+            if (citizenEmail != null && !citizenEmail.trim().isEmpty()) {
+                citizen = citizenRepository.findByEmailIgnoreCase(citizenEmail.trim()).orElse(null);
+            }
+            if (citizen == null && citizenId != null && !citizenId.trim().isEmpty()) {
+                citizen = citizenRepository.findByCitizenIdIgnoreCase(citizenId.trim()).orElse(null);
+            }
         }
+
+        if (citizen != null) {
+            if ((citizenName == null || citizenName.trim().isEmpty() || "Citizen".equalsIgnoreCase(citizenName.trim())) && citizen.getFullName() != null) {
+                citizenName = citizen.getFullName();
+            }
+            if ((citizenContact == null || citizenContact.trim().isEmpty()) && citizen.getPhone() != null) {
+                citizenContact = citizen.getPhone();
+            }
+            if ((citizenEmail == null || citizenEmail.trim().isEmpty()) && citizen.getEmail() != null) {
+                citizenEmail = citizen.getEmail();
+            }
+            if ((citizenId == null || citizenId.trim().isEmpty()) && citizen.getCitizenId() != null) {
+                citizenId = citizen.getCitizenId();
+            }
+            citizenAddress = citizen.getAddress();
+        }
+
+        if (citizenAddress == null || citizenAddress.trim().isEmpty()) {
+            citizenAddress = complaint.getLocation();
+        }
+
+        dto.setCitizenName(citizenName != null && !citizenName.trim().isEmpty() ? citizenName : "Citizen");
+        dto.setCitizenContact(citizenContact != null && !citizenContact.trim().isEmpty() ? citizenContact : "—");
+        dto.setCitizenEmail(citizenEmail != null && !citizenEmail.trim().isEmpty() ? citizenEmail : "—");
+        dto.setCitizenId(citizenId != null && !citizenId.trim().isEmpty() ? citizenId : "—");
+        dto.setCitizenAddress(citizenAddress != null && !citizenAddress.trim().isEmpty() ? citizenAddress : "—");
+
+        dto.setImagePath(complaint.getImagePath());
+        dto.setAttachments(mapAttachments(complaint));
 
         return dto;
     }
 
-    private AttachmentDTO mapAttachmentToDTO(ComplaintAttachment attachment) {
+    public List<AttachmentDTO> mapAttachments(Complaint complaint) {
+        if (complaint == null) {
+            return Collections.emptyList();
+        }
+        List<AttachmentDTO> list = new ArrayList<>();
+        if (complaint.getAttachments() != null) {
+            for (ComplaintAttachment att : complaint.getAttachments()) {
+                list.add(mapAttachmentToDTO(att));
+            }
+        }
+        if (complaint.getImagePath() != null && !complaint.getImagePath().trim().isEmpty()) {
+            String imgPath = complaint.getImagePath().trim();
+            boolean alreadyMapped = list.stream().anyMatch(a ->
+                    imgPath.equalsIgnoreCase(a.getFileUrl()) || (a.getFileUrl() != null && a.getFileUrl().endsWith(imgPath))
+            );
+            if (!alreadyMapped) {
+                AttachmentDTO synth = new AttachmentDTO();
+                String fileName = imgPath.contains("/") ? imgPath.substring(imgPath.lastIndexOf("/") + 1) : imgPath;
+                synth.setFileName(fileName);
+                synth.setFileType("image/jpeg");
+                synth.setFileUrl(imgPath);
+                synth.setUploadedAt(complaint.getCreatedAt() != null ? complaint.getCreatedAt() : LocalDateTime.now());
+                list.add(synth);
+            }
+        }
+        return list;
+    }
+
+    public AttachmentDTO mapAttachmentToDTO(ComplaintAttachment attachment) {
         AttachmentDTO dto = new AttachmentDTO();
         dto.setId(attachment.getId());
         dto.setFileName(attachment.getFileName());

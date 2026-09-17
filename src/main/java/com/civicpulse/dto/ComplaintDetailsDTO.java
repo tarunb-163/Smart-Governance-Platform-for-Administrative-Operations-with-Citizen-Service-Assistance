@@ -14,12 +14,19 @@ public class ComplaintDetailsDTO {
     private String status;
     private String department;
 
+    private String citizenName;
+    private String citizenContact;
+    private String citizenEmail;
+    private String citizenId;
+    private String citizenAddress;
+
     private LocalDateTime createdAt;
     private LocalDateTime assignedAt;
     private LocalDateTime updatedAt;
     private LocalDateTime resolvedAt;
 
     private List<AttachmentDTO> attachments;
+    private String imagePath;
 
     public ComplaintDetailsDTO() {
     }
@@ -126,5 +133,53 @@ public class ComplaintDetailsDTO {
 
     public void setAttachments(List<AttachmentDTO> attachments) {
         this.attachments = attachments;
+    }
+
+    public String getCitizenName() {
+        return citizenName;
+    }
+
+    public void setCitizenName(String citizenName) {
+        this.citizenName = citizenName;
+    }
+
+    public String getCitizenContact() {
+        return citizenContact;
+    }
+
+    public void setCitizenContact(String citizenContact) {
+        this.citizenContact = citizenContact;
+    }
+
+    public String getCitizenEmail() {
+        return citizenEmail;
+    }
+
+    public void setCitizenEmail(String citizenEmail) {
+        this.citizenEmail = citizenEmail;
+    }
+
+    public String getCitizenId() {
+        return citizenId;
+    }
+
+    public void setCitizenId(String citizenId) {
+        this.citizenId = citizenId;
+    }
+
+    public String getCitizenAddress() {
+        return citizenAddress;
+    }
+
+    public void setCitizenAddress(String citizenAddress) {
+        this.citizenAddress = citizenAddress;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

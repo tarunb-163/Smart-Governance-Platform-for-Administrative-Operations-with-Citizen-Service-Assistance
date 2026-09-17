@@ -273,6 +273,21 @@ function populateCurrentComplaint(
         complaint.status
     );
 
+    const imgPath = complaint.imagePath || (complaint.attachments && complaint.attachments.length > 0 ? complaint.attachments[0].fileUrl : null);
+    const evContainer = document.getElementById("currentEvidenceContainer");
+    const evImg = document.getElementById("currentEvidenceImg");
+    const evLink = document.getElementById("currentEvidenceLink");
+
+    if (evContainer && evImg && evLink) {
+        if (imgPath) {
+            evImg.src = imgPath;
+            evLink.href = imgPath;
+            evContainer.classList.remove("d-none");
+        } else {
+            evContainer.classList.add("d-none");
+        }
+    }
+
 }
 
 

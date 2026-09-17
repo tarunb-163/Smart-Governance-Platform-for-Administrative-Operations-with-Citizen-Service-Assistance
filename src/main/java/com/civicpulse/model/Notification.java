@@ -15,8 +15,11 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "citizen_email", nullable = false)
+    @Column(name = "citizen_email", nullable = true)
     private String citizenEmail;
+
+    @Column(name = "officer_username")
+    private String officerUsername;
 
     @Column(nullable = false)
     private String title;
@@ -47,6 +50,18 @@ public class Notification {
         this.type = type;
         this.createdAt = LocalDateTime.now();
         this.isRead = false;
+    }
+
+    public static Notification forOfficer(String officerUsername, String title, String message, String complaintNumber, String type) {
+        Notification notification = new Notification();
+        notification.setOfficerUsername(officerUsername);
+        notification.setTitle(title);
+        notification.setMessage(message);
+        notification.setComplaintNumber(complaintNumber);
+        notification.setType(type);
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setRead(false);
+        return notification;
     }
 
     @PrePersist
@@ -120,5 +135,13 @@ public class Notification {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public String getOfficerUsername() {
+        return officerUsername;
+    }
+
+    public void setOfficerUsername(String officerUsername) {
+        this.officerUsername = officerUsername;
     }
 }

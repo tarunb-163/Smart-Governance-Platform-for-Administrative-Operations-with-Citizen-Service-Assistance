@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -167,6 +168,14 @@ class ComplaintLifecycleIntegrationTest {
         String trackResponse = trackResult.getResponse().getContentAsString();
         assertFalse(trackResponse.contains("Aug 2026"), "Should not contain hardcoded August date");
 
+        // 5b. Officer checks complaint details: Verify citizen information is populated
+        mockMvc.perform(get("/api/officer/complaints/" + complaintId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(complaintId))
+                .andExpect(jsonPath("$.citizenName").value("Rahul Verma"))
+                .andExpect(jsonPath("$.citizenContact").value("9876543210"))
+                .andExpect(jsonPath("$.citizenEmail").value(citizenEmail));
+
         // 6. Officer resolves complaint
         String updateToResolved = """
             {
@@ -256,5 +265,77 @@ class ComplaintLifecycleIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("Reopened"))
                 .andExpect(jsonPath("$.reopenReason").value("Recent rain washed away the loose patch"));
+    }
+
+    @Test
+    @WithMockUser(username = "officer1", roles = {"OFFICER"})
+    void testComplaintImageEvidenceUploadAndRetrieval() throws Exception {
+        String citizenEmail = "evidence_test_" + System.currentTimeMillis() + "@civicpulse.com";
+        MockHttpSession citizenSession = new MockHttpSession();
+        citizenSession.setAttribute("CITIZEN_EMAIL", citizenEmail);
+        citizenSession.setAttribute("CITIZEN_NAME", "Priya Sharma");
+
+        // 1. Submit a complaint
+        String submitJson = """
+            {
+                "title": "Broken water supply main",
+                "description": "Clean drinking water leaking on road opposite gate 2",
+                "category": "Water Supply",
+                "location": "Near Gate 2, Sector 5",
+                "citizenContact": "9876543219"
+            }
+            """;
+
+        MvcResult submitResult = mockMvc.perform(post("/api/complaints")
+                        .session(citizenSession)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(submitJson))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        String complaintId = JsonPath.read(submitResult.getResponse().getContentAsString(), "$.complaintId");
+        assertNotNull(complaintId);
+
+        // 2. Upload image evidence
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "file",
+                "leakage_evidence.jpg",
+                "image/jpeg",
+                "dummy image content bytes for test".getBytes()
+        );
+
+        mockMvc.perform(multipart("/api/complaints/" + complaintId + "/image")
+                        .file(mockFile))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.imagePath").exists());
+
+        // 3. Verify Complaint entity has imagePath and attachment in DB
+        Complaint complaint = complaintRepository.findByComplaintNumber(complaintId).orElseThrow();
+        assertNotNull(complaint.getImagePath());
+        assertTrue(complaint.getImagePath().startsWith("/uploads/"));
+        assertNotNull(complaint.getAttachments());
+        assertFalse(complaint.getAttachments().isEmpty());
+        assertEquals("leakage_evidence.jpg", complaint.getAttachments().get(0).getFileName());
+
+        // 4. Verify Citizen tracking API returns imagePath and attachments
+        mockMvc.perform(get("/api/complaints/" + complaintId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.imagePath").value(complaint.getImagePath()))
+                .andExpect(jsonPath("$.attachments").isArray())
+                .andExpect(jsonPath("$.attachments[0].fileName").value("leakage_evidence.jpg"))
+                .andExpect(jsonPath("$.attachments[0].fileUrl").value(complaint.getImagePath()));
+
+        // 5. Verify Officer complaint details API returns imagePath and attachments
+        mockMvc.perform(get("/api/officer/complaints/" + complaintId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.imagePath").value(complaint.getImagePath()))
+                .andExpect(jsonPath("$.attachments").isArray())
+                .andExpect(jsonPath("$.attachments[0].fileName").value("leakage_evidence.jpg"))
+                .andExpect(jsonPath("$.attachments[0].fileUrl").value(complaint.getImagePath()));
+
+        // 6. Verify image can be retrieved via HTTP resource handler
+        mockMvc.perform(get(complaint.getImagePath()))
+                .andExpect(status().isOk());
     }
 }

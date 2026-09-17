@@ -25,6 +25,7 @@ public class ComplaintResponse {
     private String remarks;
     private List<TimelineEvent> timeline;
     private String imagePath;
+    private List<AttachmentDTO> attachments;
     private Integer feedbackRating;
     private String feedbackComment;
     private String reopenReason;
@@ -231,5 +232,13 @@ public class ComplaintResponse {
 
     public void setReopenReason(String reopenReason) {
         this.reopenReason = reopenReason;
+    }
+
+    public List<AttachmentDTO> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<AttachmentDTO> attachments) {
+        this.attachments = attachments;
     }
 }

@@ -476,6 +476,21 @@
 
                 </div>
 
+                <!-- ================= EVIDENCE / ATTACHMENT ================= -->
+                <div class="description" style="margin-top: 25px;" th:if="${complaint.imagePath != null and !#strings.isEmpty(complaint.imagePath)}">
+                    <h3>
+                        Uploaded Evidence Photo
+                    </h3>
+                    <div class="description-box" style="text-align: center; background: #f8fafc;">
+                        <img th:src="${complaint.imagePath}" alt="Evidence Photo" style="max-height: 320px; max-width: 100%; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+                        <div style="margin-top: 10px;">
+                            <a th:href="${complaint.imagePath}" target="_blank" class="back-btn" style="padding: 6px 14px; font-size: 13px; margin-bottom: 0;">
+                                View Full Size ↗
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
 
 
                 <!-- ================= STATUS UPDATE ================= -->

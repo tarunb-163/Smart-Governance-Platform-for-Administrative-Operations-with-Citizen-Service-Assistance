@@ -408,7 +408,15 @@
             <div class="card p-4 border rounded-3 mb-4">
                 <h6 class="fw-bold mb-3"><i class="bi bi-image me-2"></i> Supporting Evidence Photo</h6>
                 <div id="currentPhotoContainer" class="mb-3 d-none">
-                    <img id="currentPhotoImg" src="" alt="Complaint photo evidence" class="img-fluid rounded border shadow-sm" style="max-height: 240px; object-fit: contain;">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle"><i class="bi bi-image me-1"></i> Attached Evidence Photo</span>
+                        <a id="currentPhotoFullLink" href="#" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.78rem;">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Open Full Size
+                        </a>
+                    </div>
+                    <div class="text-center p-2 bg-light rounded border">
+                        <img id="currentPhotoImg" src="" alt="Complaint photo evidence" class="img-fluid rounded border shadow-sm" style="max-height: 320px; object-fit: contain; cursor: pointer;" onclick="openTrackEvidenceModal()">
+                    </div>
                 </div>
                 <div id="noPhotoText" class="text-muted small mb-3">No image attached yet. You can attach a photo below.</div>
 
@@ -507,6 +515,27 @@
         </div>
     </div>
 </main>
+
+<!-- EVIDENCE PREVIEW MODAL -->
+<div class="modal fade" id="trackEvidenceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light border-bottom py-2">
+                <h6 class="modal-title fw-bold text-dark mb-0"><i class="bi bi-image text-primary me-2"></i> Evidence Photo Preview</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-3 bg-dark-subtle">
+                <img id="trackModalImg" src="" alt="Evidence" class="img-fluid rounded shadow-sm" style="max-height: 80vh; object-fit: contain;">
+            </div>
+            <div class="modal-footer border-0 py-2 justify-content-between">
+                <span class="small text-muted">Click anywhere outside to close</span>
+                <a id="trackModalOpenBtn" href="#" target="_blank" class="btn btn-sm btn-primary">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Open in New Tab
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -672,10 +701,14 @@ function trackComplaint() {
             // Photo Preview
             const photoContainer = document.getElementById("currentPhotoContainer");
             const photoImg = document.getElementById("currentPhotoImg");
+            const photoFullLink = document.getElementById("currentPhotoFullLink");
             const noPhotoText = document.getElementById("noPhotoText");
 
-            if (complaint.imagePath) {
-                photoImg.src = complaint.imagePath;
+            const activePhoto = complaint.imagePath || (complaint.attachments && complaint.attachments.length > 0 ? complaint.attachments[0].fileUrl : null);
+
+            if (activePhoto && activePhoto.trim() !== "") {
+                photoImg.src = activePhoto;
+                if (photoFullLink) photoFullLink.href = activePhoto;
                 photoContainer.classList.remove("d-none");
                 noPhotoText.classList.add("d-none");
             } else {
@@ -813,6 +846,22 @@ function reopenComplaint() {
     .finally(() => {
         if (btn) btn.disabled = false;
     });
+}
+
+function openTrackEvidenceModal() {
+    const photoImg = document.getElementById("currentPhotoImg");
+    const trackModalImg = document.getElementById("trackModalImg");
+    const trackModalOpenBtn = document.getElementById("trackModalOpenBtn");
+
+    if (photoImg && photoImg.src) {
+        if (trackModalImg) trackModalImg.src = photoImg.src;
+        if (trackModalOpenBtn) trackModalOpenBtn.href = photoImg.src;
+        const modalEl = document.getElementById('trackEvidenceModal');
+        if (modalEl && window.bootstrap) {
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        }
+    }
 }
 </script>
 

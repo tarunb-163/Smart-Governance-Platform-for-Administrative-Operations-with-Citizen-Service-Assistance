@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Citizen Sign In | CivicPulse Smart Governance</title>
+    <title>Administrator Login | CivicPulse Executive Console</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
             font-family: 'Poppins', sans-serif;
         }
         body {
-            background: #090e17;
+            background: #090d16;
             color: #f8fafc;
             min-height: 100vh;
             display: flex;
@@ -26,23 +26,23 @@
             justify-content: center;
             padding: 30px 15px;
             background-image: 
-                radial-gradient(circle at 12% 20%, rgba(37, 99, 235, 0.18) 0%, transparent 40%),
-                radial-gradient(circle at 88% 80%, rgba(6, 182, 212, 0.14) 0%, transparent 40%);
+                radial-gradient(circle at 15% 20%, rgba(124, 58, 237, 0.18) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%);
         }
-        .citizen-login-container {
+        .admin-login-container {
             width: 100%;
-            max-width: 1040px;
+            max-width: 1020px;
             background: #0f172a;
-            border: 1px solid rgba(59, 130, 246, 0.25);
+            border: 1px solid rgba(139, 92, 246, 0.25);
             border-radius: 24px;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(37, 99, 235, 0.12);
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(124, 58, 237, 0.12);
             overflow: hidden;
             display: flex;
             flex-wrap: wrap;
         }
-        .citizen-branding-col {
+        .admin-branding-col {
             flex: 1 1 420px;
-            background: linear-gradient(145deg, #1e3a8a 0%, #0f172a 100%);
+            background: linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%);
             padding: 48px 40px;
             border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
@@ -50,16 +50,16 @@
             justify-content: space-between;
             position: relative;
         }
-        .citizen-branding-col::before {
+        .admin-branding-col::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #2563eb, #38bdf8, #06b6d4);
+            background: linear-gradient(90deg, #7c3aed, #a855f7, #3b82f6);
         }
-        .citizen-form-col {
+        .admin-form-col {
             flex: 1 1 500px;
             padding: 48px 44px;
             background: #0f172a;
@@ -71,9 +71,9 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(37, 99, 235, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.35);
-            color: #60a5fa;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.35);
+            color: #c084fc;
             padding: 6px 14px;
             border-radius: 9999px;
             font-size: 12px;
@@ -86,7 +86,7 @@
             font-size: 2.2rem;
             font-weight: 700;
             line-height: 1.25;
-            background: linear-gradient(135deg, #ffffff 0%, #93c5fd 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 16px;
@@ -106,12 +106,12 @@
             width: 40px;
             height: 40px;
             border-radius: 10px;
-            background: rgba(37, 99, 235, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #60a5fa;
+            color: #a78bfa;
             font-size: 18px;
             flex-shrink: 0;
         }
@@ -132,7 +132,7 @@
             color: #64748b;
         }
         .form-header {
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
         .form-header h2 {
             font-size: 1.75rem;
@@ -179,9 +179,9 @@
             outline: none;
         }
         .custom-input:focus {
-            border-color: #3b82f6;
+            border-color: #8b5cf6;
             background: #1e293b;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
             color: #ffffff;
         }
         .password-toggle-btn {
@@ -198,11 +198,11 @@
             color: #cbd5e1;
         }
         .demo-pill-card {
-            background: rgba(37, 99, 235, 0.08);
-            border: 1px dashed rgba(59, 130, 246, 0.35);
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px dashed rgba(139, 92, 246, 0.35);
             border-radius: 12px;
             padding: 12px 16px;
-            margin-bottom: 22px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -213,12 +213,12 @@
             color: #cbd5e1;
         }
         .demo-pill-info strong {
-            color: #60a5fa;
+            color: #c084fc;
         }
         .btn-fill-demo {
-            background: rgba(37, 99, 235, 0.2);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            color: #bfdbfe;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            color: #e9d5ff;
             font-size: 0.78rem;
             font-weight: 600;
             padding: 6px 12px;
@@ -228,13 +228,13 @@
             white-space: nowrap;
         }
         .btn-fill-demo:hover {
-            background: #2563eb;
+            background: #7c3aed;
             color: white;
         }
         .btn-submit {
             width: 100%;
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            border: 1px solid rgba(96, 165, 250, 0.4);
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            border: 1px solid rgba(167, 139, 250, 0.4);
             color: white;
             padding: 14px;
             border-radius: 12px;
@@ -247,37 +247,16 @@
             gap: 10px;
             transition: all 0.2s;
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
         }
         .btn-submit:hover {
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.55);
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.55);
             transform: translateY(-1px);
         }
-        .register-card {
-            margin-top: 18px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 0.88rem;
-            color: #94a3b8;
-            text-align: center;
-        }
-        .register-card a {
-            color: #60a5fa;
-            text-decoration: none;
-            font-weight: 600;
-            margin-left: 4px;
-            transition: 0.2s;
-        }
-        .register-card a:hover {
-            color: #93c5fd;
-            text-decoration: underline;
-        }
         .nav-switchers {
-            margin-top: 22px;
-            padding-top: 18px;
+            margin-top: 24px;
+            padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             justify-content: space-between;
@@ -292,7 +271,7 @@
             transition: 0.2s;
         }
         .nav-switchers a:hover {
-            color: #60a5fa;
+            color: #c084fc;
         }
         .alert-box {
             padding: 12px 16px;
@@ -313,125 +292,104 @@
             border: 1px solid rgba(16, 185, 129, 0.35);
             color: #6ee7b7;
         }
-        .alert-info-custom {
-            background: rgba(14, 165, 233, 0.12);
-            border: 1px solid rgba(14, 165, 233, 0.35);
-            color: #7dd3fc;
-        }
     </style>
 </head>
 <body>
 
-<div class="citizen-login-container">
+<div class="admin-login-container">
 
     <!-- LEFT BRANDING -->
-    <div class="citizen-branding-col">
+    <div class="admin-branding-col">
         <div>
             <div class="brand-badge">
-                <i class="bi bi-people-fill"></i> CITIZEN SERVICES PORTAL
+                <i class="bi bi-shield-lock-fill"></i> EXECUTIVE CONSOLE
             </div>
 
             <h1 class="branding-title">
-                CivicPulse<br>Citizen Portal
+                CivicPulse<br>Admin Portal
             </h1>
 
             <p class="branding-desc">
-                Empowering residents with transparent, direct municipal grievance resolution. Register civic issues, attach site photos, follow real-time officer investigations, and verify resolutions.
+                Authorized access point for municipal executive oversight, grievance analytics, department governance, and administrative operations.
             </p>
 
             <div class="feature-item">
                 <div class="feature-icon">
-                    <i class="bi bi-megaphone-fill"></i>
+                    <i class="bi bi-pie-chart-fill"></i>
                 </div>
                 <div class="feature-text">
-                    <strong>Express Grievance Lodging</strong>
-                    <span>Report roads, water, sanitation, and electrical faults in under a minute</span>
+                    <strong>Grievance Intelligence</strong>
+                    <span>Real-time resolution rates and department throughput KPIs</span>
                 </div>
             </div>
 
             <div class="feature-item">
                 <div class="feature-icon">
-                    <i class="bi bi-camera-fill"></i>
+                    <i class="bi bi-person-gear"></i>
                 </div>
                 <div class="feature-text">
-                    <strong>Photographic Evidence Upload</strong>
-                    <span>Attach field photos directly to expedite inspection, repairs, and verification</span>
+                    <strong>Officer & Staff Directory</strong>
+                    <span>Direct inspection of officers, workloads, and department queues</span>
                 </div>
             </div>
 
             <div class="feature-item">
                 <div class="feature-icon">
-                    <i class="bi bi-clock-history"></i>
+                    <i class="bi bi-sliders"></i>
                 </div>
                 <div class="feature-text">
-                    <strong>Real-Time Lifecycle Tracking</strong>
-                    <span>Live transparency from citizen submission to field team dispatch & completion</span>
-                </div>
-            </div>
-
-            <div class="feature-item">
-                <div class="feature-icon">
-                    <i class="bi bi-shield-check"></i>
-                </div>
-                <div class="feature-text">
-                    <strong>Verified Feedback & Reopen</strong>
-                    <span>Rate completed work with star feedback or request immediate reinvestigation</span>
+                    <strong>System Controls</strong>
+                    <span>Administrative overrides, audit logs, and complaint escalation</span>
                 </div>
             </div>
         </div>
 
         <div class="branding-footer">
-            <span>CivicPulse Smart Governance Platform &bull; Citizen Assistance Grid</span>
+            <span>CivicPulse Smart Governance Platform &bull; Security Level: High</span>
         </div>
     </div>
 
     <!-- RIGHT LOGIN FORM -->
-    <div class="citizen-form-col">
+    <div class="admin-form-col">
 
         <div class="form-header">
-            <h2>Citizen Sign In</h2>
-            <p>Enter your registered Email, Username, or Citizen ID to continue.</p>
+            <h2>Administrator Sign In</h2>
+            <p>Please provide your administrative credentials to continue.</p>
         </div>
 
-        <!-- ERROR MESSAGE (From Spring Security param or Model) -->
-        <div th:if="${loginErrorMessage != null or param.error != null}" class="alert-box alert-danger-custom">
+        <!-- ERROR MESSAGE -->
+        <div th:if="${loginErrorMessage != null}" class="alert-box alert-danger-custom">
             <i class="bi bi-exclamation-triangle-fill"></i>
-            <span th:text="${loginErrorMessage != null ? loginErrorMessage : 'Invalid citizen credentials. Please check your identifier and password.'}">Invalid citizen credentials.</span>
+            <span th:text="${loginErrorMessage}">Invalid administrator credentials.</span>
         </div>
 
         <!-- LOGOUT MESSAGE -->
-        <div th:if="${logoutMessage != null or param.logout != null}" class="alert-box alert-info-custom">
-            <i class="bi bi-info-circle-fill"></i>
-            <span th:text="${logoutMessage != null ? logoutMessage : 'You have signed out successfully.'}">You have signed out successfully.</span>
-        </div>
-
-        <!-- SUCCESS MESSAGE (e.g. after Registration) -->
-        <div th:if="${successMessage != null or param.registered != null}" class="alert-box alert-success-custom">
+        <div th:if="${logoutMessage != null}" class="alert-box alert-success-custom">
             <i class="bi bi-check-circle-fill"></i>
-            <span th:text="${successMessage != null ? successMessage : 'Account created successfully! Please sign in with your credentials.'}">Account created successfully!</span>
+            <span th:text="${logoutMessage}">You have signed out securely.</span>
         </div>
 
         <!-- QUICK DEMO AUTOFILL -->
         <div class="demo-pill-card">
             <div class="demo-pill-info">
-                <strong>Demo Citizen Account:</strong><br>
-                <span>Identifier: <code>citizen@civicpulse.com</code> | Password: <code>password123</code></span>
+                <strong>Demo Admin Account:</strong><br>
+                <span>Username: <code>admin</code> | Password: <code>admin123</code></span>
             </div>
-            <button type="button" class="btn-fill-demo" onclick="fillCitizenDemo()">
-                <i class="bi bi-lightning-charge-fill"></i> Auto-fill Demo
+            <button type="button" class="btn-fill-demo" onclick="fillAdminDemo()">
+                <i class="bi bi-lightning-charge-fill"></i> Auto-fill
             </button>
         </div>
 
         <!-- LOGIN FORM -->
-        <form method="post" action="/login" id="citizenLoginForm">
-            <input type="hidden" name="loginType" value="citizen">
+        <form method="post" action="/login" id="adminLoginForm">
+            <input type="hidden" name="loginType" value="admin">
 
-            <!-- USERNAME / IDENTIFIER -->
+            <!-- USERNAME -->
             <div class="form-group">
-                <label for="username" class="form-label">Citizen Email, Username, or ID</label>
+                <label for="username" class="form-label">Admin Username</label>
                 <div class="input-wrapper">
-                    <i class="bi bi-person-badge-fill input-icon"></i>
-                    <input type="text" id="username" name="username" class="custom-input" placeholder="e.g. citizen@civicpulse.com or CIT10045" autocomplete="username" required>
+                    <i class="bi bi-person-fill input-icon"></i>
+                    <input type="text" id="username" name="username" class="custom-input" placeholder="e.g. admin" autocomplete="username" required>
                 </div>
             </div>
 
@@ -440,7 +398,7 @@
                 <label for="password" class="form-label">Password</label>
                 <div class="input-wrapper">
                     <i class="bi bi-lock-fill input-icon"></i>
-                    <input type="password" id="password" name="password" class="custom-input" placeholder="Enter citizen password" autocomplete="current-password" required>
+                    <input type="password" id="password" name="password" class="custom-input" placeholder="Enter administrative password" autocomplete="current-password" required>
                     <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility">
                         <i class="bi bi-eye" id="passwordEyeIcon"></i>
                     </button>
@@ -449,26 +407,18 @@
 
             <!-- SUBMIT BUTTON -->
             <button type="submit" class="btn-submit" id="submitBtn">
-                <span>Sign In to Citizen Portal</span>
+                <span>Access Admin Console</span>
                 <i class="bi bi-arrow-right"></i>
             </button>
         </form>
-
-        <!-- REGISTER PROMPT -->
-        <div class="register-card">
-            Don't have a citizen account?
-            <a href="/citizen/register">
-                Register here <i class="bi bi-arrow-right"></i>
-            </a>
-        </div>
 
         <!-- SWITCHER NAVIGATION -->
         <div class="nav-switchers">
             <a href="/officer/login">
                 <i class="bi bi-shield-shaded"></i> Field Officer Login
             </a>
-            <a href="/admin/login">
-                <i class="bi bi-speedometer2"></i> Admin Console
+            <a href="/citizen/login">
+                <i class="bi bi-person-heart"></i> Citizen Login
             </a>
             <a href="/">
                 <i class="bi bi-house-door"></i> Main Portal
@@ -480,9 +430,9 @@
 </div>
 
 <script>
-    function fillCitizenDemo() {
-        document.getElementById('username').value = 'citizen@civicpulse.com';
-        document.getElementById('password').value = 'password123';
+    function fillAdminDemo() {
+        document.getElementById('username').value = 'admin';
+        document.getElementById('password').value = 'admin123';
     }
 
     function togglePasswordVisibility() {

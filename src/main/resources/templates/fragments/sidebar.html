@@ -163,7 +163,7 @@
             <li class="nav-item">
 
                 <a
-                        href="#"
+                        th:href="@{/officer/notifications}"
                         class="nav-link"
                         th:classappend="${activePage == 'notifications'} ? ' active' : ''">
 
@@ -173,7 +173,9 @@
                         Notifications
                     </span>
 
-                    <span class="nav-badge">
+                    <span class="nav-badge"
+                          th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}"
+                          th:text="${unreadNotificationCount}">
                         0
                     </span>
 

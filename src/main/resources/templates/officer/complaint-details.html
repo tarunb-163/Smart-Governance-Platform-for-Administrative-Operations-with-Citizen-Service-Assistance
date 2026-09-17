@@ -370,10 +370,10 @@
                                         <div class="detail-row-content">
 
                                             <span class="detail-label">
-                                                Name
+                                                Full Name
                                             </span>
 
-                                            <strong id="citizenName">
+                                            <strong id="citizenName" th:text="${complaint?.citizenName ?: '—'}">
                                                 —
                                             </strong>
 
@@ -395,10 +395,10 @@
                                         <div class="detail-row-content">
 
                                             <span class="detail-label">
-                                                Contact
+                                                Contact Number
                                             </span>
 
-                                            <strong id="citizenContact">
+                                            <strong id="citizenContact" th:text="${complaint?.citizenContact ?: '—'}">
                                                 —
                                             </strong>
 
@@ -420,10 +420,60 @@
                                         <div class="detail-row-content">
 
                                             <span class="detail-label">
-                                                Email
+                                                Email Address
                                             </span>
 
-                                            <strong id="citizenEmail">
+                                            <strong id="citizenEmail" th:text="${complaint?.citizenEmail ?: '—'}">
+                                                —
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Citizen ID -->
+
+                                    <div class="detail-row">
+
+                                        <div class="detail-row-icon">
+
+                                            <i class="bi bi-person-badge"></i>
+
+                                        </div>
+
+                                        <div class="detail-row-content">
+
+                                            <span class="detail-label">
+                                                Citizen ID
+                                            </span>
+
+                                            <strong id="citizenId" th:text="${complaint?.citizenId ?: '—'}">
+                                                —
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Address / Location -->
+
+                                    <div class="detail-row">
+
+                                        <div class="detail-row-icon">
+
+                                            <i class="bi bi-geo-alt"></i>
+
+                                        </div>
+
+                                        <div class="detail-row-content">
+
+                                            <span class="detail-label">
+                                                Citizen / Incident Address
+                                            </span>
+
+                                            <strong id="citizenAddress" th:text="${complaint?.location ?: '—'}">
                                                 —
                                             </strong>
 
@@ -961,6 +1011,35 @@
 <div
         class="sidebar-overlay"
         id="sidebarOverlay">
+</div>
+
+
+<!-- =========================================================
+     EVIDENCE IMAGE PREVIEW MODAL
+========================================================= -->
+<div class="modal fade" id="evidenceImageModal" tabindex="-1" aria-labelledby="evidenceImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light border-bottom py-3">
+                <h6 class="modal-title fw-bold text-dark mb-0" id="evidenceImageModalLabel">
+                    <i class="bi bi-image text-primary me-2"></i> Supporting Evidence Photo
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-3 bg-dark-subtle">
+                <img id="modalEvidenceImg" src="" alt="Citizen complaint evidence" class="img-fluid rounded shadow-sm" style="max-height: 75vh; object-fit: contain;">
+            </div>
+            <div class="modal-footer border-0 py-2 justify-content-between">
+                <span id="modalEvidenceCaption" class="small text-muted font-monospace"></span>
+                <div>
+                    <a id="modalEvidenceDownloadBtn" href="#" target="_blank" class="btn btn-sm btn-primary me-2">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Open Full Size
+                    </a>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 

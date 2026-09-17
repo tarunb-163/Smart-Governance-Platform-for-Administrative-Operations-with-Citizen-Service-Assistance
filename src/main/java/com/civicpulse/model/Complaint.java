@@ -98,7 +98,7 @@ public class Complaint {
     @JsonIgnoreProperties({"assignedComplaints", "password", "hibernateLazyInitializer", "handler"})
     private Officer assignedOfficer;
 
-    @OneToMany(mappedBy = "complaint", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "complaint", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"complaint", "hibernateLazyInitializer", "handler"})
     private List<ComplaintAttachment> attachments = new ArrayList<>();
 

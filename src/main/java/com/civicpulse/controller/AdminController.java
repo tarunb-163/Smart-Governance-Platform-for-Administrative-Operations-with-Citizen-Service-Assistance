@@ -4,6 +4,10 @@ import com.civicpulse.model.Citizen;
 import com.civicpulse.model.Complaint;
 import com.civicpulse.service.CitizenService;
 import com.civicpulse.service.ComplaintService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +26,45 @@ public class AdminController {
     public AdminController(ComplaintService complaintService, CitizenService citizenService) {
         this.complaintService = complaintService;
         this.citizenService = citizenService;
+    }
+
+    // ================= ADMIN AUTH =================
+
+    @GetMapping("/admin/login")
+    public String adminLoginPage(HttpServletRequest request, Model model,
+                                 @RequestParam(value = "error", required = false) String error,
+                                 @RequestParam(value = "logout", required = false) String logout) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+            boolean isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (isAdmin) {
+                return "redirect:/admin/dashboard";
+            }
+        }
+
+        if (error != null) {
+            if ("unauthorized".equalsIgnoreCase(error)) {
+                model.addAttribute("loginErrorMessage", "Access Denied: This account does not possess Administrative privileges.");
+            } else {
+                model.addAttribute("loginErrorMessage", "Invalid administrator credentials. Please check your username and password.");
+            }
+        }
+        if (logout != null) {
+            model.addAttribute("logoutMessage", "Administrator session closed securely.");
+        }
+
+        return "admin/login";
+    }
+
+    @GetMapping("/admin/logout")
+    public String adminLogout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        SecurityContextHolder.clearContext();
+        return "redirect:/admin/login?logout";
     }
 
     // ================= ADMIN DASHBOARD =================

@@ -140,6 +140,26 @@
 
             </section>
 
+            <!-- Success Alert if profile was updated -->
+            <div th:if="${profileSuccess}" class="alert alert-success alert-dismissible fade show mt-3 mb-0" role="alert" style="border-radius: 12px; font-weight: 500;">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${profileSuccess}">Your profile information has been successfully updated.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Password Success Alert -->
+            <div th:if="${passwordSuccess}" class="alert alert-success alert-dismissible fade show mt-3 mb-0" role="alert" style="border-radius: 12px; font-weight: 500;">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${passwordSuccess}">Password changed successfully.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Password Error Alert -->
+            <div th:if="${passwordError}" class="alert alert-danger alert-dismissible fade show mt-3 mb-0" role="alert" style="border-radius: 12px; font-weight: 500;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${passwordError}">Error updating password.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
 
             <!-- =================================================
                  PROFILE LAYOUT
@@ -165,20 +185,20 @@
                                     class="profile-avatar"
                                     id="profileAvatar">
 
-                                <span id="profileInitials">
+                                <span id="profileInitials" th:text="${profileInitials ?: 'OO'}">
                                     O
                                 </span>
 
                             </div>
 
 
-                            <h4 id="profileDisplayName">
+                            <h4 id="profileDisplayName" th:text="${officer?.fullName ?: 'Officer One'}">
                                 Officer
                             </h4>
 
                             <span
                                     class="profile-role"
-                                    id="profileRole">
+                                    id="profileRole" th:text="${officer?.designation ?: officer?.role ?: 'Senior Field Officer'}">
 
                                 Officer
 
@@ -214,7 +234,7 @@
                                         Officer ID
                                     </span>
 
-                                    <strong id="profileOfficerId">
+                                    <strong id="profileOfficerId" th:text="${officer?.employeeId ?: 'EMP001'}">
                                         —
                                     </strong>
 
@@ -237,7 +257,7 @@
                                         Department
                                     </span>
 
-                                    <strong id="profileDepartment">
+                                    <strong id="profileDepartment" th:text="${officer?.department ?: 'Roads / Public Works Department'}">
                                         —
                                     </strong>
 
@@ -260,7 +280,7 @@
                                         Assigned Area
                                     </span>
 
-                                    <strong id="profileArea">
+                                    <strong id="profileArea" th:text="${officer?.assignedArea ?: 'Central Ward & Sector 4'}">
                                         —
                                     </strong>
 
@@ -283,7 +303,7 @@
                                         Joined Date
                                     </span>
 
-                                    <strong id="profileJoinedDate">
+                                    <strong id="profileJoinedDate" th:text="${officer?.joinedDate != null ? #temporals.format(officer.joinedDate, 'dd MMM yyyy') : '16 Mar 2026'}">
                                         —
                                     </strong>
 
@@ -330,7 +350,9 @@
                             <button
                                     type="button"
                                     class="profile-action-link"
-                                    id="changePasswordButton">
+                                    id="changePasswordButton"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#changePasswordModal">
 
                                 <div class="profile-action-icon">
 
@@ -393,6 +415,8 @@
 
                             <form
                                     id="profileForm"
+                                    method="POST"
+                                    th:action="@{/officer/profile}"
                                     novalidate>
 
 
@@ -416,6 +440,7 @@
                                                 id="fullName"
                                                 name="fullName"
                                                 class="form-control"
+                                                th:value="${officer?.fullName ?: 'Officer One'}"
                                                 placeholder="Enter full name"
                                                 autocomplete="name">
 
@@ -439,6 +464,7 @@
                                                 id="employeeId"
                                                 name="employeeId"
                                                 class="form-control"
+                                                th:value="${officer?.employeeId ?: 'EMP001'}"
                                                 placeholder="Employee ID"
                                                 readonly>
 
@@ -462,6 +488,7 @@
                                                 id="email"
                                                 name="email"
                                                 class="form-control"
+                                                th:value="${officer?.email ?: 'officer1@civicpulse.com'}"
                                                 placeholder="Enter email address"
                                                 autocomplete="email">
 
@@ -485,6 +512,7 @@
                                                 id="phone"
                                                 name="phone"
                                                 class="form-control"
+                                                th:value="${officer?.phone ?: '+91 9876543210'}"
                                                 placeholder="Enter phone number"
                                                 autocomplete="tel">
 
@@ -508,6 +536,7 @@
                                                 id="designation"
                                                 name="designation"
                                                 class="form-control"
+                                                th:value="${officer?.designation ?: 'Senior Field Officer'}"
                                                 placeholder="Officer designation">
 
                                     </div>
@@ -530,6 +559,7 @@
                                                 id="department"
                                                 name="department"
                                                 class="form-control"
+                                                th:value="${officer?.department ?: 'Roads / Public Works Department'}"
                                                 placeholder="Department">
 
                                     </div>
@@ -552,6 +582,7 @@
                                                 id="assignedArea"
                                                 name="assignedArea"
                                                 class="form-control"
+                                                th:value="${officer?.assignedArea ?: 'Central Ward & Sector 4'}"
                                                 placeholder="Assigned ward / area">
 
                                     </div>
@@ -574,6 +605,7 @@
                                                 id="officeLocation"
                                                 name="officeLocation"
                                                 class="form-control"
+                                                th:value="${officer?.officeLocation ?: 'Municipal PWD Headquarters, Zone 1'}"
                                                 placeholder="Office location">
 
                                     </div>
@@ -596,6 +628,7 @@
                                                 name="address"
                                                 class="form-control"
                                                 rows="3"
+                                                th:text="${officer?.address ?: 'Room 204, PWD Administrative Block, Civic Center, Andhra Pradesh'}"
                                                 placeholder="Enter official address"></textarea>
 
                                     </div>
@@ -685,8 +718,8 @@
                                             ROLE
                                         </span>
 
-                                        <strong id="officialRole">
-                                            —
+                                        <strong id="officialRole" th:text="${officer?.role ?: 'OFFICER'}">
+                                            OFFICER
                                         </strong>
 
                                     </div>
@@ -704,7 +737,7 @@
                                             DEPARTMENT
                                         </span>
 
-                                        <strong id="officialDepartment">
+                                        <strong id="officialDepartment" th:text="${officer?.department ?: 'Roads / Public Works Department'}">
                                             —
                                         </strong>
 
@@ -723,7 +756,7 @@
                                             JURISDICTION
                                         </span>
 
-                                        <strong id="officialJurisdiction">
+                                        <strong id="officialJurisdiction" th:text="${officer?.jurisdiction ?: officer?.assignedArea ?: 'Municipal North & Central Zones'}">
                                             —
                                         </strong>
 
@@ -834,8 +867,9 @@
 
             <div class="modal-body">
 
-                <form id="changePasswordForm">
+                <form id="changePasswordForm" method="POST" th:action="@{/officer/change-password}">
 
+                    <div id="modalPasswordAlert" class="alert d-none mb-3" style="border-radius: 8px; font-size: 13px;"></div>
 
                     <!-- Current Password -->
 
@@ -852,9 +886,11 @@
                         <input
                                 type="password"
                                 id="currentPassword"
+                                name="currentPassword"
                                 class="form-control"
                                 autocomplete="current-password"
-                                placeholder="Enter current password">
+                                placeholder="Enter current password"
+                                required>
 
                     </div>
 
@@ -874,9 +910,11 @@
                         <input
                                 type="password"
                                 id="newPassword"
+                                name="newPassword"
                                 class="form-control"
                                 autocomplete="new-password"
-                                placeholder="Enter new password">
+                                placeholder="Enter new password (min. 6 chars)"
+                                required>
 
                     </div>
 
@@ -896,9 +934,11 @@
                         <input
                                 type="password"
                                 id="confirmPassword"
+                                name="confirmPassword"
                                 class="form-control"
                                 autocomplete="new-password"
-                                placeholder="Confirm new password">
+                                placeholder="Confirm new password"
+                                required>
 
                     </div>
 
@@ -906,7 +946,7 @@
                     <div class="password-requirements">
 
                         <span>
-                            Password should contain at least 8 characters.
+                            Password should contain at least 6 characters.
                         </span>
 
                     </div>
@@ -925,6 +965,7 @@
 
                         <button
                                 type="submit"
+                                id="modalUpdatePasswordBtn"
                                 class="btn-civic-primary">
 
                             <i class="bi bi-check-lg"></i>
